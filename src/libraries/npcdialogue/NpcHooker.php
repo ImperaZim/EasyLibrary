@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace libraries\npcdialogue;
 
+use pocketmine\plugin\PluginBase;
+
 /**
 * Class NpcHooker
 * @package libraries\npcdialogue
@@ -13,13 +15,13 @@ final class NpcHooker {
   /**
   * @var \Plugin|null
   */
-  private static ?\Plugin $plugin = null;
+  private static ?PluginBase $plugin = null;
 
   /**
   * NpcHooker constructor.
   * @param \Plugin $plugin
   */
-  public function __construct(\Plugin $plugin) {
+  public function __construct(PluginBase $plugin) {
     if (!self::isRegistered()) {
       self::register($plugin);
     }
@@ -38,7 +40,7 @@ final class NpcHooker {
   * @param \Plugin $plugin
   * @throws \RuntimeException
   */
-  public static function register(\Plugin $plugin) : void {
+  public static function register(PluginBase $plugin) : void {
     if (self::$plugin !== null) {
       throw new \RuntimeException("Plugin is already registered");
     }

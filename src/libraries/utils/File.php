@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace libraries\utils;
 
 use pocketmine\utils\Config;
+use pocketmine\plugin\PluginBase;
 
 /**
 * Class File
@@ -20,13 +21,14 @@ final class File {
   * @param string|null $extension
   */
   public function __construct(
-    string $file,
-    ?string $extension = '.yml'
+    private PluginBase $plugin,
+    private string $file,
+    private ?string $extension = '.yml'
   ) {
     try {
-      $filePath = Path::getDataFolder() . $file . $extension;
+      $filePath = Path::getDataFolder($plugin) . $file . $extension;
       if (!file_exists($filePath)) {
-        \Plugin::getInstance()->saveResource($file . $extension);
+        $plugin->saveResource($file . $extension);
       }
       if ($extension !== '.php') {
         $this->config = new Config($filePath);
@@ -108,7 +110,7 @@ final class File {
   */
   public static function load(string $file): void {
     try {
-      \Plugin::getInstance()->saveResource(Path::getDataFolder() . $file . '.yml');
+      $this->plugin->saveResource(Path::getDataFolder() . $file . '.yml');
     } catch (\Throwable $e) {
       new \crashdump($e);
     }

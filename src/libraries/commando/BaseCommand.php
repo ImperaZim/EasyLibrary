@@ -9,6 +9,7 @@ use libraries\commando\traits\ArgumentableTrait;
 use libraries\commando\constraint\BaseConstraint;
 use libraries\commando\exception\InvalidErrorCode;
 
+use pocketmine\plugin\Plugin;
 use InvalidArgumentException;
 use pocketmine\command\Command;
 use pocketmine\utils\TextFormat;
@@ -50,14 +51,15 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
   private array $constraints = [];
 
   /** @var Plugin */
-  protected \Plugin $plugin;
+  protected Plugin $plugin;
 
   public function __construct(
+    Plugin $plugin,
     string $name,
     Translatable|string $description = "",
     array $aliases = []
   ) {
-    $this->plugin = \Plugin::getInstance();
+    $this->plugin = $plugin;
     parent::__construct($name, $description, null, $aliases);
 
     $this->prepare();
@@ -65,7 +67,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     $this->usageMessage = $this->generateUsageMessage();
   }
 
-  public function getOwningPlugin(): \Plugin {
+  public function getOwningPlugin(): Plugin {
     return $this->plugin;
   }
 

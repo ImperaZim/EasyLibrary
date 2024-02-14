@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace libraries\utils;
 
+use pocketmine\plugin\PluginBase;
+
 /**
 * Class Path
 * @package libraries\utils
@@ -12,10 +14,11 @@ final class Path {
   
   /**
   * Path constructor.
+  * @param PluginBase $plugin
   * @param string $dir
   */
-  public function __construct(?String $dir) {
-    self::load($dir);
+  public function __construct(private PluginBase $plugin, ?String $dir) {
+    self::load($plugin, $dir);
   }
   
   /**
@@ -52,9 +55,9 @@ final class Path {
   *
   * @return string
   */
-  public static function getDataFolder(): string {
+  public static function getDataFolder(PluginBase $plugin): string {
     try {
-      return \Plugin::getInstance()->getDataFolder();
+      return $plugin->getDataFolder();
     } catch (\Throwable $e) {
       new \crashdump($e);
     }
@@ -63,11 +66,12 @@ final class Path {
   /**
   * Load a directory within the data folder.
   *
+  * @param PluginBase $plugin
   * @param string $directory
   */
-  public static function load(string $directory): void {
+  public static function load(PluginBase $plugin, string $directory): void {
     try {
-      @mkdir(Path::getDataFolder() . $directory);
+      @mkdir(Path::getDataFolder($plugin) . $directory);
     } catch (\Throwable $e) {
       new \crashdump($e);
     }

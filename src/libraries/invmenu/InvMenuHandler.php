@@ -7,20 +7,21 @@ namespace libraries\invmenu;
 use LogicException;
 use pocketmine\Server;
 use InvalidArgumentException;
+use pocketmine\plugin\PluginBase;
 use libraries\invmenu\session\PlayerManager;
 use libraries\invmenu\type\InvMenuTypeRegistry;
 
 final class InvMenuHandler {
 
-  private static ?\Plugin $registrant = null;
+  private static ?PluginBase $registrant = null;
   private static InvMenuTypeRegistry $type_registry;
   private static PlayerManager $player_manager;
 
-  public function __construct(\Plugin $plugin) {
+  public function __construct(PluginBase $plugin) {
     self::register($plugin);
   }
 
-  public static function register(\Plugin $plugin) : void {
+  public static function register(PluginBase $plugin) : void {
     if (!self::isRegistered()) {
       self::$registrant = $plugin;
       self::$type_registry = new InvMenuTypeRegistry();
@@ -30,10 +31,10 @@ final class InvMenuHandler {
   }
 
   public static function isRegistered() : bool {
-    return self::$registrant instanceof \Plugin;
+    return self::$registrant instanceof PluginBase;
   }
 
-  public static function getRegistrant() : \Plugin {
+  public static function getRegistrant() : PluginBase {
     return self::$registrant ?? throw new LogicException("Cannot obtain registrant before registration");
   }
 

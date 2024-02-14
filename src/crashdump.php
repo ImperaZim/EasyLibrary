@@ -11,7 +11,7 @@ final class crashdump {
   * @param \Throwable $e The throwable object representing the error.
   */
   public function __construct(private \Throwable $e) {
-    Plugin::getInstance()->getLogger()->notice($this->getContent());
+    \Library::getInstance()->getLogger()->notice($this->getContent());
   }
 
   /**

@@ -4,14 +4,15 @@ declare(strict_types = 1);
 
 namespace libraries\commando;
 
+use pocketmine\plugin\Plugin;
 use function trim;
 
 abstract class BaseSubCommand extends BaseCommand {
   /** @var BaseCommand */
   protected BaseCommand $parent;
 
-  public function __construct(string $name, string $description = "", array $aliases = []) {
-    parent::__construct($name, $description, $aliases);
+  public function __construct(Plugin $plugin, string $name, string $description = "", array $aliases = []) {
+    parent::__construct($plugin, $name, $description, $aliases);
 
     $this->usageMessage = "";
   }

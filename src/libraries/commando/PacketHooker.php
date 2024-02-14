@@ -12,6 +12,7 @@ use libraries\commando\exception\HookAlreadyRegistered;
 use ReflectionClass;
 use pocketmine\Server;
 use pocketmine\event\Listener;
+use pocketmine\plugin\PluginBase;
 use pocketmine\event\EventPriority;
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\NetworkSession;
@@ -24,13 +25,13 @@ use function count;
 use function array_unshift;
 
 class PacketHooker implements Listener {
-  /** @var bool */
-  private static bool $isRegistered = false;
+  /** @var mixed */
+  private static mixed $isRegistered = false;
 
   /** @var bool */
   private static bool $isIntercepting = false;
 
-  public function __construct(\Plugin $plugin) {
+  public function __construct(PluginBase $plugin) {
     self::register($plugin);
   }
 
@@ -38,9 +39,9 @@ class PacketHooker implements Listener {
     return self::$isRegistered;
   }
 
-  public static function register(\Plugin $registrant): void {
-    if (self::$isRegistered) {
-      throw new HookAlreadyRegistered("Event listener is already registered by another plugin.");
+  public static function register(PluginBase $registrant): void {
+    if (self::$isRegistered !== false) {
+      throw new HookAlreadyRegistered("Event listener is already registered by another plugin: " . self::$isRegistered);
     }
     $interceptor = SimplePacketHandler::createInterceptor($registrant, EventPriority::HIGHEST, false);
     $interceptor->interceptOutgoing(function(AvailableCommandsPacket $pk, NetworkSession $target) : bool {
@@ -64,7 +65,7 @@ class PacketHooker implements Listener {
       return false;
     });
 
-    self::$isRegistered = true;
+    self::$isRegistered = $registrant->getName();
   }
 
   /**
