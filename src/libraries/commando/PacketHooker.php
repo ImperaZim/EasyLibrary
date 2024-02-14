@@ -29,11 +29,9 @@ class PacketHooker implements Listener {
 
   /** @var bool */
   private static bool $isIntercepting = false;
-  
+
   public function __construct(\Plugin $plugin) {
-    if (!self::isRegistered()) {
-      self::register($plugin);
-    }
+    self::register($plugin);
   }
 
   public static function isRegistered(): bool {
