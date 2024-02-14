@@ -2,6 +2,16 @@
 ![EasyLibrary](https://raw.githubusercontent.com/ImperaZim/EasyLibrary/main/icon.png)
 _Library with APIs for EasyPlugins plugin functionality._
 
+## APIs 
+This Bookstore contains some essential APIs for using some EasyPlugins plugins, namely:
+ - [Commando](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/commando/) ```(original CortexPE modified by me)```
+ - [Forms](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/form/) ```(original by me)```
+ - [NPC Dialogue](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/npcdialogue/) ```(original by me)```
+ - [PlayerViewer](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/playerviewer/) ```(original by me)```
+ - [InvMenu](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/invmenu/) ```(original by Muqsit)```
+ - [SimplePacketHandler](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/simplepackethandler/) ```(original by Muqsit)```
+ - [Utils](https://github.com/ImperaZim/EasyLibrary/tree/main/src/libraries/utils/) ```(original by me)```
+
 ## License
 ```
 © ImperaZim • EasyLibrary 2024
