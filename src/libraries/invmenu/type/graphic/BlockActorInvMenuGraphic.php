@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace \invmenu\type\graphic;
+namespace libraries\invmenu\type\graphic;
 
 use libraries\invmenu\type\graphic\network\InvMenuGraphicNetworkTranslator;
 use pocketmine\block\Block;

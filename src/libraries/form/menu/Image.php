@@ -15,12 +15,6 @@ class Image implements \JsonSerializable {
 		return new self($data, "url");
 	}
 
-	public static function site(string $name): self {
-		return self::url(
-		  'https://imperazim.cloud/skyblock/images/' . $name . '.png'
-		);
-	}
-
 	public static function path(string $data): self {
 		return new self($data, "path");
 	}

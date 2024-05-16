@@ -59,6 +59,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     Translatable|string $description = "",
     array $aliases = []
   ) {
+    $aliases = array_diff($aliases, [$name]);
     $this->plugin = $plugin;
     parent::__construct($name, $description, null, $aliases);
 
@@ -101,7 +102,7 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
       $cmd->onRun($sender, $commandLabel, $passArgs);
     }
   }
-  
+
   public function sendConsoleError() : void {
     $this->getOwningPlugin()->getLogger()->error('Comando bloqueado no console!');
   }
