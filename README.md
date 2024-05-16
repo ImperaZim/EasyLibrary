@@ -1,6 +1,9 @@
-# <h3 align="center">EasyLibrary 1.0.0</h3> 
+# <h3 align="center">EasyLibrary 1.1.0</h3> 
 ![EasyLibrary](https://raw.githubusercontent.com/ImperaZim/EasyLibrary/main/icon.png)
 _Library with APIs for EasyPlugins plugin functionality._
+
+## Update 1.1.0 
+See the new changes in version 1.1.0 in [Release 1.1.0](https://github.com/ImperaZim/EasyLibrary/releases/tag/1.1.0).
 
 ## APIs 
 This Bookstore contains some essential APIs for using some EasyPlugins plugins, namely:
