@@ -64,7 +64,7 @@ class ExampleMenuForm extends Form {
 
 Inside your form class, define the buttons you want to include in your form. Each button is represented by an instance of the `Button` class.
 
-````php
+```php
 new Button(
   text: 'Button with url image',
   image: Image::url('https://picsum.photos/200/200'),
