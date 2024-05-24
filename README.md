@@ -30,8 +30,6 @@ _The `EasyLibrary` is a powerful plugin for PocketMine-MP that serves as a colle
 6. **[ImperaZim/world](https://github.com/ImperaZim/EasyLibrary/tree/main/src/library/world/):** A library for interacting with and managing the game world, including terrain manipulation and world generation. [How to use?](#usage-imperazimworld)
 7. **[ImperaZim/utils](https://github.com/ImperaZim/EasyLibrary/tree/main/src/library/utils/):** A collection of utility functions and tools to assist with various aspects of plugin development. [How to use?](#usage-imperazimutils)
 
-
-
 ## How to Use
 
 ### Installation

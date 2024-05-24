@@ -8,6 +8,7 @@ use Closure;
 use pocketmine\player\Player;
 use pocketmine\form\FormValidationException;
 
+use internal\libform\Form;
 use internal\libform\elements\Image;
 use internal\libform\elements\Button;
 use internal\libform\handler\ButtonResponse;

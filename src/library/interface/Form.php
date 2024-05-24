@@ -52,7 +52,7 @@ abstract class Form {
   /**
   * Construct and set up the form.
   */
-  protected abstract function structure(): void;
+  protected abstract function structure(): IForm;
 
   /**
   * Get processed data by key.

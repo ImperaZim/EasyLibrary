@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace internal\libform\types;
 
 use Closure;
+use internal\libform\Form;
 use pocketmine\utils\Utils;
 use pocketmine\player\Player;
 use pocketmine\form\FormValidationException;

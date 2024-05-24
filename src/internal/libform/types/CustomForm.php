@@ -9,6 +9,7 @@ use pocketmine\utils\Utils;
 use pocketmine\player\Player;
 use pocketmine\form\FormValidationException;
 
+use internal\libform\Form;
 use internal\libform\elements\Input;
 use internal\libform\elements\Label;
 use internal\libform\elements\Slider;
@@ -23,7 +24,7 @@ use internal\libform\handler\CustomFormResponse;
 * Class CustomForm
 * @package internal\libform\types
 */
-final class CustomForm extends BaseForm {
+final class CustomForm extends Form {
 
   /**
   * CustomForm constructor.
