@@ -117,6 +117,17 @@ $form = new ExampleMenuForm(
 );
 ````
 
+You can obtain this value in your form class using:
+```php 
+public function structure(): IForm {
+  // To get a specific value 
+  $money = $this->getProcessedData('money');
+  
+  // To get all values 
+  $data = $this->getProcessedData();
+}
+```
+
 ## Step 7: Customize and Extend
 
 Feel free to customize and extend the `Form-LongForm` class to suit your plugin's needs. You can add more elements, modify form behavior, or integrate with other features of your plugin.
