@@ -1,5 +1,6 @@
 # <h3 align="center">![EasyLibrary](icon.gif)</h3> 
 
+## Description
 _The `EasyLibrary` is a powerful plugin for PocketMine-MP that serves as a collection of various public libraries, providing a wide range of functionalities and utilities for plugin developers. This plugin simplifies the integration and use of popular libraries, allowing developers to save time and effort when creating their own plugins._
 
 ## Features
