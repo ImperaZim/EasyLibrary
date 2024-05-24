@@ -64,7 +64,8 @@ class ExampleMenuForm extends Form {
 
 Inside your form class, define the buttons you want to include in your form. Each button is represented by an instance of the `Button` class.
 
-```php
+```php 
+// Example of creating a button.
 new Button(
   text: 'Button with url image',
   image: Image::url('https://picsum.photos/200/200'),
@@ -75,11 +76,12 @@ new Button(
 ## Step 4: Handle Button responses
 
 For each button, define a callback function that will be executed when the button is clicked. You can use the `ButtonResponse` class to define these callbacks.
-```php
+```php 
+// Example of creating a button with interactions.
 new Button(
   text: 'Button with resourcepack image',
   image: Image::path('textures/items/diamond_sowrd.png'),
-  value: 'button_name',
+  value: 'button_value',
   callback: new ButtonResponse(
     function (Player $player, Button $button): void {
       $player->sendMessage("you clicked {$button->getValue()}");
