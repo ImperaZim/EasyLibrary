@@ -15,13 +15,14 @@ You need to create a PHP class that extends the `Form` class provided by the `li
 
 namespace forms;
 
-use library\interface\Form;
 use pocketmine\player\Player;
+
+use library\interface\Form;
 use internal\libform\Form as IForm;
 use internal\libform\types\LongForm;
 use internal\libform\elements\Image;
 use internal\libform\elements\Button;
-use internal\libform\handler\ButtonResponse;
+use internal\libform\interaction\ButtonResponse;
 
 /**
 * Class ExampleMenuForm

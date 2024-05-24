@@ -18,7 +18,7 @@ use internal\libform\elements\Element;
 use internal\libform\elements\Dropdown;
 use internal\libform\elements\StepSlider;
 use internal\libform\elements\ElementWithValue;
-use internal\libform\handler\CustomFormResponse;
+use internal\libform\interaction\CustomFormResponse;
 
 /**
 * Class CustomForm

@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace internal\libform\handler;
+namespace internal\libform\interaction;
 
 use UnexpectedValueException;
 
@@ -17,7 +17,7 @@ use internal\libform\elements\ElementWithValue;
 
 /**
 * Class CustomFormResponse
-* @package internal\libform\handler
+* @package internal\libform\interaction
 */
 final class CustomFormResponse {
 

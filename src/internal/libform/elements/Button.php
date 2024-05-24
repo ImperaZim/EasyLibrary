@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace internal\libform\elements;
 
-use internal\libform\handler\ButtonResponse;
+use internal\libform\interaction\ButtonResponse;
 use internal\libform\traits\IdentifiableElement;
 
 /**

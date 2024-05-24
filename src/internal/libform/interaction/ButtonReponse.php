@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace internal\libform\handler;
+namespace internal\libform\interaction;
 
 use Closure;
 use pocketmine\player\Player;
@@ -10,7 +10,7 @@ use internal\libform\elements\Button;
 
 /**
 * Class ButtonResponse
-* @package internal\libform\handler
+* @package internal\libform\interaction
 */
 final class ButtonResponse {
 
