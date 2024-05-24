@@ -1,5 +1,7 @@
 <?php 
 
+declare(strict_types = 1);
+
 /**
 * Class crashdump
 */
@@ -7,7 +9,6 @@ final class crashdump {
 
   /**
   * crashdump constructor.
-  *
   * @param \Throwable $e The throwable object representing the error.
   */
   public function __construct(private \Throwable $e) {

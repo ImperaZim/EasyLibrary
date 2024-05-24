@@ -1,42 +1,46 @@
 <?php
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\SingletonTrait;
+declare(strict_types = 1);
 
-use world\WorldManager;
-use libraries\commando\PacketHooker;
-use libraries\npcdialogue\NpcHooker;
-use libraries\invmenu\InvMenuHandler;
+use library\world\WorldManager;
+use library\plugin\PluginToolkit;
+use library\bossbar\BossBarHooker;
+use library\world\GeneratorHandler;
+
+use internal\invmenu\InvMenuHandler;
+use internal\commando\CommandoHooker;
+use internal\dialogue\DialogueHooker;
+
 
 /**
- * Class Library
- */
-final class Library extends PluginBase {
-  use SingletonTrait;
-  
-  /** @var NpcHooker */
-  public NpcHooker $dialogue;
-  
-  /** @var PacketHooker */
-  public PacketHooker $commando;
-  
+* Class Library
+* TODO: This class should not be called in other plugins!
+*/
+final class Library extends PluginToolkit {
+
+  /** @var BossBarHooker */
+  protected BossBarHooker $bossbar;
+
   /** @var InvMenuHandler */
-  public InvMenuHandler $invmenu;
+  protected InvMenuHandler $invmenu;
+
+  /** @var DialogueHooker */
+  protected DialogueHooker $dialogue;
+
+  /** @var CommandoHooker */
+  protected CommandoHooker $commando;
+
+  /** @var GeneratorHandler */
+  protected GeneratorHandler $generator;
 
   /**
-   * Called when the plugin is loaded.
-   */
-  protected function onLoad() : void {
-    self::setInstance($this);
-  }
-
-  /**
-   * Called when the plugin is enabled.
-   */
+  * Called when the plugin is enabled.
+  */
   protected function onEnable() : void {
-    WorldManager::registerGenerators();
-    $this->dialogue = new NpcHooker($this);
-    $this->commando = new PacketHooker($this);
+    $this->bossbar = new BossBarHooker($this);
     $this->invmenu = new InvMenuHandler($this);
+    $this->dialogue = new DialogueHooker($this);
+    $this->commando = new CommandoHooker($this);
+    $this->generator = new GeneratorHandler($this);
   }
 }
