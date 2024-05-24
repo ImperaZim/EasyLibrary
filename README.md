@@ -22,7 +22,7 @@ _The `EasyLibrary` is a powerful plugin for PocketMine-MP that serves as a colle
 
 ### Original Libraries
 
-1. **[ImperaZim/libform](https://github.com/ImperaZim/EasyLibrary/tree/main/src/internal/libform/):** A custom library for creating and managing forms in PocketMine-MP. [How to use?](#usage-imperazimlibform)
+1. **[ImperaZim/libform](https://github.com/ImperaZim/EasyLibrary/tree/main/src/internal/libform/):** A custom library for creating and managing forms in PocketMine-MP. [How to use Form?](/examples/)
 2. **[ImperaZim/dialogue](https://github.com/ImperaZim/EasyLibrary/tree/main/src/internal/dialogue/):** A dialogue management library that allows for the creation and handling of in-game dialogues. [How to use?](#usage-imperazimdialogue)
 3. **[ImperaZim/metadata](https://github.com/ImperaZim/EasyLibrary/tree/main/src/library/metadata/):** A library for managing metadata within PocketMine-MP, providing tools for storing and retrieving additional data on entities and blocks. [How to use?](#usage-imperazimmetadata)
 4. **[ImperaZim/interface](https://github.com/ImperaZim/EasyLibrary/tree/main/src/library/interface/):** A user interface library for creating and managing complex forms and menus within PocketMine-MP. [How to use?](#usage-imperaziminterface)
