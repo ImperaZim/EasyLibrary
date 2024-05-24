@@ -83,11 +83,12 @@ new Button(
   text: 'Button with resourcepack image',
   image: Image::path('textures/items/diamond_sowrd.png'),
   value: 'button_value',
-  callback: new ButtonResponse(
+  onclick: new ButtonResponse(
     function (Player $player, Button $button): void {
       $player->sendMessage("you clicked {$button->getValue()}");
     }
-  )
+  ),
+  reopen: false // Defines whether the form should be opened again after clicking.
 );
 ```
 
