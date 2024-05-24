@@ -101,9 +101,21 @@ $player = $this->getPlayer();
 $form = new ExampleMenuForm($player);
 ````
 
-## Step 6: Process Button Responses
+## Step 6: Define values to be passed to the form
 
-Handle button responses inside the callback functions defined for each button. You can perform any actions or display additional forms based on the button clicked by the player.
+You can pass values when calling the form class as a temporary value
+
+```php
+// Example of creating and sending the form
+$player = $this->getPlayer();
+$playerMoney = 100;
+$form = new ExampleMenuForm(
+  $player, 
+  [
+    'money' => $playerMoney
+  ]
+);
+````
 
 ## Step 7: Customize and Extend
 
