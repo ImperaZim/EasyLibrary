@@ -16,9 +16,9 @@ You need to create a PHP class that extends the `Form` class provided by the `li
 namespace forms;
 
 use library\interface\Form;
+use pocketmine\player\Player;
 use internal\libform\Form as IForm;
 use internal\libform\types\LongForm;
-use pocketmine\player\Player;
 use internal\libform\elements\Image;
 use internal\libform\elements\Button;
 use internal\libform\handler\ButtonResponse;
@@ -64,9 +64,29 @@ class ExampleMenuForm extends Form {
 
 Inside your form class, define the buttons you want to include in your form. Each button is represented by an instance of the `Button` class.
 
-## Step 4: Handle Button Responses
+````php
+new Button(
+  text: 'Button with url image',
+  image: Image::url('https://picsum.photos/200/200'),
+  value: 'button_value'
+);
+```
+
+## Step 4: Handle Button responses
 
 For each button, define a callback function that will be executed when the button is clicked. You can use the `ButtonResponse` class to define these callbacks.
+```php
+new Button(
+  text: 'Button with resourcepack image',
+  image: Image::path('textures/items/diamond_sowrd.png'),
+  value: 'button_name',
+  callback: new ButtonResponse(
+    function (Player $player, Button $button): void {
+      $player->sendMessage("you clicked {$button->getValue()}");
+    }
+  )
+);
+```
 
 ## Step 5: Send the Form
 
@@ -76,7 +96,7 @@ Create an instance of your form class and call the `send()` method to send the f
 // Example of creating and sending the form
 $player = $this->getPlayer();
 $form = new ExampleMenuForm($player);
-```
+````
 
 ## Step 6: Process Button Responses
 
