@@ -101,7 +101,7 @@ $player = $this->getPlayer();
 $form = new ExampleMenuForm($player);
 ````
 
-## Step 6: Define values to be passed to the form
+## Step 6: Submit the form with predefined data
 
 You can pass values when calling the form class as a temporary value
 
