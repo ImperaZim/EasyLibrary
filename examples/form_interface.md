@@ -4,4 +4,4 @@ This class allows you to create forms much faster than using the pure library be
 ## Usage 
 
 ### LongForm 
-See step by step how to create a form class in (LongForm Usage)[long_form_usage.md]
+See step by step how to create a form class in [LongForm Usage](long_form_usage.md).
