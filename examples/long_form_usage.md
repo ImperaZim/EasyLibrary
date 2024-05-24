@@ -30,9 +30,9 @@ use internal\libform\handler\ButtonResponse;
 class ExampleMenuForm extends Form {
 
   /**
-  * Generates and sends the form to the player.
+  * Defines the form structure.
   */
-  protected function structure(): IForm {
+  public function structure(): IForm {
     return new LongForm(
       title: "Example Menu Form",
       content: '§7Any text:',
