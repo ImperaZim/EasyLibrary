@@ -97,25 +97,26 @@ Create an instance of your form class and call the `send()` method to send the f
 
 ```php
 // Example of creating and sending the form
-$player = $this->getPlayer();
-$form = new ExampleMenuForm($player);
-````
+public function example(): void {
+  new ExampleMenuForm($this->getPlayer());
+}
+```
 
 ## Step 6: Submit the form with predefined data
 
 You can pass values when calling the form class as a temporary value
 
 ```php
-// Example of creating and sending the form
-$player = $this->getPlayer();
-$playerMoney = 100;
-$form = new ExampleMenuForm(
-  $player, 
-  [
-    'money' => $playerMoney
-  ]
-);
-````
+// Example of creating and sending the form with data
+public function example(): void {
+  new ExampleMenuForm(
+    $this->getPlayer(), 
+    [
+      'money' => 100
+    ]
+  );
+}
+```
 
 You can obtain this value in your form class using:
 ```php 
