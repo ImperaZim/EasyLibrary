@@ -3,6 +3,7 @@ version: 1.0.0
 api: 5.0.0
 main: ImperaZim\PluginExample
 author: ImperaZim
+load: POSTWORLD
 
 permissions: 
   plugin.permission:
