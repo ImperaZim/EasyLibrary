@@ -45,10 +45,9 @@ final class Image implements \JsonSerializable {
   */
   public static function fromString(string $data): ?Image {
     $type = explode('|', $data)[0];
-    $source = explode('|', $data)[1];
     return match(strtolower($type)) {
-      'url' => new self($source, $type),
-      'path' => new self($source, $type),
+      'url' => new self(explode('|', $data)[1], $type),
+      'path' => new self(explode('|', $data)[1], $type),
       'null' => null,
       default => null
     };
