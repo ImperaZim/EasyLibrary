@@ -12,12 +12,12 @@ use ImperaZim\commands\FormExampleCommand;
 use pocketmine\utils\SingletonTrait;
 
 /**
-* Class PluginExample 
+* Class PluginExample
 * @package ImperaZim
 */
 final class PluginExample extends PluginToolkit {
   use SingletonTrait;
-  
+
   /** @var File */
   private File $settings;
 
@@ -40,7 +40,7 @@ final class PluginExample extends PluginToolkit {
       ]
     );
   }
-  
+
   /**
   * Get the message using id.
   * @param string $way
@@ -50,15 +50,13 @@ final class PluginExample extends PluginToolkit {
   */
   public static function getSettings(string $way, mixed $default = '', array $tags = []): mixed {
     $messages = PluginExample::getInstance()->settings;
-    $tags['{PREFIX}'] = $messages->get('prefix', '§l§8(§c!§8)§r');
-    return str_replace(
-      array_keys($tags), 
-      array_values($tags), 
-      $messages->get(
-        $way, 
-        $default
-      )
-    );
+    $result = $messages->get($way, $default);
+    if (in_array($result)) {
+      return $result;
+    } else {
+      $tags['{PREFIX}'] = $messages->get('prefix', '§l§8(§c!§8)§r');
+      return str_replace(array_keys($tags), array_values($tags), $result);
+    }
   }
 
 }
