@@ -36,8 +36,7 @@ final class PluginExample extends PluginToolkit {
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'InstanceDungeons',
       commands: [
-        FormExampleCommand::base(),
-        MenuExampleCommand::base(),
+        FormExampleCommand::base()
       ]
     );
   }
