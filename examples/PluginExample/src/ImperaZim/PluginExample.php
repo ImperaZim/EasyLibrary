@@ -51,7 +51,7 @@ final class PluginExample extends PluginToolkit {
   public static function getSettings(string $way, mixed $default = '', array $tags = []): mixed {
     $messages = PluginExample::getInstance()->settings;
     $result = $messages->get($way, $default);
-    if (in_array($result)) {
+    if (is_array($result)) {
       return $result;
     } else {
       $tags['{PREFIX}'] = $messages->get('prefix', '§l§8(§c!§8)§r');
