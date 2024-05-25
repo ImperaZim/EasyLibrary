@@ -49,6 +49,7 @@ final class Image implements \JsonSerializable {
     return match(strtolower($type)) {
       'url' => new self($source, $type),
       'path' => new self($source, $type),
+      'null' => null,
       default => null
     };
   }

@@ -20,4 +20,4 @@ menu_command_name: ['menu']
 menu_command_description: '§7Menu example command!' 
   # Menu 
 menu_title: 'Example Menu'
-menu_contents: []
+menu_contents: [] # Use Item_Serielized
