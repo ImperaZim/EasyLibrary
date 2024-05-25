@@ -39,6 +39,21 @@ final class Image implements \JsonSerializable {
   }
 
   /**
+  * Creates an Image from string.
+  * @param string $data The encode image.
+  * @return self Returns an Image instance.
+  */
+  public static function fromString(string $data): ?Image {
+    $type = explode('|', $data)[0];
+    $source = explode('|', $data)[1];
+    return match(strtolower($type)) {
+      'url' => new self($source, $type),
+      'path' => new self($source, $type),
+      default => null
+    };
+  }
+
+  /**
   * Returns a null value indicating no image.
   * @return null Returns null to indicate no image.
   */

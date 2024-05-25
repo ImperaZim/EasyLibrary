@@ -1,0 +1,10 @@
+name: PluginExample
+version: 1.0.0
+api: 5.0.0
+main: ImperaZim\PluginExample
+author: ImperaZim
+
+permissions: 
+  plugin.permission:
+    default: true 
+    description: "General permission"

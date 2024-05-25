@@ -81,7 +81,7 @@ For each button, define a callback function that will be executed when the butto
 // Example of creating a button with interactions.
 new Button(
   text: 'Button with resourcepack image',
-  image: Image::path('textures/items/diamond_sowrd.png'),
+  image: Image::path('textures/items/diamond_sword.png'),
   value: 'button_value',
   onclick: new ButtonResponse(
     function (Player $player, Button $button): void {

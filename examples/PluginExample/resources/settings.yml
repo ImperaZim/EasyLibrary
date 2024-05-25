@@ -1,0 +1,15 @@
+
+# Form settings 
+  # Command
+form_command_name: ['form']
+form_command_description: '§7Form example command!' 
+  # Form 
+form_title: 'Example Menu Form' 
+form_content: '§7Any text:' 
+form_buttons: 
+  form_button_1:
+    text: ['§l§8BUTTON 1', 'Content example'] 
+    image: 'path|textures/items/iron_sword.png'
+  form_button_2:
+    text: ['§l§8BUTTON 2', 'Content example'] 
+    image: 'path|textures/items/diamond_sword.png'
