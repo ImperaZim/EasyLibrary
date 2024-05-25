@@ -59,6 +59,10 @@ final class FormExampleCommand extends BaseCommand {
   * @param array $args
   */
   public function onRun(mixed $player, string $aliasUsed, array $args): void {
+    if (!$player instanceof Player) {
+      $this->sendConsoleError();
+      return;
+    }
     new ExampleForm($player);
   }
 }
