@@ -115,7 +115,7 @@ final class Button implements \JsonSerializable {
   * Gets result whether to reopen
   * @return bool Gets result whether to reopen
   */
-  public function getShouldReopen(): ?string {
+  public function getShouldReopen(): bool {
     return $this->reopen;
   }
 
