@@ -68,7 +68,7 @@ class ExampleForm extends Form {
   * @param Player $player
   * @return Form|null
   */
-  private function getCloseCallback(Player $player): ?Form {
+  private function getCloseCallback(Player $player): void {
     $player->sendMessage('Form closed!');
   }
 }

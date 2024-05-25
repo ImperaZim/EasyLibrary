@@ -53,9 +53,8 @@ class ExampleMenuForm extends Form {
   /**
   * Handles the form closure and returns the next form to display.
   * @param Player $player
-  * @return Form|null
   */
-  private function getCloseCallback(Player $player): ?Form {
+  private function getCloseCallback(Player $player): void {
     // Handle form closure here
   }
 }
@@ -92,7 +91,20 @@ new Button(
 );
 ```
 
-## Step 5: Send the Form
+## Step 5: Handle Close responses
+
+Defines what should happen when the form is closed by button (×).
+```php 
+/**
+* Handles the form closure and returns the next form to display.
+* @param Player $player
+*/
+private function getCloseCallback(Player $player): void {
+  $player->sendMessage('Form closed!');
+}
+```
+
+## Step 6: Send the Form
 
 Create an instance of your form class and call the `send()` method to send the form to the player.
 
@@ -103,7 +115,7 @@ public function example(): void {
 }
 ```
 
-## Step 6: Submit the form with predefined data
+## Steph7: Submit the form with predefined data
 
 You can pass values when calling the form class as a temporary value
 
@@ -130,6 +142,82 @@ public function structure(): IForm {
 }
 ```
 
-## Step 7: Customize and Extend
+## Step 8: Customize and Extend
 
 Feel free to customize and extend the `Form-LongForm` class to suit your plugin's needs. You can add more elements, modify form behavior, or integrate with other features of your plugin.
+
+
+## In summary: You can copy the code below
+
+```php
+<?php
+
+namespace forms;
+
+use pocketmine\player\Player;
+
+use library\interface\Form;
+use internal\libform\Form as IForm;
+use internal\libform\types\LongForm;
+use internal\libform\elements\Image;
+use internal\libform\elements\Button;
+use internal\libform\interaction\ButtonResponse;
+
+/**
+* Class ExampleMenuForm
+* @package forms
+*/
+class ExampleMenuForm extends Form {
+
+  /**
+  * Defines the form structure.
+  */
+  public function structure(): IForm {
+    return new LongForm(
+      title: "Example Menu Form",
+      content: '§7Any text:',
+      buttons: $this->getButtons(),
+      onClose: fn($player) => $this->getCloseCallback($player)
+    );
+  }
+
+  /**
+  * Retrieves an array of buttons for each available class.
+  * @return Button[]
+  */
+  private function getButtons(): array {
+    return [
+      new Button(
+        text: 'Button with resourcepack image',
+        image: Image::path('textures/items/diamond_sword.png'),
+        value: 'button_value',
+        onclick: new ButtonResponse(
+          function (Player $player, Button $button): void {
+            $player->sendMessage("you clicked {$button->getValue()}");
+          }
+        ),
+        reopen: false
+      ),
+      new Button(
+        text: 'Created by ImperaZim',
+        image: Image::null(),
+        value: 'ImperaZim',
+        onclick: new ButtonResponse(
+          function (Player $player, Button $button): void {
+            $player->sendMessage("you clicked {$button->getValue()}");
+          }
+        ),
+        reopen: false
+      )
+    ];
+  }
+
+  /**
+  * Handles the form closure and returns the next form to display.
+  * @param Player $player
+  */
+  private function getCloseCallback(Player $player): void {
+    $player->sendMessage('Form closed!');
+  }
+}
+```

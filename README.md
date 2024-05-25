@@ -45,6 +45,10 @@ The plugin comes pre-configured, but you can adjust the settings in the `config.
 
 Import the libraries you need into your own plugin and start using their functionalities as per the provided documentation.
 
+### Examples 
+
+You can get a basic of how to use the systems in general in [PluginExample](/examples/PluginExample/).
+
 ## Licensing information
 This project is licensed under MIT. Please see the [LICENSE](/LICENSE) file for details.
 
