@@ -17,9 +17,6 @@ use pocketmine\network\mcpe\protocol\BossEventPacket;
 */
 final class BossBarHooker implements Listener {
 
-  /** @var PluginBase|null */
-  private ?PluginBase $registrant;
-
   /**
   * BossBarHooker constructor.
   * @param PluginBase|null $registrant
