@@ -48,7 +48,6 @@ final class ExampleMenu extends Menu {
   */
   private function getContents(): array {
     $contents = [];
-    $contents[13] = VanillaItems::DIAMOND();
     foreach (PluginExample::getSettings('menu_contents', []) as $button_value => $data) {
       // save as [json_encode(ItemFactory::jsonSerialize($item))]
       $contents[] = ItemFactory::jsonDeserialize(json_decode($itemBlockEncoded));

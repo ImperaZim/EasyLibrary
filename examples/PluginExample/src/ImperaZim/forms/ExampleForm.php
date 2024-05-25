@@ -36,17 +36,6 @@ class ExampleForm extends Form {
   */
   private function getButtons(): array {
     $buttons = [];
-    $buttons[] = new Button(
-      text: 'Created by ImperaZim',
-      image: Image::null(),
-      value: 'ImperaZim',
-      onclick: new ButtonResponse(
-        function (Player $player, Button $button): void {
-          $player->sendMessage("you clicked {$button->getValue()}");
-        }
-      ),
-      reopen: false
-    );
     foreach (PluginExample::getSettings('form_buttons', []) as $button_value => $data) {
       $buttons[] = new Button(
         text: $data['text'],
