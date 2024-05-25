@@ -19,9 +19,6 @@ use internal\dialogue\form\DialogueButtonData;
 */
 final class DialogueHooker implements Listener {
 
-  /** @var PluginBase|null */
-  private ?PluginBase $registrant;
-
   /**
   * DialogueHooker constructor.
   * @param PluginBase|null $registrant
