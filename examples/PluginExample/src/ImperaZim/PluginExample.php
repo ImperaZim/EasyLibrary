@@ -6,8 +6,8 @@ namespace ImperaZim;
 
 use library\utils\File;
 use library\plugin\PluginToolkit;
-use ImperaZim\commands\MenuExampleCommand;
 use ImperaZim\commands\FormExampleCommand;
+use ImperaZim\commands\MenuExampleCommand;
 
 use pocketmine\utils\SingletonTrait;
 
@@ -34,9 +34,10 @@ final class PluginExample extends PluginToolkit {
   protected function onEnable(): void {
     $this->settings = new File($this, 'settings');
     $this->getServer()->getCommandMap()->registerAll(
-      fallbackPrefix: 'InstanceDungeons',
+      fallbackPrefix: 'PluginExample',
       commands: [
-        FormExampleCommand::base()
+        FormExampleCommand::base(),
+        MenuExampleCommand::base()
       ]
     );
   }

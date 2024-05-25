@@ -4,7 +4,7 @@
 form_command_name: ['form']
 form_command_description: '§7Form example command!' 
   # Form 
-form_title: 'Example Menu Form' 
+form_title: 'Example Form' 
 form_content: '§7Any text:' 
 form_buttons: 
   form_button_1:
@@ -13,3 +13,11 @@ form_buttons:
   form_button_2:
     text: ['§l§8BUTTON 2', 'Content example'] 
     image: 'path|textures/items/diamond_sword.png'
+
+# Menu settings 
+  # Command
+menu_command_name: ['menu']
+menu_command_description: '§7Menu example command!' 
+  # Menu 
+menu_title: 'Example Menu'
+menu_contents: []
