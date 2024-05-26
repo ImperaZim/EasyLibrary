@@ -8,7 +8,7 @@ The Form class allows you to create forms separated by classes where you can cre
 ## Plugin Example 
 See how the structure should work in a plugin [ExampleForm](https://github.com/ImperaZim/EasyLibrary/blob/development/examples/PluginExample/src/ImperaZim/forms/ExampleForm.php)
 
-## Usage [form](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform/types)
+## Usage [FormTypes](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform/types)
 
 ### LongForm 
 See step by step how to create a form class in [LongForm Usage](long_form_usage.md).
