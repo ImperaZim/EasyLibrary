@@ -1,4 +1,4 @@
-## libform [INTERNAL](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform)
+## [libform](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform)
 naturally you can use my libform like formAPI where you create an instance of the FormType you want, but aiming for code structure I decided to create an extension of libform where you create a class that extends the interface/Form and defines the values within the class with some predefined functions.  See below for more on how to use **Form**
 
 ## interface/Form 
