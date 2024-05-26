@@ -3,7 +3,7 @@ Naturally you can use my libform like formAPI where you create an instance of th
 __See below for more on how to use__ **Form**
 
 ## [interface/Form](https://github.com/ImperaZim/EasyLibrary/blob/development/src/library/interface/Form.php)
-The Form class allows you to create forms separated by classes where you can create a class that extends the Form ``final class FormExample extends Form {...}`` and within this class you must define the form settings of the method `` structure(): Form;``, see below how to use the Form class and each of the available FormTypes.
+The Form class allows you to create forms separated by classes where you can create a class that extends the Form ``final class FormExample extends Form {...}`` and within this class you must define the form settings of the method ``structure(): Form;``, see below how to use the Form class and each of the available FormTypes.
 
 ## Plugin Example 
 See how the structure should work in a plugin [ExampleForm](https://github.com/ImperaZim/EasyLibrary/blob/development/examples/PluginExample/src/ImperaZim/forms/ExampleForm.php)

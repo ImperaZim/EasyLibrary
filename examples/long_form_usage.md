@@ -1,6 +1,8 @@
-# Step-by-Step Guide for Using Form/LongForm
+## [types/LongForm](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform/types/LongForm.php) 
+The LongForm class provides a convenient way to create and display long forms with multiple buttons in PocketMine-MP plugins. This guide will walk you through the process of using LongForm effectively in your plugin.
+Installation
 
-The `Form-LongForm` class provides a convenient way to create and display long forms with multiple buttons in PocketMine-MP plugins. This guide will walk you through the process of using `Form-LongForm` effectively in your plugin.
+- - - -
 
 ## Step 1: Installation
 
@@ -144,7 +146,7 @@ public function structure(): IForm {
 
 ## Step 8: Customize and Extend
 
-Feel free to customize and extend the `Form-LongForm` class to suit your plugin's needs. You can add more elements, modify form behavior, or integrate with other features of your plugin.
+Feel free to customize and extend the [types/LongForm](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform/types/LongForm.php) class to suit your plugin's needs. You can add more elements, modify form behavior, or integrate with other features of your plugin.
 
 
 ## In summary: You can copy the code below
