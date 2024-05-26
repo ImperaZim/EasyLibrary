@@ -4,12 +4,11 @@ declare(strict_types = 1);
 
 namespace ImperaZim\commands;
 
-use ImperaZim\PluginExample;
-use ImperaZim\forms\ExampleForm;
-use internal\commando\BaseCommand;
-
 use pocketmine\player\Player;
 
+use ImperaZim\PluginExample;
+use internal\commando\BaseCommand;
+use ImperaZim\commands\subcommands\LongFormExampleSubcommand;
 /**
 * Class FormExampleCommand
 * @package commands
@@ -37,10 +36,10 @@ final class FormExampleCommand extends BaseCommand {
       )
     );
   }
-  
+
   /**
-   * Get the command permission
-   */
+  * Get the command permission
+  */
   public function getPermission() {
     return 'plugin.permission';
   }
@@ -50,6 +49,7 @@ final class FormExampleCommand extends BaseCommand {
   */
   protected function prepare(): void {
     $this->setPermission($this->getPermission());
+    $this->registerSubCommand(LongFormExampleSubcommand::base());
   }
 
   /**
@@ -59,10 +59,16 @@ final class FormExampleCommand extends BaseCommand {
   * @param array $args
   */
   public function onRun(mixed $player, string $aliasUsed, array $args): void {
-    if (!$player instanceof Player) {
-      $this->sendConsoleError();
-      return;
+    try {
+      if (!$player instanceof Player) {
+        $this->sendConsoleError();
+        return;
+      }
+      foreach ($this->getSubCommands() as $key => $subcommand) {
+        $player->sendMessage('§e» §r/' . $this->getName() . ' ' . $subcommand->getName());
+      }
+    } catch (\Throwable $e) {
+      new \crashdump($e);
     }
-    new ExampleForm($player);
   }
 }

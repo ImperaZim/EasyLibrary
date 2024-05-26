@@ -13,18 +13,18 @@ use internal\libform\elements\Button;
 use internal\libform\interaction\ButtonResponse;
 
 /**
-* Class ExampleForm
+* Class ExampleLongForm
 * @package ImperaZim\forms
 */
-class ExampleForm extends Form {
+class ExampleLongForm extends Form {
 
   /**
   * Defines the form structure.
   */
   public function structure(): IForm {
     return new LongForm(
-      title: "Example Form",
-      content: '§7Any text:',
+      title: PluginExample::getSettings('long_form_title', ''),
+      content: PluginExample::getSettings('long_form_content', ''),
       buttons: $this->getButtons(),
       onClose: fn($player) => $this->getCloseCallback($player)
     );
@@ -36,7 +36,7 @@ class ExampleForm extends Form {
   */
   private function getButtons(): array {
     $buttons = [];
-    foreach (PluginExample::getSettings('form_buttons', []) as $button_value => $data) {
+    foreach (PluginExample::getSettings('long_form_buttons', []) as $button_value => $data) {
       $buttons[] = new Button(
         text: $data['text'],
         image: Image::fromString($data['image']),
@@ -58,6 +58,6 @@ class ExampleForm extends Form {
   * @return Form|null
   */
   private function getCloseCallback(Player $player): void {
-    $player->sendMessage('Form closed!');
+    $player->sendMessage('LongForm closed!');
   }
 }

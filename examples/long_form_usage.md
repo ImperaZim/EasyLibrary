@@ -174,7 +174,7 @@ class ExampleMenuForm extends Form {
   */
   public function structure(): IForm {
     return new LongForm(
-      title: "Example Menu Form",
+      title: "Example Form",
       content: '§7Any text:',
       buttons: $this->getButtons(),
       onClose: fn($player) => $this->getCloseCallback($player)
