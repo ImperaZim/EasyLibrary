@@ -11,4 +11,5 @@ See how the structure should work in a plugin [ExampleForm](https://github.com/I
 ## Usage [FormTypes](https://github.com/ImperaZim/EasyLibrary/blob/development/src/internal/libform/types)
 
 ### LongForm 
+<h3>LongForm</h3>
 See step by step how to create a form class in [LongForm Usage](long_form_usage.md).
