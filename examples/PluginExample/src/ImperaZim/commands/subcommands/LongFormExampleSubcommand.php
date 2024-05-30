@@ -55,7 +55,7 @@ final class LongFormExampleSubcommand extends BaseSubCommand {
         $this->sendConsoleError();
         return;
       }
-      new LongFormExampleSubcommand($player);
+      new ExampleLongForm($player);
     } catch (\Throwable $e) {
       new \crashdump($e);
     }

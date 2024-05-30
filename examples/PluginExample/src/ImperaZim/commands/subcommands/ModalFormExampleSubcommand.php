@@ -55,7 +55,7 @@ final class ModalFormExampleSubcommand extends BaseSubCommand {
         $this->sendConsoleError();
         return;
       }
-      new ModalFormExampleSubcommand($player);
+      new ExampleModalForm($player);
     } catch (\Throwable $e) {
       new \crashdump($e);
     }
