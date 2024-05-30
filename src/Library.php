@@ -7,6 +7,8 @@ use library\plugin\PluginToolkit;
 use library\bossbar\BossBarHooker;
 use library\world\GeneratorHandler;
 
+use pocketmine\utils\SingletonTrait;
+
 use internal\invmenu\InvMenuHandler;
 use internal\commando\CommandoHooker;
 use internal\dialogue\DialogueHooker;
@@ -17,7 +19,8 @@ use internal\dialogue\DialogueHooker;
 * TODO: This class should not be called in other plugins!
 */
 final class Library extends PluginToolkit {
-
+  use SingletonTrait;
+  
   /** @var BossBarHooker */
   protected BossBarHooker $bossbar;
 
@@ -32,6 +35,13 @@ final class Library extends PluginToolkit {
 
   /** @var GeneratorHandler */
   protected GeneratorHandler $generator;
+  
+  /**
+  * Called when the plugin is loaded.
+  */
+  protected function onLoad(): void {
+    self::setInstance($this);
+  }
 
   /**
   * Called when the plugin is enabled.
