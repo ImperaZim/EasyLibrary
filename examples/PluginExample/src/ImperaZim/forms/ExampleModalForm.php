@@ -75,7 +75,7 @@ class ExampleModalForm extends Form {
   */
   private function getModalButtonNo(): ModalButton {
     return new ModalButton(
-      text: PluginExample::getSettings('modal_form_buttons.button_no', 'gui.no'),
+      text: PluginExample::getSettings('modal_form_buttons.button_no.text', 'gui.no'),
       onclick: new ModalButtonResponse(
         function (Player $player): void {
           $player->sendMessage("you canceled!");
