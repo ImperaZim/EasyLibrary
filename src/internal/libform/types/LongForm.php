@@ -47,9 +47,9 @@ final class LongForm extends Form {
 
   /**
   * Get the content of the form.
-  * @return string
+  * @return Content|null
   */
-  public function getContent(): string {
+  public function getContent(): ?Content {
     return $this->content;
   }
 
