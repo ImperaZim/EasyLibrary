@@ -134,7 +134,7 @@ final class LongForm extends Form {
   */
   protected function serializeFormData(): array {
     return [
-      'buttons' => $this->getButtons()->getText(),
+      'buttons' => $this->getButtons(),
       'content' => $this->getContent()->getText(),
     ];
   }
