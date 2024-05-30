@@ -6,6 +6,7 @@ namespace internal\libform;
 
 use pocketmine\player\Player;
 use pocketmine\form\Form as IForm;
+use internal\libform\elements\Title;
 
 /**
 * Class Form
@@ -15,23 +16,23 @@ abstract class Form implements IForm {
 
   /**
   * Form constructor.
-  * @param string $title The title of the form.
+  * @param ?Title $title The title of the form.
   */
-  public function __construct(protected string $title) {}
+  public function __construct(protected ?Title $title = '') {}
 
   /**
   * Gets the title of the form.
-  * @return string The title of the form.
+  * @return Title The title of the form.
   */
-  public function getTitle(): string {
+  public function getTitle(): ?Title {
     return $this->title;
   }
 
   /**
   * Sets the title of the form.
-  * @param string $title The new title of the form.
+  * @param Title $title The new title of the form.
   */
-  public function setTitle(string $title): void {
+  public function setTitle(?Title $title = ''): void {
     $this->title = $title;
   }
 
@@ -50,7 +51,7 @@ abstract class Form implements IForm {
   final public function jsonSerialize(): array {
     $data = $this->serializeFormData();
     $data['type'] = $this->getType();
-    $data['title'] = $this->title;
+    $data['title'] = $this->getTitle()->getText();
     return $data;
   }
 

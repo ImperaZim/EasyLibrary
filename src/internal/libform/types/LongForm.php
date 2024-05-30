@@ -9,8 +9,10 @@ use pocketmine\player\Player;
 use pocketmine\form\FormValidationException;
 
 use internal\libform\Form;
+use internal\libform\elements\Title;
 use internal\libform\elements\Image;
 use internal\libform\elements\Button;
+use internal\libform\elements\Content;
 use internal\libform\interaction\ButtonResponse;
 
 /**
@@ -21,15 +23,15 @@ final class LongForm extends Form {
 
   /**
   * LongForm constructor.
-  * @param string $title
-  * @param string $content
+  * @param Title $title
+  * @param Content $content
   * @param Button[] $buttons
   * @param (Closure(Player): mixed)|null $onClose
   */
   public function __construct(
-    public string $title,
-    protected string $content = '',
-    private array $buttons = [],
+    public ?Title $title,
+    protected ?Content $content = '',
+    private ?array $buttons = [],
     private ?Closure $onClose = null,
   ) {
     parent::__construct($title);
@@ -54,9 +56,32 @@ final class LongForm extends Form {
   /**
   * Set the content of the form.
   * @param string $content
+  * @return self
   */
-  public function setContent(string $content): void {
+  public function setContent(string $content): self {
     $this->content = $content;
+    return $this;
+  }
+  
+   /**
+  * Get the buttons of the form.
+  * @return array
+  */
+  public function getButtons(): array {
+    return $this->buttons;
+  }
+  
+  /**
+  * Get a button by its index.
+  * @param int $value
+  * @return Button
+  * @throws FormValidationException
+  */
+  private function getButton(int $value): Button {
+    if (!isset($this->buttons[$value])) {
+      throw new FormValidationException("Button at index $value does not exist.");
+    }
+    return $this->buttons[$value];
   }
 
   /**
@@ -64,29 +89,13 @@ final class LongForm extends Form {
   * @param string $text
   * @param Image|null $image
   * @param string|null $value
+  * @return self
   */
-  public function addButton(string $text, ?Image $image = null, ?string $value = null, ?ButtonResponse $response = null): void {
+  public function addButton(string $text, ?Image $image = null, ?string $value = null, ?ButtonResponse $response = null): self {
     $button = new Button($text, $image, $value, $response);
     $button->setIdentifier($value);
     $this->buttons[] = $button;
-  }
-
-  /**
-  * Append multiple string options as buttons to the form.
-  * @param string ...$options
-  */
-  public function appendOptions(string ...$options): void {
-    foreach ($options as $option) {
-      $this->buttons[] = new Button($option);
-    }
-  }
-
-  /**
-  * Append multiple Button objects to the form.
-  * @param Button ...$buttons
-  */
-  public function appendButtons(Button ...$buttons): void {
-    $this->buttons = array_merge($this->buttons, $buttons);
+    return $this;
   }
 
   /**
@@ -111,20 +120,6 @@ final class LongForm extends Form {
     }
   }
 
-
-  /**
-  * Get a button by its index.
-  * @param int $value
-  * @return Button
-  * @throws FormValidationException
-  */
-  private function getButton(int $value): Button {
-    if (!isset($this->buttons[$value])) {
-      throw new FormValidationException("Button at index $value does not exist.");
-    }
-    return $this->buttons[$value];
-  }
-
   /**
   * Get the type of the form.
   * @return string
@@ -139,8 +134,8 @@ final class LongForm extends Form {
   */
   protected function serializeFormData(): array {
     return [
-      'buttons' => $this->buttons,
-      'content' => $this->content,
+      'buttons' => $this->getButtons(),
+      'content' => $this->getContent()->getText(),
     ];
   }
 

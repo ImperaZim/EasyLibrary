@@ -8,8 +8,8 @@ use Closure;
 use internal\libform\Form;
 use pocketmine\utils\Utils;
 use pocketmine\player\Player;
+use internal\libform\elements\ModalButton;
 use pocketmine\form\FormValidationException;
-
 /**
 * Class ModalForm
 * @package internal\libform\types
@@ -20,26 +20,16 @@ final class ModalForm extends Form {
   * ModalForm constructor.
   * @param string $title
   * @param string $content
-  * @param Closure(Player, bool): mixed $onSubmit
-  * @param string $button1
-  * @param string $button2
+  * @param ModalButton $buttonYes
+  * @param ModalButton $buttonNo
   */
   public function __construct(
     public string $title,
     protected string $content = '',
-    private ?Closure $onSubmit = null,
-    public string $button1 = 'gui.yes',
-    public string $button2 = 'gui.no',
+    public ModalButton $buttonYes = new ModalButton('gui.yes'),
+    public ModalButton $buttonNo = new ModalButton('gui.no')
   ) {
     parent::__construct($title);
-  }
-
-  /**
-  * Set the callback to be executed when the form is submitted.
-  * @param Closure $closure @phpstan-param Closure(Player, bool): void $closure
-  */
-  public function onSubmit(Closure $closure): void {
-    $this->onSubmit = $closure;
   }
 
   /**
@@ -53,45 +43,47 @@ final class ModalForm extends Form {
   /**
   * Set the content of the form.
   * @param string $content
-  */
-  public function setContent(string $content): void {
-    $this->content = $content;
-  }
-
-  /**
-  * Set the text for button 1.
-  * @param string $button1
-  */
-  public function setButton1(string $button1): void {
-    $this->button1 = $button1;
-  }
-
-  /**
-  * Set the text for button 2.
-  * @param string $button2
-  */
-  public function setButton2(string $button2): void {
-    $this->button2 = $button2;
-  }
-
-  /**
-  * Create a confirmation modal form with a single confirm action.
-  * @param string $title
-  * @param string $content
-  * @param Closure $onConfirm @phpstan-param Closure(Player): void $onConfirm
   * @return self
   */
-  public static function confirm(string $title, string $content, Closure $onConfirm): self {
-    Utils::validateCallableSignature(function(Player $player) {}, $onConfirm);
-    return new self(
-      $title,
-      $content,
-      static function(Player $player, bool $response) use ($onConfirm): void {
-        if ($response) {
-          $onConfirm($player);
-        }
-      }
-    );
+  public function setContent(string $content): self {
+    $this->content = $content;
+    return $this;
+  }
+
+  /**
+  * Get the button Yes.
+  * @return ModalButton
+  */
+  public function getButtonYes(): ModalButton {
+    return $this->buttonYes;
+  }
+
+  /**
+  * Set the button Yes.
+  * @param ModalButton $buttonYes
+  * @return self
+  */
+  public function setButtonYes(ModalButton $buttonYes): self {
+    $this->buttonYes = $buttonYes;
+    return $this;
+  }
+
+  /**
+  * Get the button No.
+  * @return ModalButton
+  */
+  public function getButtonNo(): ModalButton {
+    return $this->buttonNo;
+  }
+  
+  /**
+  * Set the button No.
+  * @param ModalButton $buttself
+  * @return self
+  */
+  public function setButtonNo(ModalButton $buttonNo): self {
+    $this->buttonNo = $buttonNo;
+    return $this;
   }
 
   /**
@@ -105,8 +97,18 @@ final class ModalForm extends Form {
     if (!is_bool($data)) {
       throw new FormValidationException('Expected bool, got ' . gettype($data));
     }
-    if ($this->onSubmit !== null) {
-      ($this->onSubmit)($player, $data);
+    if ($data) {
+      $button = $this->getButtonYes();
+      $buttonResponse = $button->getResponse();
+      if ($buttonResponse !== null) {
+        $buttonResponse->runAt($player);
+      }
+    } else {
+      $button = $this->getButtonNo();
+      $buttonResponse = $button->getResponse();
+      if ($buttonResponse !== null) {
+        $buttonResponse->runAt($player);
+      }
     }
   }
 
@@ -124,9 +126,9 @@ final class ModalForm extends Form {
   */
   protected function serializeFormData(): array {
     return [
-      'content' => $this->content,
-      'button1' => $this->button1,
-      'button2' => $this->button2,
+      'content' => $this->getContent(),
+      'button1' => $this->getButtonYes()->getText(),
+      'button2' => $this->getButtonNo()->getText(),
     ];
   }
 

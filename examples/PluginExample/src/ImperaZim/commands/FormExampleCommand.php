@@ -9,6 +9,8 @@ use pocketmine\player\Player;
 use ImperaZim\PluginExample;
 use internal\commando\BaseCommand;
 use ImperaZim\commands\subcommands\LongFormExampleSubcommand;
+use ImperaZim\commands\subcommands\ModalFormExampleSubcommand;
+
 /**
 * Class FormExampleCommand
 * @package commands
@@ -50,6 +52,7 @@ final class FormExampleCommand extends BaseCommand {
   protected function prepare(): void {
     $this->setPermission($this->getPermission());
     $this->registerSubCommand(LongFormExampleSubcommand::base());
+    $this->registerSubCommand(ModalFormExampleSubcommand::base());
   }
 
   /**

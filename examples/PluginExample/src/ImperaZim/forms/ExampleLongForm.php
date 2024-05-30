@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace ImperaZim\forms;
 
 use pocketmine\player\Player;
@@ -7,9 +9,11 @@ use pocketmine\player\Player;
 use library\interface\Form;
 use ImperaZim\PluginExample;
 use internal\libform\Form as IForm;
+use internal\libform\elements\Title;
 use internal\libform\types\LongForm;
 use internal\libform\elements\Image;
 use internal\libform\elements\Button;
+use internal\libform\elements\Content;
 use internal\libform\interaction\ButtonResponse;
 
 /**
@@ -23,10 +27,30 @@ class ExampleLongForm extends Form {
   */
   public function structure(): IForm {
     return new LongForm(
-      title: PluginExample::getSettings('long_form_title', ''),
-      content: PluginExample::getSettings('long_form_content', ''),
+      title: $this->getTitle(),
+      content: $this->getContent(),
       buttons: $this->getButtons(),
       onClose: fn($player) => $this->getCloseCallback($player)
+    );
+  }
+  
+  /**
+  * Gets the title.
+  * @return Title
+  */
+  private function getTitle(): Title {
+    return new Title(
+      text: PluginExample::getSettings('long_form_title', '')
+    );
+  }
+
+  /**
+  * Gets the content.
+  * @return Content
+  */
+  private function getContent(): Content {
+    return new Content(
+      text: PluginExample::getSettings('long_form_content', '')
     );
   }
 

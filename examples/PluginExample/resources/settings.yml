@@ -16,6 +16,15 @@ long_form_buttons:
     text: ['§l§8BUTTON 2', 'Content example'] 
     image: 'path|textures/items/diamond_sword.png'
 
+  # Form [ModalForm]
+modal_form_title: 'Example ModalForm' 
+modal_form_content: '§7Any text:' 
+modal_form_buttons: 
+  button_yes:
+    text: 'Button Confirm'
+  button_no:
+    text: 'Button Cancel'
+
 
 
 # Menu settings 
