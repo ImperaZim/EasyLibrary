@@ -26,7 +26,7 @@ class ExampleModalForm extends Form {
   * @return IForm
   */
   public function structure(): IForm {
-    return new LongForm(
+    return new ModalForm(
       title: $this->getTitle(),
       content: $this->getContent(),
       buttonYes: $this->getModalButtonYes(),
