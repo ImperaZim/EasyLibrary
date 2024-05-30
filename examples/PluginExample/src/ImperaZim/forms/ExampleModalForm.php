@@ -60,7 +60,7 @@ class ExampleModalForm extends Form {
   */
   private function getModalButtonYes(): ModalButton {
     return new ModalButton(
-      text: PluginExample::getSettings('modal_form_buttons.button_yes', 'gui.yes'),
+      text: PluginExample::getSettings('modal_form_buttons.button_yes.text', 'gui.yes'),
       onclick: new ModalButtonResponse(
         function (Player $player): void {
           $player->sendMessage("you confirmed!");
