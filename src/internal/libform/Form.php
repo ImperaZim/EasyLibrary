@@ -16,9 +16,11 @@ abstract class Form implements IForm {
 
   /**
   * Form constructor.
-  * @param ?Title $title The title of the form.
+  * @param Title $title The title of the form.
   */
-  public function __construct(protected ?Title $title = '') {}
+  public function __construct(
+    protected ?Title $title = new Title('')
+  ) {}
 
   /**
   * Gets the title of the form.
@@ -32,7 +34,7 @@ abstract class Form implements IForm {
   * Sets the title of the form.
   * @param Title $title The new title of the form.
   */
-  public function setTitle(?Title $title = ''): void {
+  public function setTitle(?Title $title = new Title('')): void {
     $this->title = $title;
   }
 

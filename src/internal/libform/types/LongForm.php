@@ -55,10 +55,10 @@ final class LongForm extends Form {
 
   /**
   * Set the content of the form.
-  * @param string $content
+  * @param Content $content
   * @return self
   */
-  public function setContent(string $content): self {
+  public function setContent(?Content $content = new Content('')): self {
     $this->content = $content;
     return $this;
   }

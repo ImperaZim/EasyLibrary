@@ -47,7 +47,7 @@ final class ModalForm extends Form {
   * @param Content|null $content
   * @return self
   */
-  public function setContent(?Content $content): self {
+  public function setContent(?Content $content = new Content('')): self {
     $this->content = $content;
     return $this;
   }
@@ -65,7 +65,7 @@ final class ModalForm extends Form {
   * @param ModalButton $buttonYes
   * @return self
   */
-  public function setButtonYes(ModalButton $buttonYes): self {
+  public function setButtonYes(?ModalButton $buttonYes = new ModalButton('gui.yes')): self {
     $this->buttonYes = $buttonYes;
     return $this;
   }
@@ -83,7 +83,7 @@ final class ModalForm extends Form {
   * @param ModalButton $buttself
   * @return self
   */
-  public function setButtonNo(ModalButton $buttonNo): self {
+  public function setButtonNo(?ModalButton $buttonNo = new ModalButton('gui.no')): self {
     $this->buttonNo = $buttonNo;
     return $this;
   }
