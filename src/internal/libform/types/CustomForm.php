@@ -34,7 +34,7 @@ final class CustomForm extends Form {
   * @param (Closure(Player): mixed)|null $onClose
   */
   public function __construct(
-    string $title,
+    public ?Title $title = new Title(''),
     protected array $elements = [],
     private ?Closure $onSubmit = null,
     private ?Closure $onClose = null,

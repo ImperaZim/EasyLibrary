@@ -29,8 +29,8 @@ final class LongForm extends Form {
   * @param (Closure(Player): mixed)|null $onClose
   */
   public function __construct(
-    public ?Title $title,
-    protected ?Content $content = '',
+    public ?Title $title = new Title(''),
+    protected ?Content $content = new Content(''),
     private ?array $buttons = [],
     private ?Closure $onClose = null,
   ) {
@@ -134,7 +134,7 @@ final class LongForm extends Form {
   */
   protected function serializeFormData(): array {
     return [
-      'buttons' => $this->getButtons(),
+      'buttons' => $this->getButtons()->getText(),
       'content' => $this->getContent()->getText(),
     ];
   }

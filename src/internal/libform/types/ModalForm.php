@@ -8,6 +8,8 @@ use Closure;
 use internal\libform\Form;
 use pocketmine\utils\Utils;
 use pocketmine\player\Player;
+use internal\libform\elements\Title;
+use internal\libform\elements\Content;
 use internal\libform\elements\ModalButton;
 use pocketmine\form\FormValidationException;
 /**
@@ -18,14 +20,14 @@ final class ModalForm extends Form {
 
   /**
   * ModalForm constructor.
-  * @param string $title
-  * @param string $content
+  * @param Title $title
+  * @param Content $content
   * @param ModalButton $buttonYes
   * @param ModalButton $buttonNo
   */
   public function __construct(
-    public string $title,
-    protected string $content = '',
+    public ?Title $title = new Title(''),
+    protected ?Content $content = new Content(''),
     public ModalButton $buttonYes = new ModalButton('gui.yes'),
     public ModalButton $buttonNo = new ModalButton('gui.no')
   ) {
@@ -34,18 +36,18 @@ final class ModalForm extends Form {
 
   /**
   * Get the content of the form.
-  * @return string
+  * @return Content|null
   */
-  public function getContent(): string {
+  public function getContent(): ?Content {
     return $this->content;
   }
 
   /**
   * Set the content of the form.
-  * @param string $content
+  * @param Content|null $content
   * @return self
   */
-  public function setContent(string $content): self {
+  public function setContent(?Content $content): self {
     $this->content = $content;
     return $this;
   }
@@ -114,7 +116,7 @@ final class ModalForm extends Form {
 
   /**
   * Get the type of the form.
-  * @return string
+  * @return 
   */
   protected function getType(): string {
     return 'modal';
@@ -126,7 +128,7 @@ final class ModalForm extends Form {
   */
   protected function serializeFormData(): array {
     return [
-      'content' => $this->getContent(),
+      'content' => $this->getContent()->getText(),
       'button1' => $this->getButtonYes()->getText(),
       'button2' => $this->getButtonNo()->getText(),
     ];
