@@ -7,8 +7,8 @@ namespace ImperaZim\commands\subcommands;
 use pocketmine\player\Player;
 
 use ImperaZim\PluginExample;
-use internal\command\BaseSubCommand;
 use ImperaZim\forms\ExampleLongForm;
+use internal\commando\BaseSubCommand;
 
 /**
 * Class LongFormExampleSubcommand
