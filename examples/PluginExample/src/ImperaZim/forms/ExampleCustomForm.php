@@ -99,7 +99,7 @@ class ExampleCustomForm extends Form {
 
       $dropdownResponse = $response->getElementResult(5);
       $dropdownResponseIndexValue = $dropdownResponse->getValue();
-      $dropdownResponseOptionValue = $dropdownResponse->getSelectedOption();
+      $dropdownResponseOptionsValue = $dropdownResponse->getSelectedOption();
       # $dropdownResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
       # $dropdownResponseOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
       
