@@ -56,7 +56,7 @@ class ExampleCustomForm extends Form {
   private function getElements(): array {
     return [
       new Label('Label: Text Element.'),
-      new Input('Input: Text Box Element.', 'Example Text', 'Default Value'),
+      new Input('Input: Text Box Element.', 'Example Text', 'Default Value', 'input_identifier'),
       new Slider('Slider: Number Slider Element.', 1, 16, 1.0, 1),
       new StepSlider('Slider: Option Slider Element.', ['text 1', 'text 2'], 0),
       new Toggle('Toggle: Toggle Button Element', false),
@@ -78,6 +78,11 @@ class ExampleCustomForm extends Form {
       * or 
       * $response->getValues($id) which returns the direct value
       */
+      
+      var_dump($response->getElement('input_identifier'));
+      var_dump($response->getElement('input_identifierjsj'));
+      
+      return;
       
       $inputResponse = $response->getElementResult(1);
       $inputResponseValue = $inputResponse->getValue();
