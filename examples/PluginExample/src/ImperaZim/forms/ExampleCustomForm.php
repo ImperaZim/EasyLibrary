@@ -77,32 +77,31 @@ class ExampleCustomForm extends Form {
       * $response->getElementResult($id)
       * or $response->getValues($id) which returns the direct value
       */
-        var_dump($response->getElementResult());
-
-      /*
-      $inputResponse = $response->getElementResult(0);
+      
+      $inputResponse = $response->getElementResult(1);
       $inputResponseValue = $inputResponse->getValue();
       # $sliderResponseValue: Returns the text written in the text box called.
 
-      $sliderResponse = $response->getElementResult(1);
+      $sliderResponse = $response->getElementResult(2);
       $sliderResponseValue = $sliderResponse->getValue();
       # $sliderResponseValue: Returns the numeric value chosen in the called slider.
 
-      $stepSliderResponse = $response->getElementResult(2);
+      $stepSliderResponse = $response->getElementResult(3);
       $stepSliderResponseIndexValue = $stepSliderResponse->getValue();
       $stepSliderResponseOptionsValue = $stepSliderResponse->SelectedOption();
       # $stepSliderResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called StepSlider.
       # $stepSliderResponseOptionsValue: Returns the text of the chosen option according to the array passed in the called StepSlider.
 
-      $toggleResponse = $response->getElementResult(3);
+      $toggleResponse = $response->getElementResult(4);
       $toggleResponseValue = $toggleResponse->getValue();
       # $toggleResponseValue: Returns true/false according to the button toggle called.
 
-      $dropdownResponse = $response->getElementResult(4);
+      $dropdownResponse = $response->getElementResult(5);
       $dropdownResponseIndexValue = $dropdownResponse->getValue();
       $dropdownResponseOptionValue = $dropdownResponse->SelectedOption();
       # $dropdownResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
       # $dropdownResponseOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
+      
       $player->sendMessage('Input: ' . $inputResponse);
       $player->sendMessage('Slider: ' . $sliderResponse);
       $player->sendMessage('StepSlider Index: ' . $stepSliderResponseIndexValue);
@@ -110,7 +109,6 @@ class ExampleCustomForm extends Form {
       $player->sendMessage('Toggle: ' . $toggleResponse ? 'true' : 'false');
       $player->sendMessage('Dropdown Index: ' . $dropdownResponseIndexValue);
       $player->sendMessage('Dropdown Option: ' . $dropdownResponseOptionsValue);
-      */
     } catch (\Throwable $e) {
       new \crashdump($e);
     }
