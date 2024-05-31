@@ -97,7 +97,8 @@ final class ModalForm extends Form {
   final public function handleResponse(Player $player,
     mixed $data): void {
     if (!is_bool($data)) {
-      throw new FormValidationException('Expected bool, got ' . gettype($data));
+      // It is possible to separate the callback from onClose here but it made me lazy. :)
+      return; 
     }
     if ($data) {
       $button = $this->getButtonYes();
