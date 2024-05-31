@@ -40,11 +40,12 @@ final class CustomElementsResponse {
   * @return Element|null
   */
   public function getElement(string $id): ?Element {
-    $filter = array_filter($this->elements, fn(Element $element) => $element->getIdentifier() === $id);
-    if ($filter == null || empty($filter) || (!is_array($filter))) {
-      return null;
+    foreach ($this->elements as $element) {
+      if ($element->getIdentifier() === $id) {
+        return $element;
+      }
     }
-    return $filter[0];
+    return null;
   }
 
   /**
