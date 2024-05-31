@@ -20,6 +20,7 @@ class Slider extends ElementWithValue {
   * @param float $max The maximum value of the slider.
   * @param float $step The step value of the slider.
   * @param float|null $default The default value of the slider.
+  * @param string|null $identifier The elemment identifier.
   */
   public function __construct(
     public string $text,
@@ -27,8 +28,10 @@ class Slider extends ElementWithValue {
     public /*readonly*/ float $max,
     public /*readonly*/ float $step = 1.0,
     public /*readonly*/ ?float $default = null,
+    public ?string $identifier = null
   ) {
     parent::__construct($text, $default);
+    $this->setIdentifier($identifier);
     if ($min > $max) {
       throw new \InvalidArgumentException("Slider min value should be less than max value");
     }

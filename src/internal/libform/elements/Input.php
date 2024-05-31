@@ -17,13 +17,16 @@ class Input extends ElementWithValue {
   * @param string $text The text of the input element.
   * @param string $placeholder The placeholder text for the input.
   * @param string $default The default text for the input.
+  * @param string|null $identifier The elemment identifier.
   */
   public function __construct(
     public string $text,
     public /*readonly*/ string $placeholder,
     public /*readonly*/ string $default = "",
+    public ?string $identifier = null
   ) {
     parent::__construct($text);
+    $this->setIdentifier($identifier);
   }
 
   /**

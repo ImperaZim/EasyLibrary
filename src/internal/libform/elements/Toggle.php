@@ -16,12 +16,15 @@ class Toggle extends ElementWithValue {
   * Toggle constructor.
   * @param string $text The text of the toggle element.
   * @param bool $default The default value of the toggle.
+  * @param string|null $identifier The elemment identifier.
   */
   public function __construct(
     public string $text,
     public /*readonly*/ bool $default = false,
+    public ?string $identifier = null
   ) {
     parent::__construct($text);
+    $this->setIdentifier($identifier);
   }
 
   /**

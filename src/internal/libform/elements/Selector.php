@@ -17,13 +17,16 @@ abstract class Selector extends ElementWithValue {
   * @param string $text The text of the selector element.
   * @param array<int, string> $options The list of options for the selector.
   * @param int $default The default selected index.
+  * @param string|null $identifier The elemment identifier.
   */
   public function __construct(
     public string $text,
     public array $options,
-    public int $default = 0
+    public int $default = 0,
+    public ?string $identifier = null
   ) {
     parent::__construct($text, $default);
+    $this->setIdentifier($identifier);
   }
 
   /**
