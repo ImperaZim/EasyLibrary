@@ -75,7 +75,8 @@ class ExampleCustomForm extends Form {
       * NOTICE: The CustomElementsResponse Cost disregards Label elements as they are not interactive.
       * $id = indicative index of the element defined in getElements starting at 0 and disregarding Label elements.
       * $response->getElementResult($id)
-      * or $response->getValues($id) which returns the direct value
+      * or 
+      * $response->getValues($id) which returns the direct value
       */
       
       $inputResponse = $response->getElementResult(1);
@@ -102,11 +103,11 @@ class ExampleCustomForm extends Form {
       # $dropdownResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
       # $dropdownResponseOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
       
-      $player->sendMessage('Input: ' . $inputResponse);
-      $player->sendMessage('Slider: ' . $sliderResponse);
+      $player->sendMessage('Input: ' . $inputResponseValue);
+      $player->sendMessage('Slider: ' . $sliderResponseValue);
       $player->sendMessage('StepSlider Index: ' . $stepSliderResponseIndexValue);
       $player->sendMessage('StepSlider Option: ' . $stepSliderResponseOptionsValue);
-      $player->sendMessage('Toggle: ' . $toggleResponse ? 'true' : 'false');
+      $player->sendMessage('Toggle: ' . $toggleResponseValue ? 'true' : 'false');
       $player->sendMessage('Dropdown Index: ' . $dropdownResponseIndexValue);
       $player->sendMessage('Dropdown Option: ' . $dropdownResponseOptionsValue);
     } catch (\Throwable $e) {
