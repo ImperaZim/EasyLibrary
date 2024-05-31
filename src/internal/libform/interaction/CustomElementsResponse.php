@@ -40,7 +40,11 @@ final class CustomElementsResponse {
   * @return Element|null
   */
   public function getElement(string $id): ?Element {
-    return array_filter($this->elements, fn(Element $element) => $element->getIdentifier() === $id);
+    $filter = array_filter($this->elements, fn(Element $element) => $element->getIdentifier() === $id);
+    if ($filter == null || empty($filter) || (!is_array($filter))) {
+      return null;
+    }
+    return $filter[0];
   }
 
   /**
