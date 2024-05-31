@@ -88,7 +88,7 @@ class ExampleCustomForm extends Form {
 
       $stepSliderResponse = $response->getElementResult(3);
       $stepSliderResponseIndexValue = $stepSliderResponse->getValue();
-      $stepSliderResponseOptionsValue = $stepSliderResponse->SelectedOption();
+      $stepSliderResponseOptionsValue = $stepSliderResponse->getSelectedOption();
       # $stepSliderResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called StepSlider.
       # $stepSliderResponseOptionsValue: Returns the text of the chosen option according to the array passed in the called StepSlider.
 
@@ -98,7 +98,7 @@ class ExampleCustomForm extends Form {
 
       $dropdownResponse = $response->getElementResult(5);
       $dropdownResponseIndexValue = $dropdownResponse->getValue();
-      $dropdownResponseOptionValue = $dropdownResponse->SelectedOption();
+      $dropdownResponseOptionValue = $dropdownResponse->getSelectedOption();
       # $dropdownResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
       # $dropdownResponseOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
       
