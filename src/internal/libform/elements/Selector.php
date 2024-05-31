@@ -20,7 +20,8 @@ abstract class Selector extends ElementWithValue {
   */
   public function __construct(
     public string $text,
-    public array $options, int $default = 0
+    public array $options,
+    public int $default = 0
   ) {
     parent::__construct($text, $default);
   }
