@@ -57,7 +57,7 @@ class ExampleCustomForm extends Form {
     return [
       new Label('Label: Text Element.'),
       new Input('Input: Text Box Element.', 'Example Text', 'Default Value'),
-      new Slider('Slider: Number Slider Element.', 1, 16, 1.0, 0),
+      new Slider('Slider: Number Slider Element.', 1, 16, 1.0, 1),
       new StepSlider('Slider: Option Slider Element.', ['text 1', 'text 2'], 0),
       new Toggle('Toggle: Toggle Button Element', false),
       new Dropdown('Dropdown: Option Box Element', ['text 1', 'text 2'], 0)
