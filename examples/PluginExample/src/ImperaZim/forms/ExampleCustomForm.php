@@ -77,18 +77,13 @@ class ExampleCustomForm extends Form {
       * $response->getElementResult($id)
       * or $response->getValues($id) which returns the direct value
       */
-
-      foreach ($response->getElementResult() as $elementResult) {
-        var_dump($elementResult->getValue());
-      }
-
-      $inputResponse = $response->getElementResult(0);
-      //$inputResponseValue = $inputResponse->getValue();
-      var_dump($inputResponse);
-      var_dump($inputResponse->getIdentifier());
-      # $sliderResponseValue: Returns the text written in the text box called.
+        var_dump($response->getElementResult());
 
       /*
+      $inputResponse = $response->getElementResult(0);
+      $inputResponseValue = $inputResponse->getValue();
+      # $sliderResponseValue: Returns the text written in the text box called.
+
       $sliderResponse = $response->getElementResult(1);
       $sliderResponseValue = $sliderResponse->getValue();
       # $sliderResponseValue: Returns the numeric value chosen in the called slider.
