@@ -74,19 +74,21 @@ class ExampleCustomForm extends Form {
       /**
       * NOTICE: The CustomElementsResponse Cost disregards Label elements as they are not interactive.
       * $id = indicative index of the element defined in getElements starting at 0 and disregarding Label elements.
-      * $response->getElementResult($id) 
+      * $response->getElementResult($id)
       * or $response->getValues($id) which returns the direct value
       */
-      
+
       foreach ($response->getElementResult() as $elementResult) {
         var_dump($elementResult->getValue());
       }
-      
-      /*
+
       $inputResponse = $response->getElementResult(0);
       $inputResponseValue = $inputResponse->getValue();
+      var_dump($inputResponseValue);
+      var_dump($inputResponse->getIdentifier());
       # $sliderResponseValue: Returns the text written in the text box called.
 
+      /*
       $sliderResponse = $response->getElementResult(1);
       $sliderResponseValue = $sliderResponse->getValue();
       # $sliderResponseValue: Returns the numeric value chosen in the called slider.
@@ -106,7 +108,6 @@ class ExampleCustomForm extends Form {
       $dropdownResponseOptionValue = $dropdownResponse->SelectedOption();
       # $dropdownResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
       # $dropdownResponseOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
-      
       $player->sendMessage('Input: ' . $inputResponse);
       $player->sendMessage('Slider: ' . $sliderResponse);
       $player->sendMessage('StepSlider Index: ' . $stepSliderResponseIndexValue);
