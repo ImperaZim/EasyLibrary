@@ -59,9 +59,9 @@ final class CustomElementsResponse {
   * @param int|null $index
   * @return mixed
   */
-  public function getElementResult(?int $index = null): mixed {
+  public function getElementResult(?int $index = -1): mixed {
     $values = array_map(fn(Element $element) => $element, $this->getNonLabelElements());
-    if ($index == null) {
+    if ($index < 0) {
       return $values;
     }
     return $values[$index] ?? null;

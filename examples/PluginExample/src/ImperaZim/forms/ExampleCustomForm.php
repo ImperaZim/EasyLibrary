@@ -83,8 +83,8 @@ class ExampleCustomForm extends Form {
       }
 
       $inputResponse = $response->getElementResult(0);
-      $inputResponseValue = $inputResponse->getValue();
-      var_dump($inputResponseValue);
+      //$inputResponseValue = $inputResponse->getValue();
+      var_dump($inputResponse);
       var_dump($inputResponse->getIdentifier());
       # $sliderResponseValue: Returns the text written in the text box called.
 
