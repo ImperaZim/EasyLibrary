@@ -56,10 +56,14 @@ final class CustomElementsResponse {
 
   /**
   * Get result from elements by identifier, excluding labels.
-  * @return mixed
+  * @param int|null $index
+  * @return Element|null
   */
-  public function getElementResult(int $index): mixed {
+  public function getElementResult(?int $index = null): ?Element {
     $values = array_map(fn(Element $element) => $element, $this->getNonLabelElements());
+    if ($index == null) {
+      return $values;
+    }
     return $values[$index] ?? null;
   }
 

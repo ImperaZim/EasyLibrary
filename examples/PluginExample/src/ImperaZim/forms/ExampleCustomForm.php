@@ -77,7 +77,12 @@ class ExampleCustomForm extends Form {
       * $response->getElementResult($id) 
       * or $response->getValues($id) which returns the direct value
       */
-
+      
+      foreach ($response->getElementResult() as $elementResult) {
+        var_dump($elementResult);
+      }
+      
+      /*
       $inputResponse = $response->getElementResult(0);
       $inputResponseValue = $inputResponse->getValue();
       # $sliderResponseValue: Returns the text written in the text box called.
@@ -109,7 +114,7 @@ class ExampleCustomForm extends Form {
       $player->sendMessage('Toggle: ' . $toggleResponse ? 'true' : 'false');
       $player->sendMessage('Dropdown Index: ' . $dropdownResponseIndexValue);
       $player->sendMessage('Dropdown Option: ' . $dropdownResponseOptionsValue);
-      
+      */
     } catch (\Throwable $e) {
       new \crashdump($e);
     }
