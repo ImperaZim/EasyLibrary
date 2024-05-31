@@ -10,6 +10,7 @@ use pocketmine\player\Player;
 use pocketmine\form\FormValidationException;
 
 use internal\libform\Form;
+use internal\libform\elements\Title;
 use internal\libform\elements\Input;
 use internal\libform\elements\Label;
 use internal\libform\elements\Slider;
