@@ -79,7 +79,7 @@ class ExampleCustomForm extends Form {
       */
       
       foreach ($response->getElementResult() as $elementResult) {
-        var_dump($elementResult);
+        var_dump($elementResult->getValue());
       }
       
       /*
