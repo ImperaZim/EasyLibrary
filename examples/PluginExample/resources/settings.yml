@@ -25,6 +25,9 @@ modal_form_buttons:
   button_no:
     text: 'Button No'
 
+  # Form [CustomForm]
+custom_form_title: 'CustomForm Example Title' 
+
 
 
 # Menu settings 

@@ -10,6 +10,7 @@ use ImperaZim\PluginExample;
 use internal\commando\BaseCommand;
 use ImperaZim\commands\subcommands\LongFormExampleSubcommand;
 use ImperaZim\commands\subcommands\ModalFormExampleSubcommand;
+use ImperaZim\commands\subcommands\CustomFormExampleSubcommand;
 
 /**
 * Class FormExampleCommand
@@ -53,6 +54,7 @@ final class FormExampleCommand extends BaseCommand {
     $this->setPermission($this->getPermission());
     $this->registerSubCommand(LongFormExampleSubcommand::base());
     $this->registerSubCommand(ModalFormExampleSubcommand::base());
+    $this->registerSubCommand(CustomFormExampleSubcommand::base());
   }
 
   /**

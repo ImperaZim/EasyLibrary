@@ -18,7 +18,7 @@ use internal\libform\elements\Element;
 use internal\libform\elements\Dropdown;
 use internal\libform\elements\StepSlider;
 use internal\libform\elements\ElementWithValue;
-use internal\libform\interaction\CustomFormResponse;
+use internal\libform\interaction\CustomElementsResponse;
 
 /**
 * Class CustomForm
@@ -30,7 +30,7 @@ final class CustomForm extends Form {
   * CustomForm constructor.
   * @param string $title
   * @param Element[] $elements
-  * @param (Closure(Player, CustomFormResponse): mixed)|null $onSubmit
+  * @param (Closure(Player, CustomElementsResponse): mixed)|null $onSubmit
   * @param (Closure(Player): mixed)|null $onClose
   */
   public function __construct(
@@ -40,7 +40,7 @@ final class CustomForm extends Form {
     private ?Closure $onClose = null,
   ) {
     if ($onSubmit !== null) {
-      Utils::validateCallableSignature(function(Player $player, CustomFormResponse $response) {}, $onSubmit);
+      Utils::validateCallableSignature(function(Player $player, CustomElementsResponse $response) {}, $onSubmit);
     }
     if ($onClose !== null) {
       Utils::validateCallableSignature(function(Player $player) {}, $onClose);
@@ -50,7 +50,7 @@ final class CustomForm extends Form {
 
   /**
   * Set the callback to be executed when the form is submitted.
-  * @param Closure(Player, CustomFormResponse): void $closure
+  * @param Closure(Player, CustomElementsResponse): void $closure
   */
   public function onSubmit(Closure $closure): void {
     $this->onSubmit = $closure;
@@ -173,7 +173,7 @@ final class CustomForm extends Form {
     }
 
     if ($this->onSubmit !== null) {
-      ($this->onSubmit)($player, new CustomFormResponse($this->elements));
+      ($this->onSubmit)($player, new CustomElementsResponse($this->elements));
     }
   }
 
