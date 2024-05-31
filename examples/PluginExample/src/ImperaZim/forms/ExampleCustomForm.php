@@ -21,10 +21,10 @@ use internal\libform\elements\StepSlider;
 use internal\libform\interaction\CustomElementsResponse;
 
 /**
-* Class ExampleCustomFormExample
+* Class ExampleCustomForm
 * @package ImperaZim\forms
 */
-class ExampleCustomFormExample extends Form {
+class ExampleCustomForm extends Form {
 
   /**
   * Defines the form structure.
