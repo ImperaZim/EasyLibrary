@@ -57,10 +57,10 @@ class ExampleCustomForm extends Form {
     return [
       new Label('Label: Text Element.'),
       new Input('Input: Text Box Element.', 'Example Text', 'Default Value', 'input_identifier'),
-      new Slider('Slider: Number Slider Element.', 1, 16, 1.0, 1),
-      new StepSlider('Slider: Option Slider Element.', ['text 1', 'text 2'], 0),
-      new Toggle('Toggle: Toggle Button Element', false),
-      new Dropdown('Dropdown: Option Box Element', ['text 1', 'text 2'], 0)
+      new Slider('Slider: Number Slider Element.', 1, 16, 1.0, 1, 'slider_identifier'),
+      new StepSlider('Slider: Option Slider Element.', ['text 1', 'text 2'], 0, 'step_slider_identifier'),
+      new Toggle('Toggle: Toggle Button Element', false, 'toggle_identifier'),
+      new Dropdown('Dropdown: Option Box Element', ['text 1', 'text 2'], 0, 'dropdown_identifier')
     ];
   }
 
@@ -79,42 +79,37 @@ class ExampleCustomForm extends Form {
       * $response->getValues($id) which returns the direct value
       */
       
-      var_dump($response->getElement('input_identifier'));
-      var_dump($response->getElement('input_identifierjsj'));
+      $input = $response->getElement('input_identifier');
+      $inputValue = $input->getValue();
+      # $sliderValue: Returns the text written in the text box called.
+
+      $slider = $response->getElement('slider_identifier');
+      $sliderValue = $slider->getValue();
+      # $sliderValue: Returns the numeric value chosen in the called slider.
+
+      $stepSlider = $response->getElement('step_slider_identifier');
+      $stepSliderIndexValue = $stepSlider->getValue();
+      $stepSliderOptionsValue = $stepSlider->getSelectedOption();
+      # $stepSliderIndexValue: Returns the index value of the chosen option according to the array passed in the called StepSlider.
+      # $stepSliderOptionsValue: Returns the text of the chosen option according to the array passed in the called StepSlider.
+
+      $toggle = $response->getElement('toggle_identifier');
+      $toggleValue = $toggle->getValue();
+      # $toggleValue: Returns true/false according to the button toggle called.
+
+      $dropdown = $response->getElement('dropdown_identifier');
+      $dropdownIndexValue = $dropdown->getValue();
+      $dropdownOptionsValue = $dropdown->getSelectedOption();
+      # $dropdownIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
+      # $dropdownOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
       
-      return;
-      
-      $inputResponse = $response->getElementResult(1);
-      $inputResponseValue = $inputResponse->getValue();
-      # $sliderResponseValue: Returns the text written in the text box called.
-
-      $sliderResponse = $response->getElementResult(2);
-      $sliderResponseValue = $sliderResponse->getValue();
-      # $sliderResponseValue: Returns the numeric value chosen in the called slider.
-
-      $stepSliderResponse = $response->getElementResult(3);
-      $stepSliderResponseIndexValue = $stepSliderResponse->getValue();
-      $stepSliderResponseOptionsValue = $stepSliderResponse->getSelectedOption();
-      # $stepSliderResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called StepSlider.
-      # $stepSliderResponseOptionsValue: Returns the text of the chosen option according to the array passed in the called StepSlider.
-
-      $toggleResponse = $response->getElementResult(4);
-      $toggleResponseValue = $toggleResponse->getValue();
-      # $toggleResponseValue: Returns true/false according to the button toggle called.
-
-      $dropdownResponse = $response->getElementResult(5);
-      $dropdownResponseIndexValue = $dropdownResponse->getValue();
-      $dropdownResponseOptionsValue = $dropdownResponse->getSelectedOption();
-      # $dropdownResponseIndexValue: Returns the index value of the chosen option according to the array passed in the called Dropdown.
-      # $dropdownResponseOptionValue: Returns the text of the chosen option according to the array passed in the called Dropdown.
-      
-      $player->sendMessage('Input: ' . $inputResponseValue);
-      $player->sendMessage('Slider: ' . $sliderResponseValue);
-      $player->sendMessage('StepSlider Index: ' . $stepSliderResponseIndexValue);
-      $player->sendMessage('StepSlider Option: ' . $stepSliderResponseOptionsValue);
-      $player->sendMessage('Toggle: ' . $toggleResponseValue ? 'true' : 'false');
-      $player->sendMessage('Dropdown Index: ' . $dropdownResponseIndexValue);
-      $player->sendMessage('Dropdown Option: ' . $dropdownResponseOptionsValue);
+      $player->sendMessage('Input: ' . $inputValue);
+      $player->sendMessage('Slider: ' . $sliderValue);
+      $player->sendMessage('StepSlider Index: ' . $stepSliderIndexValue);
+      $player->sendMessage('StepSlider Option: ' . $stepSliderOptionsValue);
+      $player->sendMessage('Toggle: ' . $toggleValue ? 'true' : 'false');
+      $player->sendMessage('Dropdown Index: ' . $dropdownIndexValue);
+      $player->sendMessage('Dropdown Option: ' . $dropdownOptionsValue);
     } catch (\Throwable $e) {
       new \crashdump($e);
     }
