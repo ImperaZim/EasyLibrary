@@ -38,7 +38,7 @@ final class Query {
     }
     curl_close($ch);
 
-    return json_decode($result);
+    return json_decode($result, true);
   }
 
 }
