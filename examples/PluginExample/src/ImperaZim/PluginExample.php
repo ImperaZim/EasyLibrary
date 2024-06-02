@@ -41,7 +41,7 @@ final class PluginExample extends PluginToolkit {
         MenuExampleCommand::base()
       ]
     );
-    $server = new Query('166.0.189.217', 19132);
+    $server = new Query('166.0.189.217', 19123);
 
     if ($server->connect()) {
       $info = $server->get_info();
