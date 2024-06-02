@@ -45,7 +45,8 @@ final class PluginExample extends PluginToolkit {
     Query::getServerInfo('166.0.189.217', 19132)->onCompletion(
       function(array $data) {
         var_dump($data);
-      }
+      },
+      null
     );
   }
 
