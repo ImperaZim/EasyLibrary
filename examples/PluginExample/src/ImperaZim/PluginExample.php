@@ -42,14 +42,7 @@ final class PluginExample extends PluginToolkit {
       ]
     );
 
-    Query::getServerInfo('isylium.cloud', 19132)->onCompletion(
-      function(array $data) {
-        var_dump($data);
-      },
-      function($err) {
-        var_dump($err);
-      },
-    );
+    var_dump(Query::getServerInfo('isylium.cloud', 19132));
   }
 
   /**
