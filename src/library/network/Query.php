@@ -21,32 +21,33 @@ final class Query {
   * Gets the minecraft server info.
   * @param string $ip
   * @param int|null $port
-  * @return mixed
+  * @return Promise<array>
   */
-  public static function getServerInfo(string $ip, ?int $port = 19132): mixed {
+  public static function getServerInfo(string $ip, ?int $port = 19132): Promise {
     $url = "https://imperazim.cloud/plugins/EasyLibrary/query/";
-    $data = array(
+    $postData = json_encode([
       'ip' => $ip,
       'port' => $port
-    );
-    $options = array(
-      'http' => array(
-        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-        'method' => 'POST',
-        'content' => http_build_query($data)
-      ),
-      'ssl' => array(
-        'verify_peer' => false,
-        'verify_peer_name' => false,
-      )
-    );
-    $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
-    if ($result === FALSE) {
-      return "Erro ao fazer a solicitação HTTP";
-    } else {
-      return $result;
-    }
-  }
+    ]);
 
+    $resolver = new PromiseResolver();
+    $error = null;
+
+    $response = Internet::postURL($url, $postData, 10, [], $error);
+
+    if ($error !== null) {
+      $resolver->reject(['error' => $error]);
+    } elseif ($response instanceof InternetRequestResult) {
+      $data = json_decode($response->getBody(), true);
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        $resolver->reject(['error' => 'Invalid JSON response']);
+      } else {
+        $resolver->resolve($data);
+      }
+    } else {
+      $resolver->reject(['error' => 'Unknown error']);
+    }
+
+    return $resolver->getPromise();
+  }
 }
