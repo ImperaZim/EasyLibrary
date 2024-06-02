@@ -23,7 +23,7 @@ final class Query {
   * @param int|null $port
   * @return Promise<array>
   */
-  public static function getServerInfo(string $ip, ?int $port = 19132): mixed {
+  public static function getServerInfo(string $ip, ?int $port = 19132): array {
     $url = "https://imperazim.cloud/plugins/EasyLibrary/query/?ip={$ip}&port={$port}";
 
     $ch = curl_init();
@@ -34,11 +34,11 @@ final class Query {
 
     $result = curl_exec($ch);
     if (curl_errno($ch)) {
-        return "Erro ao fazer a solicitação HTTP: " . curl_error($ch);
+      return ["error" => "Erro ao fazer a solicitação HTTP: " . curl_error($ch)];
     }
     curl_close($ch);
 
-    return $result;
-}
+    return json_decode($result);
+  }
 
 }
