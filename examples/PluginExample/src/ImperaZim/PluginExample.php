@@ -46,7 +46,9 @@ final class PluginExample extends PluginToolkit {
       function(array $data) {
         var_dump($data);
       },
-      null
+      function($err) {
+        var_dump($err);
+      },
     );
   }
 
