@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace ImperaZim;
 
 use library\utils\File;
+use library\network\Query;
 use library\plugin\PluginToolkit;
 use ImperaZim\commands\FormExampleCommand;
 use ImperaZim\commands\MenuExampleCommand;
@@ -40,6 +41,12 @@ final class PluginExample extends PluginToolkit {
         MenuExampleCommand::base()
       ]
     );
+    $server = new Query($ip, $port);
+
+    if ($server->connect()) {
+      $info = $server->get_info();
+      var_dump($info);
+    }
   }
 
   /**

@@ -54,14 +54,42 @@ class ExampleCustomForm extends Form {
   * @return Element[]
   */
   private function getElements(): array {
-    return [
-      new Label('Label: Text Element.'),
-      new Input('Input: Text Box Element.', 'Example Text', 'Default Value', 'input_identifier'),
-      new Slider('Slider: Number Slider Element.', 1, 16, 1.0, 1, 'slider_identifier'),
-      new StepSlider('Slider: Option Slider Element.', ['text 1', 'text 2'], 0, 'step_slider_identifier'),
-      new Toggle('Toggle: Toggle Button Element', false, 'toggle_identifier'),
-      new Dropdown('Dropdown: Option Box Element', ['text 1', 'text 2'], 0, 'dropdown_identifier')
-    ];
+    $elements = [];
+    $elements[] = new Label(
+      text: 'Label: Text Element.'
+    );
+    $elements[] = new Input(
+      text: 'Input: Text Box Element.', 
+      placeholder: 'Example Text', 
+      default: 'Default Value', 
+      identifier: 'input_identifier'
+    );
+    $elements[] = new Slider(
+      text: 'Slider: Number Slider Element.',
+      min: 1, 
+      max: 16,
+      step: 1.0,
+      default: 1, 
+      identifier: 'slider_identifier'
+    );
+    $elements[] = new StepSlider(
+      text: 'Slider: Option Slider Element.', 
+      options: ['text 1', 'text 2'],
+      default: 0, 
+      identifier: 'step_slider_identifier'
+    );
+    $elements[] = new Toggle(
+      text: 'Toggle: Toggle Button Element.', 
+      default: false, 
+      identifier: 'toggle_identifier'
+    );
+    $elements[] = new StepSlider(
+      text: 'Dropdown: Option Box Element.', 
+      options: ['text 1', 'text 2'],
+      default: 0, 
+      identifier: 'dropdown_identifier'
+    );
+    return $elements;
   }
 
   /**
