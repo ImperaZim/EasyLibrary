@@ -41,25 +41,15 @@ final class PluginExample extends PluginToolkit {
         MenuExampleCommand::base()
       ]
     );
-    $query = new Query('166.0.189.217', 19123);
 
-    if ($query->is_connected()) {
-      $info = $query->get_info();
-      if ($info !== false) {
-        var_dump("Informações do servidor:");
-        foreach ($info as $key => $value) {
-          if (is_array($value)) {
-            var_dump("$key: " . implode(", ", $value));
-          } else {
-            var_dump("$key: $value");
-          }
-        }
-      } else {
-        var_dump("Erro ao obter informações do servidor.");
+    Query::getServerInfo('166.0.189.217', 19123)->onCompletion(
+      function (array $data): void {
+        var_dump($data);
+      },
+      function (): void {
+        var_dump(['error' => 'Erro ao conectar com servidor!']);
       }
-    } else {
-      var_dump("Erro: " . $query->get_error());
-    }
+    );
   }
 
   /**
@@ -69,9 +59,12 @@ final class PluginExample extends PluginToolkit {
   * @param array  $tags
   * @return mixed
   */
-  public static function getSettings(string $way, mixed $default = '', array $tags = []): mixed {
+  public static function getSettings(string $way,
+    mixed $default = '',
+    array $tags = []): mixed {
     $messages = PluginExample::getInstance()->settings;
-    $result = $messages->get($way, $default);
+    $result = $messages->get($way,
+      $default);
     if (is_array($result)) {
       return $result;
     } else {
