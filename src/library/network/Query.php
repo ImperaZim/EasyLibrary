@@ -21,7 +21,7 @@ final class Query {
   * Gets the minecraft server info.
   * @param string $ip
   * @param int|null $port
-  * @return Promise<array>
+  * @return mixed
   */
   public static function getServerInfo(string $ip, ?int $port = 19132): mixed {
     $url = "https://imperazim.cloud/plugins/EasyLibrary/query/";
@@ -34,6 +34,10 @@ final class Query {
         'header' => "Content-type: application/x-www-form-urlencoded\r\n",
         'method' => 'POST',
         'content' => http_build_query($data)
+      ),
+      'ssl' => array(
+        'verify_peer' => false,
+        'verify_peer_name' => false,
       )
     );
     $context = stream_context_create($options);
@@ -44,4 +48,5 @@ final class Query {
       return $result;
     }
   }
+
 }
