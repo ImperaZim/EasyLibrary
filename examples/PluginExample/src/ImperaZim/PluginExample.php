@@ -43,11 +43,22 @@ final class PluginExample extends PluginToolkit {
     );
     $server = new Query('166.0.189.217', 19123);
 
-    if ($server->connect()) {
-      $info = $server->get_info();
-      var_dump($info);
-    }else{
-      var_dump(false);
+    if ($query->is_connected()) {
+      $info = $query->get_info();
+      if ($info !== false) {
+        var_dump("Informações do servidor:");
+        foreach ($info as $key => $value) {
+          if (is_array($value)) {
+            var_dump("$key: " . implode(", ", $value));
+          } else {
+            var_dump("$key: $value");
+          }
+        }
+      } else {
+        var_dump("Erro ao obter informações do servidor.");
+      }
+    } else {
+      var_dump("Erro: " . $query->get_error());
     }
   }
 
