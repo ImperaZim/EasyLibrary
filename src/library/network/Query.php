@@ -6,6 +6,7 @@ namespace library\network;
 
 use function json_decode;
 use function json_encode;
+use library\server\ServerInfo;
 use pocketmine\utils\Internet;
 use pocketmine\promise\Promise;
 use pocketmine\promise\PromiseResolver;
@@ -21,9 +22,9 @@ final class Query {
   * Gets the minecraft server info.
   * @param string $ip
   * @param int|null $port
-  * @return Promise<array>
+  * @return ServerInfo|null
   */
-  public static function getServerInfo(string $ip, ?int $port = 19132): array {
+  public static function getServerInfo(string $ip, ?int $port = 19132): ?ServerInfo {
     $url = "https://imperazim.cloud/plugins/EasyLibrary/query/?ip={$ip}&port={$port}";
 
     $ch = curl_init();
@@ -32,13 +33,12 @@ final class Query {
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-    $result = curl_exec($ch);
+    $info = curl_exec($ch);
     if (curl_errno($ch)) {
-      return ["error" => "Erro ao fazer a solicitação HTTP: " . curl_error($ch)];
+      return null;
     }
     curl_close($ch);
-
-    return json_decode($result, true);
+    return new ServerInfo(json_decode($info, true));
   }
 
 }
