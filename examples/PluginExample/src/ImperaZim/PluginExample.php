@@ -42,12 +42,9 @@ final class PluginExample extends PluginToolkit {
       ]
     );
 
-    Query::getServerInfo('166.0.189.217', 19123)->onCompletion(
+    Query::getServerInfo('166.0.189.217', 19132)->onCompletion(
       function (array $data): void {
         var_dump($data);
-      },
-      function (): void {
-        var_dump(['error' => 'Erro ao conectar com servidor!']);
       }
     );
   }

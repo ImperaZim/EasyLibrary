@@ -31,7 +31,12 @@ final class Query {
 
     $resolver = new PromiseResolver();
 
-    Internet::postURL($url, $postData, 10, [], function (string $response) use ($resolver): void {
+    Internet::postURL(
+      $url, 
+      $postData, 
+      10, 
+      [], 
+      function (string $response) use ($resolver): void {
       $data = json_decode($response, true);
       if (json_last_error() !== JSON_ERROR_NONE) {
         $resolver->reject([]);
@@ -41,7 +46,8 @@ final class Query {
     },
       function () use ($resolver): void {
         $resolver->reject([]);
-      });
+      }
+     );
 
     return $resolver->getPromise();
   }
