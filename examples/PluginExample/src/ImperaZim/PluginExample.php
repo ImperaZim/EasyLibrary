@@ -41,8 +41,6 @@ final class PluginExample extends PluginToolkit {
         MenuExampleCommand::base()
       ]
     );
-    
-    var_dump(Query::getServerInfo('166.0.189.217', 19132));
   }
 
   /**
