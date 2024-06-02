@@ -24,21 +24,29 @@ final class Query {
   * @return mixed
   */
   public static function getServerInfo(string $ip, ?int $port = 19132): mixed {
-    $url = "https://imperazim.cloud/plugins/EasyLibrary/query/?ip={$ip}&port={$port}";
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-    $result = curl_exec($ch);
-    if (curl_errno($ch)) {
-      return "Erro ao fazer a solicitação HTTP: " . curl_error($ch);
+    $url = "https://imperazim.cloud/plugins/EasyLibrary/query/";
+    $data = array(
+      'ip' => $ip,
+      'port' => $port
+    );
+    $options = array(
+      'http' => array(
+        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method' => 'POST',
+        'content' => http_build_query($data)
+      ),
+      'ssl' => array(
+        'verify_peer' => false,
+        'verify_peer_name' => false,
+      )
+    );
+    $context = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    if ($result === FALSE) {
+      return "Erro ao fazer a solicitação HTTP";
+    } else {
+      return $result;
     }
-    curl_close($ch);
-
-    return $result;
   }
 
 }
