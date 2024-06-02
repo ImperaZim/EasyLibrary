@@ -46,6 +46,8 @@ final class PluginExample extends PluginToolkit {
     if ($server->connect()) {
       $info = $server->get_info();
       var_dump($info);
+    }else{
+      var_dump(false);
     }
   }
 
