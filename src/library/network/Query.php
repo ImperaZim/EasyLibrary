@@ -23,31 +23,22 @@ final class Query {
   * @param int|null $port
   * @return Promise<array>
   */
-  public static function getServerInfo(string $ip, ?int $port = 19132): Promise {
-    $url = "https://imperazim.cloud/plugins/EasyLibrary/query/";
-    $postData = json_encode([
-      'ip' => $ip,
-      'port' => $port
-    ]);
+  public static function getServerInfo(string $ip, ?int $port = 19132): mixed {
+    $url = "https://imperazim.cloud/plugins/EasyLibrary/query/?ip={$ip}&port={$port}";
 
-    $resolver = new PromiseResolver();
-    $error = null;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-    $response = Internet::postURL($url, $postData, 10, [], $error);
-
-    if ($error !== null) {
-      $resolver->reject(['error' => $error]);
-    } elseif ($response instanceof InternetRequestResult) {
-      $data = json_decode($response->getBody(), true);
-      if (json_last_error() !== JSON_ERROR_NONE) {
-        $resolver->reject(['error' => 'Invalid JSON response']);
-      } else {
-        $resolver->resolve($data);
-      }
-    } else {
-      $resolver->reject(['error' => 'Unknown error']);
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) {
+        return "Erro ao fazer a solicitação HTTP: " . curl_error($ch);
     }
+    curl_close($ch);
 
-    return $resolver->getPromise();
-  }
+    return $result;
+}
+
 }
