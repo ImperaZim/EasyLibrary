@@ -6,6 +6,7 @@ namespace internal\invmenu\types;
 
 use Closure;
 use internal\invmenu\InvMenu;
+use internal\invmenu\InvMenuHandler;
 use internal\invmenu\type\InvMenuTypeIds;
 
 /**
