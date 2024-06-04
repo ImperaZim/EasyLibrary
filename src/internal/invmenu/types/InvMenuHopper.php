@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace internal\invmenu\types;
 
 use Closure;
+use internal\invmenu\InvMenu;
 use internal\invmenu\type\InvMenuTypeIds;
 
 /**
