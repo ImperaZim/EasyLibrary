@@ -11,7 +11,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\NpcRequestPacket;
 
-use internal\dialogue\form\DialogueButtonData;
+use internal\dialogue\form\DialogueButton;
 
 /**
 * Class DialogueHooker
@@ -71,7 +71,7 @@ final class DialogueHooker implements Listener {
           if (!is_array($actionDatum)) {
             throw new AssumptionFailedError("Action data should be array");
           }
-          $button = DialogueButtonData::create()
+          $button = DialogueButton::create()
           ->setName((string) $actionDatum["button_name"])
           ->setText((string) $actionDatum["text"])
           ->setMode((int) $actionDatum["mode"])

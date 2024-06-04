@@ -18,7 +18,7 @@ use pocketmine\network\mcpe\protocol\types\entity\ByteMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\StringMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 
-use internal\dialogue\form\DialogueButtonData;
+use internal\dialogue\form\DialogueButton;
 use internal\dialogue\event\DialogueNameChangeEvent;
 
 /**
@@ -33,8 +33,8 @@ final class Dialogue {
   /** @var bool $fakeActor */
   protected bool $fakeActor = true;
 
-  /** @var array $buttonData */
-  protected array $buttonData = [];
+  /** @var array $buttons */
+  protected array $buttons = [];
 
   /** @var string $sceneName */
   protected string $sceneName = "";
@@ -86,7 +86,7 @@ final class Dialogue {
     if (trim($this->sceneName) === "") {
       throw new \InvalidArgumentException("Scene name cannot be empty");
     }
-    $mappedActions = Utils::assumeNotFalse(json_encode(array_map(static fn(DialogueButtonData $data) => $data->jsonSerialize(), $this->buttonData)));
+    $mappedActions = Utils::assumeNotFalse(json_encode(array_map(static fn(DialogueButton $data) => $data->jsonSerialize(), $this->buttons)));
     $skinIndex = [
       "picker_offsets" => [
         "scale" => [0,
@@ -163,7 +163,7 @@ final class Dialogue {
   * @param Player $player
   */
   public function onClose(Player $player) : void {
-    $mappedActions = Utils::assumeNotFalse(json_encode(array_map(static fn(DialogueButtonData $data) => $data->jsonSerialize(), $this->buttonData)));
+    $mappedActions = Utils::assumeNotFalse(json_encode(array_map(static fn(DialogueButton $data) => $data->jsonSerialize(), $this->buttons)));
     $player->getNetworkSession()->sendDataPacket(
       NpcDialoguePacket::create(
         $this->actorId ?? throw new AssumptionFailedError("This method should not be called when actorId is null"),
@@ -182,18 +182,18 @@ final class Dialogue {
   * @param int $buttonId
   */
   public function onButtonClicked(Player $player, int $buttonId) : void {
-    if (!array_key_exists($buttonId, $this->buttonData)) {
+    if (!array_key_exists($buttonId, $this->buttons)) {
       throw new \InvalidArgumentException("Button ID $buttonId does not exist");
     }
-    $button = $this->buttonData[$buttonId];
+    $button = $this->getButton($buttonId);
 
     if ($button->getForceCloseOnClick()) {
       $this->onClose($player);
     }
 
-    $handler = $button->getClickHandler();
-    if ($handler !== null) {
-      $handler($player);
+    $buttonResponse = $button->getResponse();
+    if ($buttonResponse !== null) {
+      $buttonResponse->runAt($player, $button);
     }
   }
 
@@ -212,7 +212,7 @@ final class Dialogue {
 
   /**
   * Add a buttons to the dialogue.
-  * @param DialogueButtonData[] $buttons
+  * @param DialogueButton[] $buttons
   */
   public function addButtons(array $buttons) : void {
     if (!empty($buttons)) {
@@ -224,10 +224,19 @@ final class Dialogue {
 
   /**
   * Add a button to the dialogue.
-  * @param DialogueButtonData $buttonData
+  * @param DialogueButton $dialogueButton
   */
-  public function addButton(DialogueButtonData $buttonData) : void {
-    $this->buttonData[] = $buttonData;
+  public function addButton(DialogueButton $dialogueButton) : void {
+    $this->buttons[] = $dialogueButton;
+  }
+
+  /**
+  * Gets the button by id.
+  * @param int $buttonId.
+  * @return DialogueButton.
+  */
+  public function getButton(int $buttonId) : DialogueButton {
+    return $this->buttons[$buttonId];
   }
 
   /**

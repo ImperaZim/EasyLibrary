@@ -26,7 +26,7 @@ class DialogueMenu extends Dialogue {
     private ?string $dialogueBody = '',
     private ?string $sceneName = '',
     private array $buttons = [],
-    private ?Entity $entityTarget
+    private ?Entity $entityTarget = null
   ) {
     parent::__construct();
     $this->setNpcName($npcName);

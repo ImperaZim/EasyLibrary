@@ -9,10 +9,10 @@ use pocketmine\player\Player;
 use pocketmine\utils\AssumptionFailedError;
 
 /**
-* Class DialogueButtonData
+* Class DialogueButton
 * @package internal\dialogue\form
 */
-final class DialogueButtonData implements \JsonSerializable {
+final class DialogueButton implements \JsonSerializable {
 
   public const TYPE_URL = 0;
   public const TYPE_COMMAND = 1;
@@ -24,44 +24,27 @@ final class DialogueButtonData implements \JsonSerializable {
   public const CMD_VER = 17;
 
   /**
-  * @var string
-  */
-  protected string $name = "";
-
-  /**
-  * @var string
-  */
-  protected string $text = "";
-
-  /**
   * @var array|null
   */
   protected ?array $data = [];
+  
+  /**
+  * Button constructor.
+  */
+  public function __construct(
+    private ?string $name = '',
+    private ?string $text = '',
+    private ?array $links = [],
+    private ?int $mode = self::MODE_BUTTON,
+    private ?int $type = self::TYPE_COMMAND,
+    private ?bool $forceClose = false,
+    private ?DialogueButtonResponse $buttonResponse = null
+  ) {}
 
   /**
-  * @var int
+  * @return DialogueButton
   */
-  protected int $mode = self::MODE_BUTTON;
-
-  /**
-  * @var int
-  */
-  protected int $type = self::TYPE_COMMAND;
-
-  /**
-  * @var bool
-  */
-  protected bool $forceCloseOnClick = false;
-
-  /**
-  * @var \Closure|null
-  */
-  protected ?\Closure $clickHandler = null;
-
-  /**
-  * @return DialogueButtonData
-  */
-  public static function create() : DialogueButtonData {
+  public static function create() : DialogueButton {
     return new self;
   }
 
@@ -70,6 +53,14 @@ final class DialogueButtonData implements \JsonSerializable {
   * @return $this
   */
   public function setName(string $name) : self {
+    $this->name = $name;
+    return $this;
+  }
+
+  /**
+  * @return string
+  */
+  public function getName() : self {
     $this->name = $name;
     return $this;
   }
@@ -117,34 +108,34 @@ final class DialogueButtonData implements \JsonSerializable {
   }
 
   /**
-  * @param bool $forceCloseOnClick
+  * @param bool $forceClose
   * @return $this
   * @throws AssumptionFailedError
   */
-  public function setForceCloseOnClick(bool $forceCloseOnClick) : self {
+  public function setForceCloseOnClick(bool $forceClose) : self {
     if ($this->mode !== self::MODE_BUTTON) {
       throw new AssumptionFailedError("Cannot set force close on click when mode is not button");
     }
-    $this->forceCloseOnClick = $forceCloseOnClick;
+    $this->forceCloseOnClick = $forceClose;
     return $this;
   }
 
   /**
-  * @param \Closure $clickHandler
+  * @param DialogueButtonResponse $buttonResponse
   * @return $this
   * @throws AssumptionFailedError
   */
-  public function setClickHandler(\Closure $clickHandler) : self {
-    Utils::validateCallableSignature(static function(Player $player) : void {}, $clickHandler);
-    $this->clickHandler = $clickHandler;
+  public function setResponse(DialogueButtonResponse $buttonResponse) : self {
+    Utils::validateCallableSignature(static function(Player $player, DialogueButton $button) : void {}, $buttonResponse);
+    $this->buttonResponse = $buttonResponse;
     return $this;
   }
 
   /**
-  * @return \Closure|null
+  * @return DialogueButtonResponse|null
   */
-  public function getClickHandler() : ?\Closure {
-    return $this->clickHandler;
+  public function getResponse() : ?DialogueButtonResponse {
+    return $this->buttonResponse;
   }
 
   /**
