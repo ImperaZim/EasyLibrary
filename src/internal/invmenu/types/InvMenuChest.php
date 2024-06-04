@@ -21,8 +21,8 @@ class InvMenuChest extends InvMenu {
   * @param (Closure(Player, Inventory) : void)|null
   */
   public function __construct(
-    string $name,
-    array $contents = [],
+    ?string $name = '',
+    ?array $contents = [],
     private ?Closure $onInteract = null,
     private ?Closure $onClose = null
   ) {

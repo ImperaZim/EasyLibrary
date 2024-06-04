@@ -52,6 +52,7 @@ final class ExampleMenu extends Menu {
       // save as [json_encode(ItemFactory::jsonSerialize($item))]
       $contents[] = ItemFactory::jsonDeserialize(json_decode($itemBlockEncoded));
     }
+    $contents[13] = VanillaItems::DIAMOND()->setCustomName('§bCustom Name')->setCount(1);
     return $contents;
   }
 
