@@ -54,7 +54,7 @@ abstract class Menu {
   /**
   * Construct and set up the menu.
   */
-  protected abstract function structure(): void;
+  protected abstract function structure(): IMenu;
 
   /**
   * Get processed data by key.
