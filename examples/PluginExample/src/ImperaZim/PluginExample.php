@@ -9,6 +9,7 @@ use library\network\Query;
 use library\plugin\PluginToolkit;
 use ImperaZim\commands\FormExampleCommand;
 use ImperaZim\commands\MenuExampleCommand;
+use ImperaZim\commands\DialogueExampleCommand;
 
 use pocketmine\utils\SingletonTrait;
 
@@ -38,7 +39,8 @@ final class PluginExample extends PluginToolkit {
       fallbackPrefix: 'PluginExample',
       commands: [
         FormExampleCommand::base(),
-        MenuExampleCommand::base()
+        MenuExampleCommand::base(),
+        DialogueExampleCommand::base()
       ]
     );
   }

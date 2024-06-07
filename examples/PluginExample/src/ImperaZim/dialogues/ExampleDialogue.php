@@ -35,7 +35,7 @@ final class ExampleDialogue extends Dialogue {
   * @return string
   */
   private function getNpcName(): string {
-    return PluginExample::getSettings('dialogue_title', 'Example Dialogue');
+    return PluginExample::getSettings('dialogue_title', 'Example Dialogue Name');
   }
 
   /**
@@ -60,7 +60,7 @@ final class ExampleDialogue extends Dialogue {
   */
   private function getButtons(): array {
     $buttons = [];
-    foreach (PluginExample::getSettings('long_form_buttons', []) as $button_value => $data) {
+    foreach (PluginExample::getSettings('dialogue_form_buttons', []) as $index => $data) {
       $buttons[] = new DialogueButton(
         name: $data['name'],
         text: $data['text'],
