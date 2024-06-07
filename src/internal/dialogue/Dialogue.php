@@ -25,7 +25,7 @@ use internal\dialogue\event\DialogueNameChangeEvent;
 * Class Dialogue
 * @package internal\dialogue
 */
-final class Dialogue {
+class Dialogue {
 
   /** @var int|null $actorId */
   protected ?int $actorId = null;
