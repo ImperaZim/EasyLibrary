@@ -54,7 +54,7 @@ abstract class Dialogue {
   /**
   * Construct and set up the dialogue.
   */
-  protected abstract function structure(): void;
+  protected abstract function structure(): IDialogue;
 
   /**
   * Get processed data by key.
