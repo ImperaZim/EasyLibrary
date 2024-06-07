@@ -64,7 +64,7 @@ final class ExampleDialogue extends Dialogue {
       $buttons[] = new DialogueButton(
         name: $data['name'],
         text: $data['text'],
-        clickHandler: new DialogueButtonResponse(
+        buttonResponse: new DialogueButtonResponse(
           function(Player $player, DialogueButton $button) : void {
             $player->sendMessage("you clicked {$button->getName()}");
           }
