@@ -20,13 +20,13 @@ class DialogueMenu extends Dialogue {
   /**
   * DialogueMenu constructor.
   * @param string $npcName
-  * @param string|null $dialogueBody
+  * @array string|null $dialogueBody
   * @param string|null $sceneName
   * @param array $buttons
   */
   public function __construct(
     string $npcName,
-    ?string $dialogueBody = '',
+    ?array $dialogueBody = '',
     ?string $sceneName = '',
     array $buttons = [],
     ?Entity $entityTarget = null
