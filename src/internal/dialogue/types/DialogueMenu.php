@@ -13,6 +13,9 @@ use internal\dialogue\Dialogue;
 * @package internal\dialogue\types
 */
 class DialogueMenu extends Dialogue {
+  
+  /** #var Entity|null */ 
+  private ?Entity $entityTarget;
 
   /**
   * DialogueMenu constructor.
@@ -22,13 +25,14 @@ class DialogueMenu extends Dialogue {
   * @param array $buttons
   */
   public function __construct(
-    private string $npcName,
-    private ?string $dialogueBody = '',
-    private ?string $sceneName = '',
-    private array $buttons = [],
-    private ?Entity $entityTarget = null
+    string $npcName,
+    ?string $dialogueBody = '',
+    ?string $sceneName = '',
+    array $buttons = [],
+    ?Entity $entityTarget = null
   ) {
     parent::__construct();
+    $this->entityTarget = $entityTarget;
     $this->setNpcName($npcName);
     $this->setDialogueBody($dialogueBody);
     $this->setSceneName($sceneName);
