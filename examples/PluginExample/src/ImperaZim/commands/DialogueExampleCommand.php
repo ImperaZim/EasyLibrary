@@ -6,7 +6,7 @@ namespace ImperaZim\commands;
 
 use ImperaZim\PluginExample;
 use internal\commando\BaseCommand;
-use ImperaZim\dialogue\ExampleDialogue;
+use ImperaZim\dialogues\ExampleDialogue;
 
 use pocketmine\player\Player;
 
