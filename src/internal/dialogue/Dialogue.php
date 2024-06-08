@@ -39,14 +39,19 @@ class Dialogue {
   /** @var string $sceneName */
   protected string $sceneName = "";
 
-  /** @var string $npcName */
-  protected string $npcName = "";
-
   /** @var string $dialogueBody */
   protected string $dialogueBody = "";
 
   /** @var int $pickerOffset */
   private int $pickerOffset = -50;
+  
+  /**
+  * Dialogue constructor.
+  * @param Title $title The title of the form.
+  */
+  public function __construct(
+    protected ?string $npcName = ''
+  ) {}
 
   /**
   * Set the scene name for the dialogue.

@@ -25,15 +25,14 @@ class DialogueMenu extends Dialogue {
   * @param array $buttons
   */
   public function __construct(
-    string $npcName,
+    ?string $npcName = '',
     ?array $dialogueBody = [],
     ?string $sceneName = '',
-    array $buttons = [],
+    ?array $buttons = [],
     ?Entity $entityTarget = null
   ) {
-    parent::__construct();
+    parent::__construct($npcName);
     $this->entityTarget = $entityTarget;
-    $this->setNpcName($npcName);
     $this->setDialogueBody($dialogueBody);
     $this->setSceneName($sceneName);
     if (!empty($buttons)) {
