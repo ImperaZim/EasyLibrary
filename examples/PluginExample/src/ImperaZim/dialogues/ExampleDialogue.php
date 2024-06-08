@@ -42,7 +42,7 @@ final class ExampleDialogue extends Dialogue {
   * Retrieves the text for the body.
   * @return string
   */
-  private function getDialogueBody(): array {
+  private function getDialogueBody(): string {
     return PluginExample::getSettings('dialogue_body', 'Example Dialogue Body');
   }
 
