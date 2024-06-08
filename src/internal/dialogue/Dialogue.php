@@ -120,7 +120,7 @@ class Dialogue {
           $player->getPosition()->add(0, 10, 0),
           null,
           $player->getLocation()->getPitch(),
-          $player->Location()->getYaw(),
+          $player->getLocation()->getYaw(),
           $player->getLocation()->getYaw(),
           $player->getLocation()->getYaw(),
           [],
