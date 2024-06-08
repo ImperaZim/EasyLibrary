@@ -26,7 +26,7 @@ class DialogueMenu extends Dialogue {
   */
   public function __construct(
     ?string $npcName = '',
-    ?strinh $dialogueBody = [],
+    ?strinh $dialogueBody = '',
     ?string $sceneName = '',
     ?array $buttons = [],
     ?Entity $entityTarget = null
