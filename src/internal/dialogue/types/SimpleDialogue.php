@@ -200,9 +200,9 @@ final class SimpleDialogue extends Dialogue {
   * @param int $id The index of the clicked button.
   */
   public function onPlayerRespond(Player $player, int $id) : void {
-    var_dump($id);
     $button = $this->getButton($id);
     $buttonResponse = $button->getResponse();
+    var_dump($buttonResponse);
     if ($buttonResponse !== null) {
       $buttonResponse->runAt($player, $button);
     }
@@ -214,7 +214,6 @@ final class SimpleDialogue extends Dialogue {
   * @return void
   */
   public function onPlayerClose(Player $player) : void {
-    // DialogueHooker::remove($player);
     $response = $this->getCloseListener();
     if ($response !== null) {
       $response($player);

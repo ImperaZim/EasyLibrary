@@ -69,19 +69,15 @@ final class PlayerManager {
         return;
       }
       
-      var_dump("Call DataPacketReceiveEvent 1");
-
       $player = $event->getOrigin()->getPlayer();
       if ($player === null) {
         return;
       }
-      var_dump("Call DataPacketReceiveEvent 2");
 
       $instance = $this->getPlayerNullable($player);
       if ($instance === null) {
         return;
       }
-      var_dump("Call DataPacketReceiveEvent 3");
 
       if ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_ACTION) {
         $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
@@ -90,7 +86,6 @@ final class PlayerManager {
       } elseif ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_CLOSING_COMMANDS) {
         $instance->onDialogueClose();
       }
-      var_dump("Call DataPacketReceiveEvent 4 [{$packet->requestType}]");
     },
       EventPriority::MONITOR,
       $plugin);
