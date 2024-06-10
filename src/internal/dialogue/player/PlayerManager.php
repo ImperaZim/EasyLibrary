@@ -149,10 +149,6 @@ final class PlayerManager implements Listener {
   * @return PlayerInstance The corresponding player instance.
   */
   public function getPlayer(Player $player) : PlayerInstance {
-    if (!isset($this->players[$player->getId()])) {
-      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
-    }
-    isset($this->players[$player->getId()]) || var_dump('Call getPlayer');
     return $this->players[$player->getId()];
   }
 
@@ -162,10 +158,6 @@ final class PlayerManager implements Listener {
   * @return PlayerInstance|null The corresponding player instance or null.
   */
   public function getPlayerNullable(Player $player) : ?PlayerInstance {
-    if (!isset($this->players[$player->getId()])) {
-      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
-    }
-    isset($this->players[$player->getId()]) || var_dump('Call getPlayerNullable');
     return $this->players[$player->getId()] ?? null;
   }
 
