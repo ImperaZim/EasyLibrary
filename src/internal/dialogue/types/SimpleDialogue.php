@@ -200,6 +200,7 @@ final class SimpleDialogue extends Dialogue {
   * @param int $id The index of the clicked button.
   */
   public function onPlayerRespond(Player $player, int $id) : void {
+    var_dump($id);
     $button = $this->getButton($id);
     $buttonResponse = $button->getResponse();
     if ($buttonResponse !== null) {
