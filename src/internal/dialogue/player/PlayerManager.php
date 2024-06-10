@@ -90,7 +90,7 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event): void {
-    // var_dump($event->getEventName());
+    var_dump($event->getEventName());
     static $processing = false;
     if ($processing) {
       return;
