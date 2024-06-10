@@ -4,12 +4,14 @@ declare(strict_types = 1);
 
 namespace ImperaZim\dialogues;
 
+use pocketmine\player\Player;
+
 use ImperaZim\PluginExample;
 use library\interface\Dialogue;
-use internal\dialogue\types\DialogueMenu;
-use internal\dialogue\form\DialogueButton;
+use internal\dialogue\types\SimpleDialogue;
 use internal\dialogue\Dialogue as IDialogue;
-use internal\dialogue\form\DialogueButtonResponse;
+use internal\dialogue\elements\DialogueButton;
+use internal\dialogue\interaction\DialogueButtonResponse;
 
 /**
 * Class ExampleDialogue
@@ -21,54 +23,61 @@ final class ExampleDialogue extends Dialogue {
   * Generates and sends the menu to the player.
   */
   public function structure(): IDialogue {
-    return new DialogueMenu(
-      npcName: $this->getNpcName(),
-      dialogueBody: $this->getDialogueBody(),
-      sceneName: $this->getSceneName(),
+    return new SimpleDialogue(
+      name: $this->getName(),
+      text: $this->getText(),
+      texture: $this->getTexture(),
       buttons: $this->getButtons(),
-      entityTarget: null
+      onResponse: null,
+      onClose: null
     );
   }
 
   /**
-  * Retrieves the name for the menu.
+  * Retrieves the name for the dialogue.
   * @return string
   */
-  private function getNpcName(): string {
-    return PluginExample::getSettings('dialogue_title', 'Example Dialogue Name');
+  private function getName(): string {
+    return PluginExample::getSettings('dialogue_name', 'Example Dialogue Name');
   }
 
   /**
-  * Retrieves the text for the body.
+  * Retrieves the text for the dialogue.
   * @return string
   */
-  private function getDialogueBody(): string {
-    return PluginExample::getSettings('dialogue_body', 'Example Dialogue Body');
+  private function getText(): string {
+    return PluginExample::getSettings('dialogue_text', 'Example Dialogue Text');
   }
 
   /**
-  * Retrieves the name for the scene.
-  * @return string
+  * Retrieves the texture for the scene.
+  * @return array
   */
-  private function getSceneName(): string {
-    return PluginExample::getSettings('dialogue_scene_name', 'Example Dialogue Scene Name');
+  private function getTexture(): array {
+    return [
+      'type' => PluginExample::getSettings('dialogue_texture.type', 'dialogue:default'),
+      'data' => PluginExample::getSettings('dialogue_texture.typeId', 0)
+    ];
   }
 
   /**
   * Retrieves an array of buttons for each available class.
-  * @return Button[]
+  * @return SimpleDialogueButton[]
   */
   private function getButtons(): array {
     $buttons = [];
-    foreach (PluginExample::getSettings('dialogue_form_buttons', []) as $index => $data) {
+    foreach (PluginExample::getSettings('dialogue_buttons', []) as $index => $name) {
       $buttons[] = new DialogueButton(
-        name: $data['name'],
-        text: $data['text'],
-        buttonResponse: new DialogueButtonResponse(
-          function(Player $player, DialogueButton $button) : void {
+        name: $name,
+        text: '',
+        data: null,
+        mode: 0,
+        type: 1,
+        onclick: new DialogueButtonResponse(
+          function (Player $player, DialogueButton $button): void {
             $player->sendMessage("you clicked {$button->getName()}");
           }
-        )
+        ),
       );
     }
     return $buttons;

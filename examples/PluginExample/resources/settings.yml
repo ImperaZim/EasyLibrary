@@ -49,13 +49,13 @@ dialogue_command_name: ['dialogue']
 dialogue_command_description: '§7Dialogue example command!' 
 
   # Dialogue 
-dialogue_title: 'Dialogue Example Name'
-dialogue_body: 'Dialogue Example Body' 
-dialogue_scene_name: 'Dialogue Example Scene Name'
-dialogue_form_buttons:
-  0: 
-    name: 'Button 1'
-    text: 'Button Text 1'
-  1: 
-    name: 'Button 2'
-    text: 'Button Text 2'
+dialogue_name: 'Dialogue Example Name'
+dialogue_text: 'Dialogue Example Text' 
+dialogue_texture: 
+  # In [DialogueTextureTypes]
+  type: 'dialogue:default'
+  # In [DefaultDialogueTexture]
+  typeId: 0
+dialogue_buttons:
+  0: 'Button 1'
+  1: 'Button 2'

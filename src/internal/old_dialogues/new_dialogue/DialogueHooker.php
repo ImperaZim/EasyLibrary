@@ -14,12 +14,11 @@ use internal\dialogue\player\PlayerManager;
 */
 final class DialogueHooker {
 
-  /** @var PlayerManager|null */
   private ?PlayerManager $manager = null;
 
   /**
   * DialogueHooker constructor.
-  * @param PluginBase|null $registrant Plugin registrant.
+  * @param PluginBase|null $registrant
   */
   public function __construct(private ?PluginBase $registrant = null) {
     if ($registrant != null) {
@@ -27,22 +26,14 @@ final class DialogueHooker {
     }
   }
 
-  /**
-  * Checks if the dialogue is registered.
-  * @return bool Returns true if the dialogue is registered, false otherwise.
-  */
   public function isRegistered() : bool {
     return $this->manager !== null;
   }
 
-  /**
-  * Registers the dialogue.
-  * @param PluginBase|null $registrant Plugin registrant.
-  * @throws BadMethodCallException If the dialogue is already registered.
-  */
   public function register(?PluginBase $registrant) : void {
     $this->manager === null || throw new BadMethodCallException("Dialogue is already registered");
     $this->manager = new PlayerManager();
     $this->manager->init($registrant);
   }
+
 }
