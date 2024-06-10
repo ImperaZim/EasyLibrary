@@ -70,7 +70,7 @@ final class PlayerManager implements Listener {
     var_dump('Call DataPacketReceiveEvent');
     $packet = $event->getPacket();
     if (!($packet instanceof RequestPacket)) {
-      var_dump('Error (DataPacketReceiveEvent::$event) is not a RequestPacket');
+      var_dump('Error (DataPacketReceiveEvent::$event) is not a RequestPacket ' . "\" is a {$packet->getName()}\"");
       return;
     }
     $player = $event->getOrigin()->getPlayer();
