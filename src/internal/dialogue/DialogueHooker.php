@@ -58,7 +58,7 @@ final class DialogueHooker {
   * @throws BadMethodCallException If the dialogue is already registered.
   */
   public function register() : void {
-    if (!$hooker->isRegistered()) {
+    if (!$this->isRegistered()) {
       throw new BadMethodCallException("Dialogue is already registered");
     }
     $this->setPlayerManager(new PlayerManager());
