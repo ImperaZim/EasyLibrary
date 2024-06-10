@@ -80,7 +80,8 @@ final class PlayerManager implements Listener {
     if ($instance === null) {
       return;
     }
-    if ($packet->requestType === RequestPacket::REQUEST_EXECUTE_ACTION) {
+    var_dump($packet->requestType);
+    if ($packet->requestType === RequestPacket::REQUEST_EXECUTE_ACTION) { 
       $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
     } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
       $instance->onDialogueReceive();
@@ -90,7 +91,7 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event): void {
-    var_dump($event->getEventName());
+    // var_dump($event->getEventName());
     static $processing = false;
     if ($processing) {
       return;
@@ -161,6 +162,9 @@ final class PlayerManager implements Listener {
   * @return PlayerInstance|null The corresponding player instance or null.
   */
   public function getPlayerNullable(Player $player) : ?PlayerInstance {
+    if (!isset($this->players[$player->getId()])) {
+      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
+    }
     return $this->players[$player->getId()] ?? null;
   }
 
