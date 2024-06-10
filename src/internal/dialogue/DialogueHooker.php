@@ -15,7 +15,7 @@ use internal\dialogue\player\PlayerManager;
 final class DialogueHooker {
 
   /** @var PlayerManager|null */
-  private ?PlayerManager $manager = null;
+  public ?PlayerManager $manager = null;
 
   /**
   * DialogueHooker constructor.
