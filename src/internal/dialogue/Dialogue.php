@@ -24,7 +24,6 @@ abstract class Dialogue {
 
   /**
   * Gets the name of the dialogue.
-  * @param string $name The new name of the dialogue.
   * @return string
   */
   public function getName() : string {
@@ -34,6 +33,7 @@ abstract class Dialogue {
   /**
   * Sets the name of the dialogue.
   * @param string $name The new name of the dialogue.
+  * @return self
   */
   public function setName(string $name) : self {
     $this->name = $name;

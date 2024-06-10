@@ -18,21 +18,21 @@ use internal\dialogue\textures\DefaultDialogueTexture;
 final class SimpleDialogue extends Dialogue {
 
   /**
-  * @param string $name
-  * @param string $text
-  * @param DialogueTexture $texture
-  * @param list<DialogueButton> $buttons
-  * @param (Closure(Player, int) : void)|null $onResponse
-  * @param (Closure(Player) : void)|null $onClose
-  * @param (Closure(Player, int) : void)|null $onInvalidResponse
-  * @param (Closure(Player) : void)|null $onDisconnect
+  * SimpleDialogue Constructor.
+  * @param string|null $name The name of the dialogue.
+  * @param string|null $text The text displayed in the dialogue.
+  * @param array|null $texture The texture of the dialogue.
+  * @param array|null $buttons The buttons of the dialogue.
+  * @param Closure|null $onResponse The action to be executed when the player responds.
+  * @param Closure|null $onClose The action to be executed when the dialogue is closed.
+  * @param Closure|null $onInvalidResponse The action to be executed when the player's response is invalid.
+  * @param Closure|null $onDisconnect The action to be executed when the player disconnects.
   */
   public function __construct(
     private ?string $name = "Default name",
     private ?string $text = "Default text",
     private ?array $texture = [],
     private ?array $buttons = [],
-    private ?Closure $onResponse = null,
     private ?Closure $onClose = null,
     private ?Closure $onInvalidResponse = null,
     private ?Closure $onDisconnect = null
@@ -46,65 +46,107 @@ final class SimpleDialogue extends Dialogue {
     parent::__construct($name);
   }
 
-  public function setName(string $name) : self {
-    $this->name = $name;
-    return $this;
+  /**
+  * Gets the text of the dialogue.
+  * @return string
+  */
+  public function getText() : string {
+    return $this->text;
   }
 
+  /**
+  * Sets the text of the dialogue.
+  * @param string $text The text of the dialogue.
+  * @return self
+  */
   public function setText(string $text) : self {
     $this->text = $text;
     return $this;
   }
 
+  /**
+  * Loads the texture of the dialogue.
+  * @param array $texture The texture of the dialogue.
+  */
   public function loadTexture(array $texture) : void {
-    switch ($texture['type']) {
-      case DialogueTextureTypes::ENTITY:
-        $this->setTexture(new EntityDialogueTexture($texture['data']));
-        break;
-      case DialogueTextureTypes::SKIN:
-        if (!isset($texture['offset'])) {
-          $this->setTexture(new PlayerDialogueTexture($texture['data']));
-        } else {
-          $parent = DialogueTextureOffset::defaultPlayerPortrait();
-          $offset = new DialogueTextureOffset(2.0, 2.0, 2.0, $parent->translate_x, $parent->translate_y, $parent->translate_z);
-          $this->setTexture(new PlayerDialogueTexture($texture['data'], null, $offset));
-        }
-        break;
+    $textureTypes = [
+      DialogueTextureTypes::ENTITY => EntityDialogueTexture::class,
+      DialogueTextureTypes::SKIN => PlayerDialogueTexture::class,
+      DialogueTextureTypes::DEFAULT => DefaultDialogueTexture::class
+    ];
+    if (isset($texture['type'], $texture['data'])) {
+      $textureType = $texture['type'];
 
-      case DialogueTextureTypes::DEFAULT:
-      default:
-        $id = DefaultDialogueTexture::TEXTURE__10;
-        $this->setTexture(new DefaultDialogueTexture($id));
-        break;
+      if (array_key_exists($textureType, $textureTypes)) {
+        $offset = null;
+        $textureClass = $textureTypes[$textureType];
+        if ($textureType === DialogueTextureTypes::SKIN && isset($texture['offset'])) {
+          $parent = DialogueTextureOffset::defaultPlayerPortrait();
+          $offset = new DialogueTextureOffset(
+            2.0,
+            2.0,
+            2.0,
+            $parent->translate_x,
+            $parent->translate_y,
+            $parent->translate_z
+          );
+        }
+        $this->setTexture(new $textureClass($texture['data'], null, $offset));
+      } else {
+        $this->setTexture(new DefaultDialogueTexture(DefaultDialogueTexture::TEXTURE__10));
+      }
+    } else {
+      $this->setTexture(new DefaultDialogueTexture(DefaultDialogueTexture::TEXTURE__10));
     }
-    return $this;
   }
 
+  /**
+  * Gets the texture of the dialogue.
+  * @return DialogueTexture The texture of the dialogue.
+  */
   public function getTexture() : DialogueTexture {
     return $this->texture;
   }
 
+  /**
+  * Sets the texture of the dialogue.
+  * @param DialogueTexture $texture The texture of the dialogue.
+  * @return self
+  */
   public function setTexture(DialogueTexture $texture) : self {
     $this->texture = $texture;
     return $this;
   }
 
+  /**
+  * Gets the buttons of the dialogue.
+  * @return array The buttons of the dialogue.
+  */
   public function getButtons() : array {
     return $this->buttons;
   }
 
   /**
-  * @param list<DialogueButton> $buttons
+  * Adds the buttons of the dialogue.
+  * @param array $buttons The buttons of the dialogue.
   * @return self
   */
-  public function setButtons(array $buttons) : self {
+  public function addButtons(array $buttons) : self {
     $this->buttons = $buttons;
     return $this;
   }
 
   /**
-  * @param DialogueButton $name
-  * @param (Closure(Player) : void)|null $on_click
+  * Gets the button from id.
+  * @return DialogueButton|null The button.
+  */
+  public function getButton(int $id) : ?DialogueButton {
+    return $this->buttons[$id] ?? null;
+  }
+
+  /**
+  * Adds a button to the dialogue.
+  * @param DialogueButton $button The button to be added.
   * @return self
   */
   public function addButton(DialogueButton $button) : self {
@@ -113,7 +155,16 @@ final class SimpleDialogue extends Dialogue {
   }
 
   /**
-  * @param (Closure(Player, int) : void)|null $onResponse
+  * Gets the player response listener.
+  * @return Closure|null The action to be executed when the player responds.
+  */
+  public function getResponseListener(): ?Closure {
+    return $this->onResponse;
+  }
+
+  /**
+  * Sets the player response listener.
+  * @param Closure|null $onResponse The action to be executed when the player responds.
   * @return self
   */
   public function setResponseListener(?Closure $onResponse) : self {
@@ -122,7 +173,16 @@ final class SimpleDialogue extends Dialogue {
   }
 
   /**
-  * @param (Closure(Player) : void)|null $onClose
+  * Gets the dialogue close listener.
+  * @return Closure|null The action to be executed when the dialogue is closed.
+  */
+  public function getCloseListener(): ?Closure {
+    return $this->onClose;
+  }
+
+  /**
+  * Sets the dialogue close listener.
+  * @param Closure|null $onClose The action to be executed when the dialogue is closed.
   * @return self
   */
   public function setCloseListener(?Closure $onClose) : self {
@@ -130,25 +190,46 @@ final class SimpleDialogue extends Dialogue {
     return $this;
   }
 
-  public function onPlayerRespond(Player $player, int $button) : void {
-    $this->buttons[$button]->onClick($player);
-    if ($this->onResponse !== null) {
-      ($this->onResponse)($player, $button);
+  /**
+  * Responds when the player responds to the dialogue.
+  * @param Player $player The player who responded.
+  * @param int $id The index of the clicked button.
+  */
+  public function onPlayerRespond(Player $player, int $id) : void {
+    $button = $this->getButton($id);
+    $buttonResponse = $button->getResponse();
+    if ($buttonResponse !== null) {
+      $buttonResponse->runAt($player, $button);
     }
   }
 
-  public function onPlayerRespondInvalid(Player $player, int $invalid_response) : void {
-    if ($this->onInvalidResponse !== null) {
-      ($this->onInvalidResponse)($player, $invalid_response);
-    }
-  }
-
+  /**
+  * Responds when the player closes the dialogue.
+  * @param Player $player The player who closed the dialogue.
+  * @return void
+  */
   public function onPlayerClose(Player $player) : void {
-    if ($this->onClose !== null) {
-      ($this->onClose)($player);
+    $response = $this->getCloseListener();
+    if ($response !== null) {
+      $response($player);
     }
   }
 
+  /**
+  * Responds when the player provides an invalid response.
+  * @param Player $player The player who provided an invalid response.
+  * @param int $invalidResponse The index of the invalid response.
+  */
+  public function onPlayerRespondInvalid(Player $player, int $invalidResponse) : void {
+    if ($this->onInvalidResponse !== null) {
+      ($this->onInvalidResponse)($player, $invalidResponse);
+    }
+  }
+
+  /**
+  * Responds when the player disconnect.
+  * @param Player $player.
+  */
   public function onPlayerDisconnect(Player $player) : void {
     if ($this->onDisconnect !== null) {
       ($this->onDisconnect)($player);

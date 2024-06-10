@@ -28,7 +28,6 @@ final class ExampleDialogue extends Dialogue {
       text: $this->getText(),
       texture: $this->getTexture(),
       buttons: $this->getButtons(),
-      onResponse: null,
       onClose: null
     );
   }
