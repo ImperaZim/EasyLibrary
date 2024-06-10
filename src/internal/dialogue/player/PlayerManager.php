@@ -67,17 +67,20 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketReceive(DataPacketReceiveEvent $event): void {
-    // var_dump($event->getEventName());
+    var_dump('Call DataPacketReceiveEvent');
     $packet = $event->getPacket();
     if (!($packet instanceof RequestPacket)) {
+      var_dump('Error (DataPacketReceiveEvent::$event) is not a RequestPacket');
       return;
     }
     $player = $event->getOrigin()->getPlayer();
     if ($player === null) {
+      var_dump('Error (DataPacketReceiveEvent::getOrigin()::getPlayer()) is null');
       return;
     }
     $instance = $this->getPlayerNullable($player);
     if ($instance === null) {
+      var_dump('Error (PlayerManager::getPlayerNullable()) is null');
       return;
     }
     var_dump($packet->requestType);
@@ -91,7 +94,7 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event): void {
-    // var_dump($event->getEventName());
+    var_dump('Call DataPacketSendEvent');
     static $processing = false;
     if ($processing) {
       return;
@@ -150,6 +153,7 @@ final class PlayerManager implements Listener {
   * @return PlayerInstance The corresponding player instance.
   */
   public function getPlayer(Player $player) : PlayerInstance {
+    var_dump('Call getPlayer');
     if (!isset($this->players[$player->getId()])) {
       $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
     }
@@ -162,6 +166,7 @@ final class PlayerManager implements Listener {
   * @return PlayerInstance|null The corresponding player instance or null.
   */
   public function getPlayerNullable(Player $player) : ?PlayerInstance {
+    var_dump('Call getPlayerNullable');
     if (!isset($this->players[$player->getId()])) {
       $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
     }
