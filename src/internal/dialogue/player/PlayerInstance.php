@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace internal\dialogue\player;
 
-use Logger;
 use pocketmine\math\Vector3;
 use pocketmine\entity\Entity;
 use pocketmine\player\Player;
@@ -39,12 +38,10 @@ final class PlayerInstance{
 	 * PlayerInstance constructor.
 	 * @param PlayerManager $manager The manager for player dialogues.
 	 * @param Player $player The player instance.
-	 * @param Logger $logger The logger instance.
 	 */
 	public function __construct(
 		readonly private PlayerManager $manager,
-		readonly private Player $player,
-		readonly private Logger $logger
+		readonly private Player $player
 	){}
 
 	/**
@@ -126,7 +123,6 @@ final class PlayerInstance{
 	 * @param PlayerDialogueInfo $info The player dialogue info.
 	 */
 	private function sendDialogueInternal(PlayerDialogueInfo $info) : void{
-		$this->logger->debug("Attempting to send dialogue");
 		$session = $this->player->getNetworkSession();
 		$metadata = new EntityMetadataCollection();
 		$metadata->setGenericFlag(EntityMetadataFlags::IMMOBILE, true);
@@ -233,7 +229,6 @@ final class PlayerInstance{
 			return null;
 		}
 
-		$this->logger->debug("Closed dialogue");
 		$current_dialogue = $this->current_dialogue;
 		$current_dialogue->dialogue->onPlayerClose($this->player);
 		$current_dialogue->dialogue = NullDialogue::instance();

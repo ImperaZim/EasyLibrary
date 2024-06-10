@@ -18,7 +18,6 @@ use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
-use PrefixedLogger;
 use RuntimeException;
 use function array_diff_key;
 use function array_map;
@@ -46,7 +45,7 @@ final class PlayerManager {
 
     $manager->registerEvent(PlayerLoginEvent::class, function(PlayerLoginEvent $event) use($plugin) : void {
       $player = $event->getPlayer();
-      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($plugin->getLogger(), $player->getName()));
+      $this->players[$player->getId()] = new PlayerInstance($this, $player);
     }, EventPriority::MONITOR, $plugin);
     $manager->registerEvent(PlayerQuitEvent::class, function(PlayerQuitEvent $event) : void {
       if (isset($this->players[$id = $event->getPlayer()->getId()])) {
