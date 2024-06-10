@@ -53,7 +53,7 @@ final class PluginExample extends PluginToolkit {
   * @return mixed
   */
   public static function getSettings(string $way,
-    mixed $default = '',
+    mixed $default = null,
     array $tags = []): mixed {
     $messages = PluginExample::getInstance()->settings;
     $result = $messages->get($way,
@@ -61,6 +61,9 @@ final class PluginExample extends PluginToolkit {
     if (is_array($result)) {
       return $result;
     } else {
+      if (is_numeric($result)) {
+        return $result;
+      }
       $tags['{PREFIX}'] = $messages->get('prefix', '§l§8(§c!§8)§r');
       return str_replace(array_keys($tags), array_values($tags), $result);
     }
