@@ -12,7 +12,7 @@ use internal\dialogue\Dialogue;
 use internal\dialogue\types\NullDialogue;
 use pocketmine\permission\DefaultPermissions;
 use internal\dialogue\elements\DialogueButton;
-use pocketmine\network\mcpe\protocol\DialoguePacket;
+use pocketmine\network\mcpe\protocol\NpcDialoguePacket;
 use pocketmine\network\mcpe\protocol\RemoveActorPacket;
 use pocketmine\network\mcpe\protocol\types\AbilitiesData;
 use pocketmine\network\mcpe\protocol\types\AbilitiesLayer;
@@ -130,7 +130,7 @@ final class PlayerInstance{
 		$session = $this->player->getNetworkSession();
 		$metadata = new EntityMetadataCollection();
 		$metadata->setGenericFlag(EntityMetadataFlags::IMMOBILE, true);
-		$metadata->setByte(EntityMetadataProperties::HAS__COMPONENT, 1);
+		$metadata->setByte(EntityMetadataProperties::HAS_NPC_COMPONENT, 1);
 		foreach($info->dialogue->getTexture()->apply($info->actor_runtime_id, $metadata, new Vector3(0.0, -2.0, 0.0)) as $packet){
 			$session->sendDataPacket($packet);
 		}
