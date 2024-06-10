@@ -214,7 +214,7 @@ final class SimpleDialogue extends Dialogue {
   * @return void
   */
   public function onPlayerClose(Player $player) : void {
-    DialogueHooker::remove($player);
+    // DialogueHooker::remove($player);
     $response = $this->getCloseListener();
     if ($response !== null) {
       $response($player);
