@@ -81,6 +81,8 @@ final class PlayerManager {
       if ($instance === null) {
         return;
       }
+      
+      var_dump($packet->requestType);
 
       if ($packet->requestType === RequestPacket::REQUEST_EXECUTE_ACTION) {
         $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
