@@ -7,6 +7,7 @@ namespace internal\dialogue\types;
 use Closure;
 use pocketmine\player\Player;
 use internal\dialogue\Dialogue;
+use internal\dialogue\DialogueHooker;
 use internal\dialogue\elements\DialogueButton;
 use internal\dialogue\textures\DialogueTexture;
 use internal\dialogue\textures\DialogueTextureTypes;
@@ -212,6 +213,7 @@ final class SimpleDialogue extends Dialogue {
   * @return void
   */
   public function onPlayerClose(Player $player) : void {
+    DialogueHooker::remove($player);
     $response = $this->getCloseListener();
     if ($response !== null) {
       $response($player);

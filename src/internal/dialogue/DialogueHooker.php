@@ -59,4 +59,34 @@ final class DialogueHooker {
 		self::$manager->getPlayer($player)->sendDialogue($dialogue, $update_existing);
 	}
 	
+	/**
+ * Requests a dialogue interaction with an NPC for a player.
+ * @param Player $player The player requesting the dialogue interaction.
+ * @param string $name The name of the dialogue.
+ * @param string $text The text displayed in the dialogue.
+ * @param NpcDialogueTexture|null $texture The texture of the NPC.
+ * @param array $buttons The buttons available in the dialogue.
+ * @param array|null $button_mapping Optional mapping of button indices to their corresponding actions.
+ * @param bool $update_existing Whether to update an existing dialogue if one is already active.
+ * @return Generator A generator that yields the result of the dialogue request.
+ */
+public static function request(Player $player, string $name, string $text, ?NpcDialogueTexture $texture = null, array $buttons = [], ?array $button_mapping = null, bool $update_existing = false) : Generator {
+    self::$manager !== null || throw new BadMethodCallException("NpcDialog is not registered");
+    $instance = self::$manager->getPlayerNullable($player) ?? throw new NpcDialogueException("Player is not connected", NpcDialogueException::ERR_PLAYER_DISCONNECTED);
+    $texture ??= new DefaultNpcDialogueTexture(DefaultNpcDialogueTexture::TEXTURE_NPC_10);
+    $button_mapping ??= array_keys($buttons);
+    return yield from Await::promise(static fn(Closure $resolve, Closure $reject) => $instance->sendDialogue(new AsyncNpcDialogue($name, $text, $texture, array_values($buttons), $button_mapping, $resolve, $reject), $update_existing));
+}
+
+/**
+ * Removes the current NPC dialogue for a player.
+ * @param Player $player The player whose NPC dialogue should be removed.
+ * @return NpcDialogue|null The removed NPC dialogue, or null if none was removed.
+ */
+public static function remove(Player $player) : ?NpcDialogue {
+    self::$manager !== null || throw new BadMethodCallException("NpcDialog is not registered");
+    return self::$manager->getPlayerNullable($player)?->removeCurrentDialogue()?->dialogue;
+}
+
+	
 }
