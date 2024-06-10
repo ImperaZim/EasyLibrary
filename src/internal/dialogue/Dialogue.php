@@ -18,7 +18,7 @@ abstract class Dialogue {
   * Dialogue constructor.
   * @param string|null $name
   */
-  private function __construct(
+  public function __construct(
     private ?string $name = "Default name",
   ) {}
 
