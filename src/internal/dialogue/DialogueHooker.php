@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace internal\dialogue;
 
 use BadMethodCallException;
+use pocketmine\player\Player;
+use internal\dialogue\Dialogue;
 use pocketmine\plugin\PluginBase;
 use internal\dialogue\player\PlayerManager;
 
@@ -13,9 +15,9 @@ use internal\dialogue\player\PlayerManager;
 * @package internal\dialogue
 */
 final class DialogueHooker {
-
+  
   /** @var PlayerManager|null */
-  private ?PlayerManager $manager = null;
+  private static ?PlayerManager $manager = null;
 
   /**
   * DialogueHooker constructor.
@@ -23,45 +25,38 @@ final class DialogueHooker {
   */
   public function __construct(private ?PluginBase $registrant = null) {
     if ($registrant != null) {
-      $this->register();
+      self::register($registrant);
     }
-  }
-
-  /**
-  * Sets the player manager instance.
-  * @param PlayerManager|null $manager
-  * @return self
-  */
-  public function setPlayerManager(?PlayerManager $manager): self {
-    $this->manager = $manager;
-    return $this;
-  }
-
-  /**
-  * Gets the player manager instance.
-  * @return PlayerManager|null
-  */
-  public function getPlayerManager(): ?PlayerManager {
-    return $this->manager;
   }
 
   /**
   * Checks if the dialogue is registered.
   * @return bool Returns true if the dialogue is registered, false otherwise.
   */
-  public function isRegistered() : bool {
-    return $this->manager !== null;
-  }
+  public static function isRegistered() : bool{
+		return self::$manager !== null;
+	}
+
 
   /**
   * Registers the dialogue.
   * @throws BadMethodCallException If the dialogue is already registered.
   */
-  public function register() : void {
-    if ($this->isRegistered()) {
-      throw new BadMethodCallException("Dialogue is already registered");
-    }
-    $this->setPlayerManager(new PlayerManager());
-    $this->getPlayerManager()->init($this->registrant);
-  }
+	public static function register(?PluginBase $plugin) : void {
+		self::$manager === null || throw new BadMethodCallException("NpcDialog is already registered");
+		self::$manager = new PlayerManager();
+		self::$manager->init($plugin);
+	}
+	
+	/**
+  * Send the dialogue to a player.
+  * @param Player $player
+  * @param Dialogue $dialogue
+  * @param bool $update_existing
+  */
+	public static function send(Player $player, Dialogue $dialogue, bool $update_existing = false) : void{
+		self::$manager !== null || throw new BadMethodCallException("NpcDialog is not registered");
+		self::$manager->getPlayer($player)->sendDialogue($dialogue, $update_existing);
+	}
+	
 }

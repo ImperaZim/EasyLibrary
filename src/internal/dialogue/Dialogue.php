@@ -46,11 +46,6 @@ abstract class Dialogue {
   * @param bool $update_existing
   */
   public function sendTo(Player $player, bool $update = false) : void {
-    $hooker = new DialogueHooker();
-    if ($hooker->isRegistered()) {
-      throw new BadMethodCallException("Dialog is not registered");
-    }
-    $manager = $hooker->getPlayerManager();
-    $manager->getPlayer($player)->sendDialogue($this, $update);
+    DialogueHooker::send($player, $this, $update);
   }
 }
