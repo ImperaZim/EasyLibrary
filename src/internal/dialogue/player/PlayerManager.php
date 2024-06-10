@@ -37,119 +37,107 @@ final class PlayerManager {
 
   public function __construct() {}
 
-  /**
-  * Initializes the player manager and registers event handlers.
-  * @param Plugin $plugin The plugin instance.
-  */
-  public function init(Plugin $plugin) : void {
-    $manager = Server::getInstance()->getPluginManager();
+  public function onPlayerLogin(PlayerLoginEvent $event): void {
+    var_dump($event->getEventName());
+    $player = $event->getPlayer();
+    $this->players[$player->getId()] = new PlayerInstance($this,
+      $player,
+      new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
+  }
 
-    $manager->registerEvent(PlayerLoginEvent::class, function(PlayerLoginEvent $event) use($plugin) : void {
-      $player = $event->getPlayer();
-      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($plugin->getLogger(), $player->getName()));
-    }, EventPriority::MONITOR, $plugin);
-
-    $manager->registerEvent(PlayerQuitEvent::class, function(PlayerQuitEvent $event) : void {
-      if (isset($this->players[$id = $event->getPlayer()->getId()])) {
-        $this->players[$id]->destroy();
-      }
+  public function onPlayerQuit(PlayerQuitEvent $event): void {
+    var_dump($event->getEventName());
+    $player = $event->getPlayer();
+    $id = $player->getId();
+    if (isset($this->players[$id])) {
+      $this->players[$id]->destroy();
       unset($this->players[$id], $this->ticking[$id]);
-    },
-      EventPriority::MONITOR,
-      $plugin);
+    }
+  }
 
-    $plugin->getScheduler()->scheduleRepeatingTask(new ClosureTask(function() : void {
-      foreach ($this->ticking as $id) {
-        if (!$this->players[$id]->tick()) {
-          unset($this->ticking[$id]);
-        }
+  public function onTick(): void {
+    foreach ($this->ticking as $id) {
+      if (!$this->players[$id]->tick()) {
+        unset($this->ticking[$id]);
       }
-    }), 1);
+    }
+  }
 
-    $manager->registerEvent(DataPacketReceiveEvent::class, function(DataPacketReceiveEvent $event) : void {
-      $packet = $event->getPacket();
-      if (!($packet instanceof RequestPacket)) {
-        return;
+  public function onDataPacketReceive(DataPacketReceiveEvent $event): void {
+    var_dump($event->getEventName());
+    $packet = $event->getPacket();
+    if (!($packet instanceof RequestPacket)) {
+      return;
+    }
+    $player = $event->getOrigin()->getPlayer();
+    if ($player === null) {
+      return;
+    }
+    $instance = $this->getPlayerNullable($player);
+    if ($instance === null) {
+      return;
+    }
+    if ($packet->requestType === RequestPacket::REQUEST_EXECUTE_ACTION) {
+      $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
+    } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
+      $instance->onDialogueReceive();
+    } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_CLOSING_COMMANDS) {
+      $instance->onDialogueClose();
+    }
+  }
+
+  public function onDataPacketSend(DataPacketSendEvent $event): void {
+    var_dump($event->getEventName());
+    static $processing = false;
+    if ($processing) {
+      return;
+    }
+
+    $packets = $event->getPackets();
+    $targets = $event->getTargets();
+    $remove = [];
+    foreach ($packets as $packet) {
+      if (!($packet instanceof UpdateAbilitiesPacket)) {
+        continue;
       }
-
-      $player = $event->getOrigin()->getPlayer();
-      if ($player === null) {
-        return;
-      }
-
-      $instance = $this->getPlayerNullable($player);
-      if ($instance === null) {
-        return;
-      }
-      
-      var_dump($packet->requestType);
-
-      if ($packet->requestType === RequestPacket::REQUEST_EXECUTE_ACTION) {
-        $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
-      } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
-        $instance->onDialogueReceive();
-      } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_CLOSING_COMMANDS) {
-        $instance->onDialogueClose();
-      }
-    },
-      EventPriority::MONITOR,
-      $plugin);
-
-    $manager->registerEvent(DataPacketSendEvent::class,
-      function(DataPacketSendEvent $event) : void {
-        static $processing = false;
-        if ($processing) {
-          return;
-        }
-
-        $packets = $event->getPackets();
-        $targets = $event->getTargets();
-        $remove = [];
-        foreach ($packets as $packet) {
-          if (!($packet instanceof UpdateAbilitiesPacket)) {
-            continue;
-          }
-          foreach ($targets as $id => $target) {
-            $player = $target->getPlayer();
-            if ($player === null) {
-              continue;
-            }
-
-            $instance = $this->getPlayerNullable($player);
-            if ($instance === null) {
-              continue;
-            }
-
-            $replacement = $instance->handleUpdateAbilities($packet);
-            if ($replacement === null) {
-              continue;
-            }
-
-            $processing = true;
-            $target->sendDataPacket($replacement);
-            $processing = false;
-            $remove[$id] = null;
-          }
+      foreach ($targets as $id => $target) {
+        $player = $target->getPlayer();
+        if ($player === null) {
+          continue;
         }
 
-        if (count($remove) === 0) {
-          return;
+        $instance = $this->getPlayerNullable($player);
+        if ($instance === null) {
+          continue;
         }
 
-        $event->cancel();
-
-        $new_targets = array_diff_key($targets, $remove);
-        if (count($new_targets) > 0) {
-          $processing = false;
-          NetworkBroadcastUtils::broadcastPackets(array_map(
-            static fn(NetworkSession $session) : Player => $session->getPlayer() ?? throw new RuntimeException("Expected connected player"),
-            $new_targets
-          ), $packets);
-          $processing = true;
+        $replacement = $instance->handleUpdateAbilities($packet);
+        if ($replacement === null) {
+          continue;
         }
-      },
-      EventPriority::MONITOR,
-      $plugin);
+
+        $processing = true;
+        $target->sendDataPacket($replacement);
+        $processing = false;
+        $remove[$id] = null;
+      }
+    }
+
+    if (count($remove) === 0) {
+      return;
+    }
+
+    $event->cancel();
+
+    $new_targets = array_diff_key($targets, $remove);
+    if (count($new_targets) > 0) {
+      $processing = false;
+      NetworkBroadcastUtils::broadcastPackets(array_map(
+        static fn(NetworkSession $session) : Player => $session->getPlayer() ?? throw new RuntimeException("Expected connected player"),
+        $new_targets
+      ), $packets);
+      $processing = true;
+    }
   }
 
   /**
