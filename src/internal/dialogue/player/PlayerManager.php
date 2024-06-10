@@ -45,7 +45,7 @@ final class PlayerManager implements Listener {
   public function onPlayerLogin(PlayerLoginEvent $event): void {
     // var_dump($event->getEventName());
     $player = $event->getPlayer();
-    $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($plugin->getLogger(), $player->getName()));
+    $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
   }
 
   public function onPlayerQuit(PlayerQuitEvent $event): void {
