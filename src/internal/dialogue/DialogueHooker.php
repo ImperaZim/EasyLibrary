@@ -51,8 +51,6 @@ final class DialogueHooker {
 	public static function register(?PluginBase $plugin) : void {
 		self::$manager === null || throw new BadMethodCallException("Dialog is already registered");
 		self::$manager = new PlayerManager($plugin);
-		$manager = Server::getInstance()->getPluginManager();
-    $manager->registerEvents(self::$manager, $plugin);
 	}
 	
 	/**

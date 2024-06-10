@@ -40,16 +40,19 @@ final class PlayerManager implements Listener {
   * PlayerManager Constructor.
   * @param Plugin|null $plugin Plugin registrant.
   */
-  public function __construct(private ?Plugin $plugin = null) {}
+  public function __construct(private ?Plugin $plugin = null) {
+    if ($plugin !== null) {
+      $manager = Server::getInstance()->getPluginManager();
+      $manager->registerEvents($this, $plugin);
+    }
+  }
 
   public function onPlayerLogin(PlayerLoginEvent $event): void {
-    // var_dump($event->getEventName());
     $player = $event->getPlayer();
     $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
   }
 
   public function onPlayerQuit(PlayerQuitEvent $event): void {
-    // var_dump($event->getEventName());
     $player = $event->getPlayer();
     $id = $player->getId();
     if (isset($this->players[$id])) {
@@ -83,7 +86,7 @@ final class PlayerManager implements Listener {
       return;
     }
     var_dump('LoopTest[DataPacketReceiveEvent] 4');
-    if ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_ACTION) { 
+    if ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_ACTION) {
       $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
     } elseif ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
       $instance->onDialogueReceive();
