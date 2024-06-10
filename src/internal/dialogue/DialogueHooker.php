@@ -15,7 +15,7 @@ use internal\dialogue\player\PlayerManager;
 final class DialogueHooker {
 
   /** @var PlayerManager|null */
-  public ?PlayerManager $manager = null;
+  private ?PlayerManager $manager = null;
 
   /**
   * DialogueHooker constructor.
@@ -25,6 +25,24 @@ final class DialogueHooker {
     if ($registrant != null) {
       $this->register();
     }
+  }
+
+  /**
+  * Sets the player manager instance.
+  * @param PlayerManager|null $manager
+  * @return self
+  */
+  public function setPlayerManager(?PlayerManager $manager): self {
+    $this->manager = $manager;
+    return $this;
+  }
+
+  /**
+  * Gets the player manager instance.
+  * @return PlayerManager|null
+  */
+  public function getPlayerManager(): ?PlayerManager {
+    return $this->manager;
   }
 
   /**
@@ -40,8 +58,10 @@ final class DialogueHooker {
   * @throws BadMethodCallException If the dialogue is already registered.
   */
   public function register() : void {
-    $this->manager === null || throw new BadMethodCallException("Dialogue is already registered");
-    $this->manager = new PlayerManager();
-    $this->manager->init($this->registrant);
+    if (!$hooker->isRegistered()) {
+      throw new BadMethodCallException("Dialogue is already registered");
+    }
+    $this->setPlayerManager(new PlayerManager());
+    $this->getPlayerManager()->init($this->registrant);
   }
 }

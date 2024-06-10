@@ -6,9 +6,10 @@ namespace internal\dialogue\types;
 
 use RuntimeException;
 use pocketmine\player\Player;
+use internal\dialogue\Dialogue;
 use internal\dialogue\textures\DialogueTexture;
 
-final class NullDialogue implements Dialogue{
+final class NullDialogue extends Dialogue {
 
 	public static function instance() : self{
 		static $instance = null;
