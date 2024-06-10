@@ -36,7 +36,11 @@ final class PlayerManager implements Listener {
   /** @var array<int, int> */
   private array $ticking = [];
 
-  public function __construct() {}
+  /**
+  * PlayerManager Constructor.
+  * @param Plugin|null $plugin Plugin registrant.
+  */
+  public function __construct(private ?Plugin $plugin = null) {}
 
   public function onPlayerLogin(PlayerLoginEvent $event): void {
     var_dump($event->getEventName());
