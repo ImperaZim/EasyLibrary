@@ -67,19 +67,22 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketReceive(DataPacketReceiveEvent $event): void {
+    var_dump('LoopTest[DataPacketReceiveEvent] 1');
     $packet = $event->getPacket();
     if (!($packet instanceof NpcRequestPacket)) {
       return;
     }
+    var_dump('LoopTest[DataPacketReceiveEvent] 2');
     $player = $event->getOrigin()->getPlayer();
     if ($player === null) {
       return;
     }
+    var_dump('LoopTest[DataPacketReceiveEvent] 3');
     $instance = $this->getPlayerNullable($player);
     if ($instance === null) {
       return;
     }
-    var_dump($packet->requestType);
+    var_dump('LoopTest[DataPacketReceiveEvent] 4');
     if ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_ACTION) { 
       $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
     } elseif ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
@@ -90,10 +93,12 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event): void {
+    var_dump('LoopTest[DataPacketSendEvent] 1');
     static $processing = false;
     if ($processing) {
       return;
     }
+    var_dump('LoopTest[DataPacketSendEvent] 2');
 
     $packets = $event->getPackets();
     $targets = $event->getTargets();
