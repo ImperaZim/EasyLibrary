@@ -37,12 +37,11 @@ final class DialogueHooker {
 
   /**
   * Registers the dialogue.
-  * @param PluginBase|null $registrant Plugin registrant.
   * @throws BadMethodCallException If the dialogue is already registered.
   */
-  public function register(?PluginBase $registrant) : void {
+  public function register() : void {
     $this->manager === null || throw new BadMethodCallException("Dialogue is already registered");
     $this->manager = new PlayerManager();
-    $this->manager->init($registrant);
+    $this->manager->init($this->registrant);
   }
 }
