@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace internal\dialogue\player;
 
+use pocketmine\event\Listener;
 use pocketmine\event\EventPriority;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -27,7 +28,7 @@ use function count;
 * Class PlayerManager
 * @package internal\dialogue\player
 */
-final class PlayerManager {
+final class PlayerManager implements Listener {
 
   /** @var array<int, PlayerInstance> */
   private array $players = [];
