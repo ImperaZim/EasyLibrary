@@ -23,7 +23,7 @@ final class DialogueButton {
   * @param int|null $type The type of the button.
   * @param DialogueButtonResponse|null $onclick The function to execute when the button is clicked.
   */
-  private function __construct(
+  public function __construct(
     private ?string $name = 'Default Name',
     private ?string $text = 'Default Text',
     private ?string $data = '',

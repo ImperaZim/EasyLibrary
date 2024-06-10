@@ -36,7 +36,7 @@ abstract class Dialogue {
     try {
       $dialogue = $this->dialogue;
       if ($dialogue instanceof IDialogue) {
-        $dialogue->sendTo($this->player, $dialogue->getTarget());
+        $dialogue->sendTo($this->player);
       }
     } catch (\Throwable $e) {
       new \crashdump($e);
