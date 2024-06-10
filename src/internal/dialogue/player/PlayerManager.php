@@ -45,9 +45,7 @@ final class PlayerManager implements Listener {
   public function onPlayerLogin(PlayerLoginEvent $event): void {
     // var_dump($event->getEventName());
     $player = $event->getPlayer();
-    $this->players[$player->getId()] = new PlayerInstance($this,
-      $player,
-      new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
+    $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($plugin->getLogger(), $player->getName()));
   }
 
   public function onPlayerQuit(PlayerQuitEvent $event): void {
@@ -151,6 +149,9 @@ final class PlayerManager implements Listener {
   * @return PlayerInstance The corresponding player instance.
   */
   public function getPlayer(Player $player) : PlayerInstance {
+    if (!isset($this->players[$player->getId()])) {
+      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($plugin->getLogger(), $player->getName()));
+    }
     return $this->players[$player->getId()];
   }
 
