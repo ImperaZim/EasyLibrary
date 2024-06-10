@@ -150,7 +150,7 @@ final class PlayerManager implements Listener {
   */
   public function getPlayer(Player $player) : PlayerInstance {
     if (!isset($this->players[$player->getId()])) {
-      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($plugin->getLogger(), $player->getName()));
+      $this->players[$player->getId()] = new PlayerInstance($this, $player, new PrefixedLogger($this->plugin->getLogger(), $player->getName()));
     }
     return $this->players[$player->getId()];
   }
