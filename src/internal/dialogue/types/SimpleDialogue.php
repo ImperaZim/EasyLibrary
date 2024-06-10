@@ -16,6 +16,9 @@ use internal\dialogue\textures\EntityDialogueTexture;
 use internal\dialogue\textures\DefaultDialogueTexture;
 
 final class SimpleDialogue extends Dialogue {
+  
+  /** @var DialogueTexture */ 
+  private ?DialogueTexture $dialogueTexture = null;
 
   /**
   * SimpleDialogue Constructor.
@@ -105,7 +108,7 @@ final class SimpleDialogue extends Dialogue {
   * @return DialogueTexture The texture of the dialogue.
   */
   public function getTexture() : DialogueTexture {
-    return $this->texture;
+    return $this->dialogueTexture;
   }
 
   /**
@@ -114,7 +117,7 @@ final class SimpleDialogue extends Dialogue {
   * @return self
   */
   public function setTexture(DialogueTexture $texture) : self {
-    $this->texture = $texture;
+    $this->dialogueTexture = $texture;
     return $this;
   }
 
