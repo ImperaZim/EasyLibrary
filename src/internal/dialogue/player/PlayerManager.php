@@ -12,7 +12,7 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\NetworkBroadcastUtils;
 use pocketmine\network\mcpe\NetworkSession;
-use pocketmine\network\mcpe\protocol\RequestPacket;
+use pocketmine\network\mcpe\protocol\NpcRequestPacket;
 use pocketmine\network\mcpe\protocol\UpdateAbilitiesPacket;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
@@ -67,28 +67,24 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketReceive(DataPacketReceiveEvent $event): void {
-    var_dump('Call DataPacketReceiveEvent');
     $packet = $event->getPacket();
-    if (!($packet instanceof RequestPacket)) {
-      var_dump('Error (DataPacketReceiveEvent::$event) is not a RequestPacket => ' . "\" is a {$packet->getName()}\"");
+    if (!($packet instanceof NpcRequestPacket)) {
       return;
     }
     $player = $event->getOrigin()->getPlayer();
     if ($player === null) {
-      var_dump('Error (DataPacketReceiveEvent::getOrigin()::getPlayer()) is null');
       return;
     }
     $instance = $this->getPlayerNullable($player);
     if ($instance === null) {
-      var_dump('Error (PlayerManager::getPlayerNullable()) is null');
       return;
     }
     var_dump($packet->requestType);
-    if ($packet->requestType === RequestPacket::REQUEST_EXECUTE_ACTION) { 
+    if ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_ACTION) { 
       $instance->onDialogueRespond($packet->sceneName, $packet->actionIndex);
-    } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
+    } elseif ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_OPENING_COMMANDS) {
       $instance->onDialogueReceive();
-    } elseif ($packet->requestType === RequestPacket::REQUEST_EXECUTE_CLOSING_COMMANDS) {
+    } elseif ($packet->requestType === NpcRequestPacket::REQUEST_EXECUTE_CLOSING_COMMANDS) {
       $instance->onDialogueClose();
     }
   }
