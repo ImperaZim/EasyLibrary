@@ -43,7 +43,7 @@ final class PlayerManager implements Listener {
   public function __construct(private ?Plugin $plugin = null) {}
 
   public function onPlayerLogin(PlayerLoginEvent $event): void {
-    var_dump($event->getEventName());
+    // var_dump($event->getEventName());
     $player = $event->getPlayer();
     $this->players[$player->getId()] = new PlayerInstance($this,
       $player,
@@ -51,7 +51,7 @@ final class PlayerManager implements Listener {
   }
 
   public function onPlayerQuit(PlayerQuitEvent $event): void {
-    var_dump($event->getEventName());
+    // var_dump($event->getEventName());
     $player = $event->getPlayer();
     $id = $player->getId();
     if (isset($this->players[$id])) {
@@ -69,7 +69,7 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketReceive(DataPacketReceiveEvent $event): void {
-    var_dump($event->getEventName());
+    // var_dump($event->getEventName());
     $packet = $event->getPacket();
     if (!($packet instanceof RequestPacket)) {
       return;
@@ -92,7 +92,7 @@ final class PlayerManager implements Listener {
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event): void {
-    var_dump($event->getEventName());
+    // var_dump($event->getEventName());
     static $processing = false;
     if ($processing) {
       return;
