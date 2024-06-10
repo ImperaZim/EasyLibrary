@@ -148,9 +148,9 @@ final class PlayerInstance{
 			$this->modify_abilities = true;
 			$session->syncAbilities($this->player);
 		}
-		$session->sendDataPacket(DialoguePacket::create(
+		$session->sendDataPacket(NpcDialoguePacket::create(
 			$info->actor_runtime_id,
-			DialoguePacket::ACTION_OPEN,
+			NpcDialoguePacket::ACTION_OPEN,
 			$info->dialogue->getText(),
 			(string) $info->actor_runtime_id,
 			$info->dialogue->getName(),
@@ -239,7 +239,7 @@ final class PlayerInstance{
 		$current_dialogue->dialogue = NullDialogue::instance();
 
 		$session = $this->player->getNetworkSession();
-		$session->sendDataPacket(DialoguePacket::create($current_dialogue->actor_runtime_id, DialoguePacket::ACTION_CLOSE, "", "", "", ""));
+		$session->sendDataPacket(NpcDialoguePacket::create($current_dialogue->actor_runtime_id, NpcDialoguePacket::ACTION_CLOSE, "", "", "", ""));
 		$session->sendDataPacket(RemoveActorPacket::create($current_dialogue->actor_runtime_id));
 		$this->manager->tick($this->player);
 		return $current_dialogue;
