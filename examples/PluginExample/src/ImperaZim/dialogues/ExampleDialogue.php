@@ -28,7 +28,7 @@ final class ExampleDialogue extends Dialogue {
       text: $this->getText(),
       texture: $this->getTexture(),
       buttons: $this->getButtons(),
-      onClose: null
+      onClose: fn($player) => $this->getCloseCallback($player)
     );
   }
 
@@ -80,6 +80,15 @@ final class ExampleDialogue extends Dialogue {
       );
     }
     return $buttons;
+  }
+  
+  /**
+  * Handles the form closure and returns the next form to display.
+  * @param Player $player
+  * @return Form|null
+  */
+  private function getCloseCallback(Player $player): void {
+    $player->sendMessage("You closed the dialogue");
   }
 
 }
