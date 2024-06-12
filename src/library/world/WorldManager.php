@@ -40,7 +40,7 @@ final class WorldManager {
         if (is_file($filePath) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
           require_once $filePath;
           $className = pathinfo($file, PATHINFO_FILENAME);
-          $qualifiedClassName = "generators\\$className";
+          $qualifiedClassName = "$generatorsDir\\$className";
           if (class_exists($qualifiedClassName)) {
             GeneratorManager::getInstance()->addGenerator($qualifiedClassName, $className, fn() => null, true);
           } else {
