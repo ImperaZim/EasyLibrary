@@ -164,7 +164,7 @@ final class File {
       $data = match ($extension) {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
-        'json' => json_decode($fileContent, true, 512, JSON_THROW_ON_ERROR),
+        'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_THROW_ON_ERROR),
         'txt' => array_fill_keys($this->parseList($fileContent), true),
       default => throw new FileSystemException("Unsupported file type: $extension")
       };
