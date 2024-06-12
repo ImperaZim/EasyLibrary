@@ -122,7 +122,9 @@ final class PluginExample extends PluginToolkit {
     );
 
     $registeredItems = $this->registerItems();
-    var_dump($registeredItems);
+    foreach ($registeredItems as $name => $item) {
+      var_dump([$name => ItemFactory::jsonSerialize($item)]);
+    }
 
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
@@ -142,7 +144,7 @@ final class PluginExample extends PluginToolkit {
       [ItemEnchantmentTags::PICKAXE]
     );
     return [
-      ItemFactory::register($item1)
+      ItemFactory::register($item1) => $item1
     ];
   }
 
