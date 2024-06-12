@@ -30,7 +30,7 @@ final class ItemFactory {
     $asyncPool->addWorkerStartHook(function(int $worker) use ($asyncPool): void {
       $asyncPool->submitTaskToWorker(new class extends AsyncTask {
         public function onRun() : void {
-          foreach (self::$registeredItems as $name => $item) {
+          foreach (ItemFactory::$registeredItems as $name => $item) {
             GlobalItemDataHandlers::getDeserializer()->map($item->getTypeId(), fn() => clone $item);
             GlobalItemDataHandlers::getSerializer()->map($item, fn() => new SavedItemData($item->getTypeId()));
             StringToItemParser::getInstance()->register($name, fn() => clone $item);
