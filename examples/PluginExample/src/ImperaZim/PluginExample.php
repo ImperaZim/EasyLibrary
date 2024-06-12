@@ -34,21 +34,15 @@ final class PluginExample extends PluginToolkit {
   * Called when the plugin is enabled.
   */
   protected function onEnable(): void {
-    $types = [
-      File::TYPE_JSON,
-      File::TYPE_YAML,
-      File::TYPE_YML
-    ];
-    foreach ($types as $type) {
-      $this->settings = new File(
-        directoryOrConfig: $this->getServerPath(
-          join: ['plugin_data', $this->getName(), 'tests']
-        ),
-        fileName: 'settings',
-        fileType: $type,
-        autoGenerate: true
-      );
-      $this->settings->set([
+    $this->settings = new File(
+      directoryOrConfig: $this->getServerPath(
+        join: ['plugin_data', $this->getName(), 'tests']
+        // use ['join:data'] to use the data plugin
+      ),
+      fileName: 'settings',
+      fileType: File::TYPE_YML,
+      autoGenerate: true,
+      readCommand: [
         '--merge' => [
           'form' => [
             'command' => [
@@ -116,9 +110,8 @@ final class PluginExample extends PluginToolkit {
             ]
           ]
         ]
-      ]);
-      var_dump($this->settings->get('form.command'));
-    }
+      ]
+    );
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
       commands: [

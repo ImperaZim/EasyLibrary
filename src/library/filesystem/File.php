@@ -38,13 +38,15 @@ final class File {
   * @param string $fileName The name of the file.
   * @param string $fileType The type of the file.
   * @param bool|null $autoGenerate Whether to generate the file if it does not exist.
+  * @param array|null $readCommand The initial query.
   * @throws FileSystemException If the file type is invalid or the file cannot be created.
   */
   public function __construct(
     private string|Config $directoryOrConfig,
     private ?string $fileName = null,
     private ?string $fileType = null,
-    private ?bool $autoGenerate = false
+    private ?bool $autoGenerate = false,
+    private ?array $readCommand = null
   ) {
     if ($directoryOrConfig instanceof Config) {
       $config = $directoryOrConfig;
@@ -65,6 +67,9 @@ final class File {
       new Path($directory, true);
       if (!$this->fileExists()) {
         $this->createFile();
+      }
+      if ($readCommand !== null) {
+        $this->set($readCommand);
       }
     }
   }

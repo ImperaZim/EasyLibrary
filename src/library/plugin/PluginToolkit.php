@@ -31,18 +31,22 @@ abstract class PluginToolkit extends PluginBase {
   public function getEnvironment(): ?string {
     return $this->environment;
   }
-  
+
   /**
-   * Gets the data path of the server.
-   * @param array|null $join Continue paths.
-   * @return string The serve data path.
-   */
-   public function getServerPath(?array $join = null): string {
-     $path = Server::getInstance()->getDataPath();
-     if ($join !== null) {
-       $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
-     }
-     return $path;
-   }
+  * Gets the data path of the server.
+  * @param array|null $join Continue paths.
+  * @return string The serve data path.
+  */
+  public function getServerPath(?array $join = null): string {
+    $path = Server::getInstance()->getDataPath();
+    if ($join !== null) {
+      if (strtolower($join[0]) === 'join:data') {
+        $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
+      } else {
+        $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
+      }
+    }
+    return $path;
+  }
 
 }
