@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace library\filesystem;
 
 use ZipArchive;
+use DirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use library\filesystem\exception\FileSystemException;
