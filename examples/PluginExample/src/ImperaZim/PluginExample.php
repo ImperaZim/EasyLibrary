@@ -35,7 +35,7 @@ final class PluginExample extends PluginToolkit {
   */
   protected function onEnable(): void {
     $this->settings = new File(
-      directoryOrConfig: $this->getServerPath(),
+      directoryOrConfig: $this->getServerPath(join: ['tests']),
       fileName: 'settings',
       fileType: File::TYPE_YML,
       autoGenerate: true

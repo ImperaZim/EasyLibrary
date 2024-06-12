@@ -26,14 +26,22 @@ final class Path {
     private ?bool $autoGenerate = false
   ) {
     if ($autoGenerate) {
-      if (!file_exists($this->sourceFolder)) {
-        if (!mkdir($this->sourceFolder, 0777, true) && !is_dir($this->sourceFolder)) {
+      if (!file_exists($this->getFolder())) {
+        if (!mkdir($this->getFolder(), 0777, true) && !is_dir($this->getFolder())) {
           throw new FileSystemException('Failed to create the destination folder.');
         }
-      } elseif (!is_dir($this->sourceFolder)) {
+      } elseif (!is_dir($this->getFolder())) {
         throw new FileSystemException('Source path is not a directory.');
       }
     }
+  }
+  
+  /**
+   * Gets the Source folder. 
+   * @return string
+   */
+  public function getFolder(): string {
+    return $this->sourceFolder;
   }
 
   /**
@@ -54,13 +62,13 @@ final class Path {
     $zip = new ZipArchive();
     if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
       $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($this->sourceFolder),
+        new RecursiveDirectoryIterator($this->getFolder()),
         RecursiveIteratorIterator::LEAVES_ONLY
       );
       foreach ($files as $name => $file) {
         if (!$file->isDir()) {
           $filePath = $file->getRealPath();
-          $relativePath = substr($filePath, strlen($this->sourceFolder) + 1);
+          $relativePath = substr($filePath, strlen($this->getFolder()) + 1);
           $zip->addFile($filePath, $relativePath);
         }
       }
@@ -79,7 +87,7 @@ final class Path {
   * @throws FileSystemException If an error occurs during the process.
   */
   public function unzipExtract(string $zipFileName, string $destinationFolder): ?string {
-    $zipFilePath = rtrim($this->sourceFolder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $zipFileName;
+    $zipFilePath = rtrim($this->getFolder(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $zipFileName;
     if (!file_exists($zipFilePath)) {
       throw new FileSystemException('The ZIP file does not exist.');
     }
@@ -102,7 +110,7 @@ final class Path {
   * @throws FileSystemException If an error occurs during the copy process.
   */
   public function copyFolderTo(string $destinationFolder): void {
-    $this->copyFolderRecursive($this->sourceFolder, $destinationFolder);
+    $this->copyFolderRecursive($this->getFolder(), $destinationFolder);
   }
 
   /**

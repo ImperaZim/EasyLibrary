@@ -34,10 +34,15 @@ abstract class PluginToolkit extends PluginBase {
   
   /**
    * Gets the data path of the server.
+   * @param array|null $join Continue paths.
    * @return string The serve data path.
    */
-   public function getServerPath(): string {
-     return Server::getInstance()->getDataPath();
+   public function getServerPath(?array $join = null): string {
+     $path = Server::getInstance()->getDataPath();
+     if ($join !== null) {
+       $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
+     }
+     return $path;
    }
 
 }
