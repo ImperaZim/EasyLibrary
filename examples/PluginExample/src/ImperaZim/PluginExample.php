@@ -13,6 +13,7 @@ use ImperaZim\commands\DialogueExampleCommand;
 
 use pocketmine\utils\SingletonTrait;
 
+use library\item\ItemFactory;
 use pocketmine\item\Item;
 use pocketmine\item\Pickaxe;
 use pocketmine\item\ToolTier;
