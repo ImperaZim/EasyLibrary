@@ -26,7 +26,7 @@ final class ItemFactory {
   private static array $registeredItems = [];
 
   public static function init(AsyncPool $asyncPool): void {
-    $asyncPool->addWorkerStartHook(function(int $worker) : void {
+    $asyncPool->addWorkerStartHook(function(int $worker) use ($asyncPool): void {
       $asyncPool->submitTaskToWorker(new class extends AsyncTask {
         public function onRun() : void {
           foreach (self::$registeredItems as $name => $item) {
