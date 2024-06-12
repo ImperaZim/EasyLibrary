@@ -157,7 +157,7 @@ final class File {
       };
       return $content;
     }
-    
+
     /**
     * Deserializes the content based on the file extension.
     * @param string $extension The extension of the file (e.g., 'json', 'yml').

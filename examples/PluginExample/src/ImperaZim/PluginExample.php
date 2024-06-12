@@ -6,6 +6,7 @@ namespace ImperaZim;
 
 use library\network\Query;
 use library\filesystem\File;
+use library\filesystem\Path;
 use library\plugin\PluginToolkit;
 use ImperaZim\commands\FormExampleCommand;
 use ImperaZim\commands\MenuExampleCommand;
@@ -128,15 +129,8 @@ final class PluginExample extends PluginToolkit {
         ToolTier::DIAMOND,
         [ItemEnchantmentTags::PICKAXE]
       );
-      $item2 = new Pickaxe(
-        new ItemIdentifier(ItemTypeIds::newId()),
-        "Refactored Diamond Pickaxe",
-        ToolTier::DIAMOND,
-        [ItemEnchantmentTags::PICKAXE]
-      );
       return [
-        ItemFactory::register($item1) => $item1,
-        ItemFactory::register($item2) => $item2,
+        ItemFactory::register($item1) => $item1
       ];
     };
     foreach ($registeredItems() as $name => $item) {
@@ -148,6 +142,9 @@ final class PluginExample extends PluginToolkit {
         ]
       ]);
     }
+    
+    $resourcePath = new Path($this->getDataFolder());
+    var_dump($resourcePath->getRecursiveFiles());
 
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',

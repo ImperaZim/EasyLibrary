@@ -174,4 +174,41 @@ final class Path {
     }
   }
   
+  /**
+  * Gets information about files in the resources directory and creates Path objects.
+  * @return string[]
+  */
+  public function getRecursiveFiles(): array {
+    $filesInfo = [];
+    $folder = $this->getFolder();
+    $files = new DirectoryIterator($folder);
+
+    foreach ($files as $file) {
+      if ($file->isFile()) {
+        $filePath = $file->getPathname();
+        $fileName = $file->getBasename();
+        $fileExtension = $file->getExtension();
+        $fileContents = file_get_contents($filePath);
+
+        $filesInfo[] = [
+          'director' => $folder,
+          'fileName' => $fileName,
+          'fileType' => 'file:' . $fileExtension,
+          'data' => [
+            'content' => $fileContents, 
+            'extension' => $fileExtension
+          ]
+        ];
+        $filesInfo[] = new File(
+          directoryOrConfig: $folder,
+          fileName: $fileName,
+          fileType: 'file:' . $fileExtension,
+          autoGenerate: true,
+          readCommand: $this->deserializeContent($fileContents, $fileExtension)
+        );
+      }
+    }
+    return $filesInfo;
+  }
+  
 }
