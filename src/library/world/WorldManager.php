@@ -32,24 +32,15 @@ final class WorldManager {
   ): void {
     self::$library = $library;
     self::$worldManager = $worldManager;
-
-    $generatorsDir = __DIR__ . DIRECTORY_SEPARATOR . 'generators';
-    if (is_dir($generatorsDir) && is_readable($generatorsDir)) {
-      foreach (scandir($generatorsDir) as $file) {
-        $filePath = $generatorsDir . DIRECTORY_SEPARATOR . $file;
-        if (is_file($filePath) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-          require_once $filePath;
-          $className = pathinfo($file, PATHINFO_FILENAME);
-          $qualifiedClassName = "$generatorsDir\\$className";
-          if (class_exists($qualifiedClassName)) {
-            GeneratorManager::getInstance()->addGenerator($qualifiedClassName, $className, fn() => null, true);
-          } else {
-            throw new WorldException("Class $qualifiedClassName does not exist in $filePath.");
-          }
+    $generatorsDir = __DIR__ . '/generators';
+    foreach (scandir($generatorsDir) as $file) {
+      if (is_file($generatorsDir . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+        require_once $generatorsDir . '/' . $file;
+        $className = pathinfo($file, PATHINFO_FILENAME);
+        if (class_exists("generators\\$className")) {
+          GeneratorManager::getInstance()->addGenerator("generators\\$className", $className, fn() => null, true);
         }
       }
-    } else {
-      throw new WorldException("Directory $generatorsDir does not exist or is not readable.");
     }
   }
 
