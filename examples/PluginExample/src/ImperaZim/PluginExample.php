@@ -42,8 +42,8 @@ final class PluginExample extends PluginToolkit {
     );
     $this->settings->set([
       '-all' => [
-        form_command_name => ['form'],
-        form_command_description => '§7Form example command!',
+        'form_command_name' => ['form'],
+        'form_command_description' => '§7Form example command!',
       ]
     ]);
     $this->getServer()->getCommandMap()->registerAll(
