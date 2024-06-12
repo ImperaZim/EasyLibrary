@@ -11,10 +11,12 @@ abstract class BaseSubCommand extends BaseCommand {
   /** @var BaseCommand */
   protected BaseCommand $parent;
 
-  public function __construct(Plugin $plugin, string $name, string $description = "", array $aliases = []) {
-    $aliases = array_diff($aliases, [$name]);
-    parent::__construct($plugin, $name, $description, $aliases);
-
+  public function __construct(
+    Plugin $plugin,
+    array $names,
+    Translatable|string $description = ""
+) {
+    parent::__construct($plugin, $names, $description);
     $this->usageMessage = "";
   }
 

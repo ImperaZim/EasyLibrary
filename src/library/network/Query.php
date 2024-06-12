@@ -4,11 +4,9 @@ declare(strict_types = 1);
 
 namespace library\network;
 
-use function json_decode;
-use function json_encode;
-use library\server\ServerInfo;
 use pocketmine\utils\Internet;
 use pocketmine\promise\Promise;
+use library\network\server\ServerInfo;
 use pocketmine\promise\PromiseResolver;
 use pocketmine\utils\InternetRequestResult;
 

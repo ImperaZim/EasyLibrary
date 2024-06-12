@@ -55,7 +55,7 @@ final class File {
       $fileName = basename($filePath, str_replace('file:', '.', TYPE_YML));
       $fileType = self::TYPE_YML;
     } else {
-      $directory = rtrim($directoryOrConfig, DIRECTORY_SEPARATOR);
+      $directory = $directoryOrConfig;
     }
     if (!in_array($fileType, $this->getFileTypes())) {
       throw new FileSystemException("Invalid file type: $fileType");
@@ -79,7 +79,7 @@ final class File {
   * @return string
   */
   public function getFilePath(): string {
-    return $this->directoryOrConfig . DIRECTORY_SEPARATOR . $this->fileName . $this->getFileExtension();
+    return $this->directoryOrConfig . $this->fileName . $this->getFileExtension();
   }
 
   /**

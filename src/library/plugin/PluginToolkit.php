@@ -46,7 +46,7 @@ abstract class PluginToolkit extends PluginBase {
         $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
       }
     }
-    return $path;
+    return trim($path . DIRECTORY_SEPARATOR);
   }
 
 }

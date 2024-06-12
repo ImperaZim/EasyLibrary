@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
+use library\item\ItemFactory;
 use library\world\WorldManager;
 use library\plugin\PluginToolkit;
-use library\bossbar\BossBarHooker;
-use library\world\GeneratorHandler;
 
 use pocketmine\utils\SingletonTrait;
 
 use internal\invmenu\InvMenuHandler;
+use internal\bossbarr\BossBarHooker;
 use internal\commando\CommandoHooker;
 use internal\dialogue\DialogueHooker;
 
@@ -20,21 +20,6 @@ use internal\dialogue\DialogueHooker;
 */
 final class Library extends PluginToolkit {
   use SingletonTrait;
-  
-  /** @var BossBarHooker */
-  protected BossBarHooker $bossbar;
-
-  /** @var InvMenuHandler */
-  protected InvMenuHandler $invmenu;
-
-  /** @var DialogueHooker */
-  protected DialogueHooker $dialogue;
-
-  /** @var CommandoHooker */
-  protected CommandoHooker $commando;
-
-  /** @var GeneratorHandler */
-  protected GeneratorHandler $generator;
   
   /**
   * Called when the plugin is loaded.
@@ -47,10 +32,12 @@ final class Library extends PluginToolkit {
   * Called when the plugin is enabled.
   */
   protected function onEnable() : void {
-    $this->bossbar = new BossBarHooker($this);
-    $this->invmenu = new InvMenuHandler($this);
-    $this->dialogue = new DialogueHooker($this);
-    $this->commando = new CommandoHooker($this);
-    $this->generator = new GeneratorHandler($this);
+    new BossBarHooker($this);
+    new InvMenuHandler($this);
+    new DialogueHooker($this);
+    new CommandoHooker($this);
+    
+    ItemFactory::init($this->getServer()->getAsyncPool());
+    WorldManager::init($this, $this->getServer()->getWorldManager());
   }
 }

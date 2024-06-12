@@ -106,10 +106,13 @@ final class Path {
 
   /**
   * Copies a folder and its contents recursively to another directory.
-  * @param string $destinationFolder The destination folder for operations.
+  * @param Path|string $destinationFolder The destination folder for operations.
   * @throws FileSystemException If an error occurs during the copy process.
   */
-  public function copyFolderTo(string $destinationFolder): void {
+  public function copyFolderTo(Path|string $destinationFolder): void {
+    if ($destinationFolder instanceof Path) {
+      $destinationFolder = $destinationFolder->getFolder();
+    }
     $this->copyFolderRecursive($this->getFolder(), $destinationFolder);
   }
 
@@ -144,6 +147,30 @@ final class Path {
           throw new FileSystemException("Failed to copy the file: $sourceFilePath");
         }
       }
+    }
+  }
+  
+  /**
+  * Deletes a folder and its contents recursively.
+  * @throws FileSystemException If an error occurs during the delete process.
+  */
+  public function deleteFolderRecursive(): void {
+    $folder = $this->getFolder();
+    if (!file_exists($folder) || !is_dir($folder)) {
+      throw new FileSystemException('The folder does not exist or is not a directory.');
+    }
+    $files = new RecursiveIteratorIterator(
+      new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
+      RecursiveIteratorIterator::CHILD_FIRST
+    );
+    foreach ($files as $fileinfo) {
+      $operation = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+      if (!$operation($fileinfo->getRealPath())) {
+        throw new FileSystemException('Failed to delete ' . $fileinfo->getRealPath());
+      }
+    }
+    if (!rmdir($folder)) {
+      throw new FileSystemException('Failed to delete the folder ' . $folder);
     }
   }
   
