@@ -6,6 +6,7 @@ namespace library\item;
 
 use pocketmine\item\Item;
 use pocketmine\nbt\TreeRoot;
+use pocketmine\scheduler\AsyncTask;
 use pocketmine\scheduler\AsyncPool;
 use pocketmine\item\StringToItemParser;
 use library\item\exception\ItemException;
