@@ -117,7 +117,7 @@ final class PluginExample extends PluginToolkit {
           ]
         ]
       ]);
-      var_dump($this->settings->get());
+      var_dump($this->settings->get('form.command'));
     }
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
