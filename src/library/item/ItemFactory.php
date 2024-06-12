@@ -62,9 +62,9 @@ final class ItemFactory {
   /**
   * Gets the serialized item.
   * @param Item $item
-  * @return array
+  * @return string
   */
-  public static function jsonSerialize(Item $item): array {
+  public static function jsonSerialize(Item $item): string {
     $data = [
       "vanillaName" => strtolower(str_replace(' ', '_', $item->getVanillaName()))
     ];
