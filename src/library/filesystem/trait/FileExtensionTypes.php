@@ -21,8 +21,5 @@ trait FileExtensionTypes {
 
   /** TXT file type constant. */
   public const TYPE_TXT = 'file:txt';
-
-  /** INI file type constant. */
-  public const TYPE_INI = 'file:ini';
   
 }

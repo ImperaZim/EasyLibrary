@@ -4,8 +4,25 @@ declare(strict_types = 1);
 
 namespace library\filesystem;
 
+use function rtrim;
+use function dirname;
+use function implode;
+use function explode;
+use function basename;
+use function array_map;
+use function yaml_emit;
+use function array_keys;
+use function yaml_parse;
+use function json_encode;
+use function json_decode;
+use function json_decode;
+use function str_replace;
+use function array_fill_keys;
+
+use const YAML_UTF8_ENCODING;
+use const JSON_THROW_ON_ERROR;
+
 use library\utils\Config;
-use Symfony\Component\Yaml\Yaml;
 use library\filesystem\trait\FileExtensionTypes;
 use library\filesystem\exception\FileSystemException;
 
@@ -78,9 +95,31 @@ final class File {
       self::TYPE_YML,
       self::TYPE_YAML,
       self::TYPE_JSON,
-      self::TYPE_TXT,
-      self::TYPE_INI
+      self::TYPE_TXT
     ];
+  }
+
+  /**
+  * @return string[]
+  */
+  public function parseList(string $content) : array {
+    $result = [];
+    foreach (explode("\n", trim(str_replace("\r\n", "\n", $content))) as $v) {
+      $v = trim($v);
+      if ($v === "") {
+        continue;
+      }
+      $result[] = $v;
+    }
+    return $result;
+  }
+
+  /**
+  * @param string[] $entries
+  * @return string
+  */
+  public function writeList(array $entries) : string {
+    return implode("\n", $entries);
   }
 
   /**
@@ -107,14 +146,9 @@ final class File {
   private function serializeContent(string $fileType, array $data): string {
     $content = match ($fileType) {
       'yml',
-      'yaml' => Yaml::dump($data, 4, 2),
-      'json' => json_encode($data, JSON_PRETTY_PRINT),
-      'txt' => implode("\n", array_map(
-        fn($k, $v) => "$k: $v",
-        array_keys($data),
-        $data
-      )),
-      'ini' => $this->arrayToIni($data)
+      'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
+      'json' => json_encode($data, JSON_THROW_ON_ERROR),
+      'txt' => $this->writeList(array_keys($data))
     };
     if ($content === null) {
       throw new FileSystemException("Unsupported file type: {$fileType}");
@@ -133,55 +167,14 @@ final class File {
   private function deserializeContent(string $extension, string $fileContent): array {
     $data = match ($extension) {
       'yml',
-      'yaml' => Yaml::parse($fileContent),
+      'yaml' => yaml_parse($fileContent),
       'json' => json_decode($fileContent, true),
-      'txt' => $this->txtToArray($fileContent),
-      'ini' => parse_ini_string($fileContent, true)
+      'txt' => array_fill_keys($this->parseList($fileContent), true)
     };
-
     if ($data === null) {
       throw new FileSystemException("Unsupported file type: $extension");
     }
     return $data;
-  }
-
-  /**
-  * Convert a plain text content to an associative array.
-  * Each line should be in the format 'key: value'.
-  * @param string $fileContent The content of the text file.
-  * @return array The associative array.
-  */
-  private function txtToArray(string $fileContent): array {
-    $data = [];
-    $lines = explode("\n", $fileContent);
-    foreach ($lines as $line) {
-      if (strpos($line, ':') !== false) {
-        [$key,
-          $value] = explode(':', $line, 2);
-        $data[trim($key)] = trim($value);
-      }
-    }
-    return $data;
-  }
-
-  /**
-  * Convert an associative array to an INI formatted string.
-  * @param array $data The associative array.
-  * @return string The INI formatted string.
-  */
-  private function arrayToIni(array $data): string {
-    $content = '';
-    foreach ($data as $key => $value) {
-      if (is_array($value)) {
-        $content .= "[$key]\n";
-        foreach ($value as $subKey => $subValue) {
-          $content .= "$subKey = $subValue\n";
-        }
-      } else {
-        $content .= "$key = $value\n";
-      }
-    }
-    return $content;
   }
 
 
