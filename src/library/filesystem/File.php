@@ -160,17 +160,23 @@ final class File {
     * @return array The deserialized data.
     * @throws FileSystemException If the file type is unsupported.
     */
+    /**
+    * Deserializes the content based on the file extension.
+    * @param string $extension The extension of the file (e.g., 'json', 'yml').
+    * @param string $fileContent The content of the file to be deserialized.
+    * @return array The deserialized data.
+    * @throws FileSystemException If the file type is unsupported.
+    */
     private function deserializeContent(string $extension, string $fileContent): array {
       $data = match ($extension) {
-        'yml' => yaml_parse($fileContent),
-        'yaml' => yaml_parse($fileContent),
+        'yml' => yaml_parse($fileContent) ?: [],
+        'yaml' => yaml_parse($fileContent) ?: [],
         'json' => json_decode($fileContent, true, 512, JSON_THROW_ON_ERROR),
         'txt' => array_fill_keys($this->parseList($fileContent), true),
       default => throw new FileSystemException("Unsupported file type: $extension")
       };
       return $data;
     }
-
 
     /**
     * Load a configuration fload
