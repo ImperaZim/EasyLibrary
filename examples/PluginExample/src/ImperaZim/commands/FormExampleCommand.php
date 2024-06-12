@@ -25,17 +25,13 @@ final class FormExampleCommand extends BaseCommand {
   public static function base() : self {
     return new self(
       plugin: PluginExample::getInstance(),
-      name: PluginExample::getSettings(
+      names: PluginExample::getSettings(
         'form_command_name',
         ['form']
-      )[0],
+      ),
       description: PluginExample::getSettings(
         'form_command_description',
         '§7Form example command!'
-      ),
-      aliases: PluginExample::getSettings(
-        'form_command_name',
-        ['form']
       )
     );
   }

@@ -23,7 +23,7 @@ final class ModalFormExampleSubcommand extends BaseSubCommand {
   public static function base() : self {
     return new self(
       plugin: PluginExample::getInstance(),
-      name: 'modal',
+      names: ['modal'],
       description: '§7ModalForm.'
     );
   }

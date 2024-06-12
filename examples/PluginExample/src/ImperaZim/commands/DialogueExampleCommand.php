@@ -23,17 +23,13 @@ final class DialogueExampleCommand extends BaseCommand {
   public static function base() : self {
     return new self(
       plugin: PluginExample::getInstance(),
-      name: PluginExample::getSettings(
+      names: PluginExample::getSettings(
         'dialogue_command_name',
         ['dialogue']
-      )[0],
+      ),
       description: PluginExample::getSettings(
         'dialogue_command_description',
         '§7Dialogue example command!'
-      ),
-      aliases: PluginExample::getSettings(
-        'dialogue_command_name',
-        ['dialogue']
       )
     );
   }

@@ -23,7 +23,7 @@ final class LongFormExampleSubcommand extends BaseSubCommand {
   public static function base() : self {
     return new self(
       plugin: PluginExample::getInstance(),
-      name: 'long',
+      names: ['long'],
       description: '§7LongForm.'
     );
   }

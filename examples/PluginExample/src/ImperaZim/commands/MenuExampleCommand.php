@@ -23,17 +23,13 @@ final class MenuExampleCommand extends BaseCommand {
   public static function base() : self {
     return new self(
       plugin: PluginExample::getInstance(),
-      name: PluginExample::getSettings(
+      names: PluginExample::getSettings(
         'menu_command_name',
         ['menu']
-      )[0],
+      ),
       description: PluginExample::getSettings(
         'menu_command_description',
         '§7Menu example command!'
-      ),
-      aliases: PluginExample::getSettings(
-        'menu_command_name',
-        ['menu']
       )
     );
   }

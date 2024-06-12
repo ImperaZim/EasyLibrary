@@ -23,7 +23,7 @@ final class CustomFormExampleSubcommand extends BaseSubCommand {
   public static function base() : self {
     return new self(
       plugin: PluginExample::getInstance(),
-      name: 'custom',
+      names: ['custom'],
       description: '§7CustomForm.'
     );
   }
