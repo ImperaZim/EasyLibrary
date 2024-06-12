@@ -50,7 +50,7 @@ final class File {
       $config = $directoryOrConfig;
       $filePath = $config->getPath();
       $directory = dirname($filePath);
-      $fileName = basename($filePath, '.yml');
+      $fileName = basename($filePath, str_replace('file:', '.', TYPE_YML));
       $fileType = self::TYPE_YML;
     } else {
       $directory = rtrim($directoryOrConfig, DIRECTORY_SEPARATOR);
@@ -58,11 +58,11 @@ final class File {
     if (!in_array($fileType, $this->getFileTypes())) {
       throw new FileSystemException("Invalid file type: $fileType");
     }
-    $this->directory = $directory;
+    $this->directoryOrConfig = $directory;
     $this->fileName = $fileName ?? '';
     $this->fileType = $fileType ?? self::TYPE_YML;
     if ($autoGenerate) {
-      new Path($this->directory, true);
+      new Path($directory, true);
       if (!$this->fileExists()) {
         $this->createFile();
       }
@@ -74,7 +74,7 @@ final class File {
   * @return string
   */
   public function getFilePath(): string {
-    return $this->directory . DIRECTORY_SEPARATOR . $this->fileName . $this->getFileExtension();
+    return $this->directoryOrConfig . DIRECTORY_SEPARATOR . $this->fileName . $this->getFileExtension();
   }
 
   /**
