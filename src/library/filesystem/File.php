@@ -144,7 +144,7 @@ final class File {
   */
   private function serializeContent(string $fileType, array $data): string {
     $content = match ($fileType) {
-      'yml',
+      'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
       'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
       'json' => json_encode($data, JSON_THROW_ON_ERROR),
       'txt' => $this->writeList(array_keys($data))
@@ -165,7 +165,7 @@ final class File {
   */
   private function deserializeContent(string $extension, string $fileContent): array {
     $data = match ($extension) {
-      'yml',
+      'yml' => yaml_parse($fileContent),
       'yaml' => yaml_parse($fileContent),
       'json' => json_decode($fileContent, true),
       'txt' => array_fill_keys($this->parseList($fileContent), true)
