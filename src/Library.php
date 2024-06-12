@@ -8,8 +8,8 @@ use library\plugin\PluginToolkit;
 
 use pocketmine\utils\SingletonTrait;
 
+use internal\bossbar\BossBarHooker;
 use internal\invmenu\InvMenuHandler;
-use internal\bossbarr\BossBarHooker;
 use internal\commando\CommandoHooker;
 use internal\dialogue\DialogueHooker;
 
