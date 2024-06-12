@@ -6,6 +6,7 @@ namespace internal\dialogue\interaction;
 
 use Closure;
 use pocketmine\player\Player;
+use internal\dialogue\Dialogue;
 use internal\dialogue\elements\DialogueButton;
 
 /**
@@ -16,7 +17,7 @@ final class DialogueButtonResponse {
 
   /**
   * ButtonResponse constructor.
-  * @param Closure(Player, DialogueButton): void $callback
+  * @param Closure(Player, DialogueButton, Dialogue): void $callback
   */
   public function __construct(private Closure $callback) {}
 
@@ -25,8 +26,8 @@ final class DialogueButtonResponse {
   * @param Player $player
   * @param DialogueButton $button
   */
-  public function runAt(Player $player, DialogueButton $button): void {
-    ($this->callback)($player, $button);
+  public function runAt(Player $player, DialogueButton $button, Dialogue &$dialogue): void {
+    ($this->callback)($player, $button, $dialogue);
   }
   
 }

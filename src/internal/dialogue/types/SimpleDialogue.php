@@ -202,9 +202,8 @@ final class SimpleDialogue extends Dialogue {
   public function onPlayerRespond(Player $player, int $id) : void {
     $button = $this->getButton($id);
     $buttonResponse = $button->getResponse();
-    var_dump($buttonResponse);
     if ($buttonResponse !== null) {
-      $buttonResponse->runAt($player, $button);
+      $buttonResponse->runAt($player, $button, $this);
     }
   }
 

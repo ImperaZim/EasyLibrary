@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace ImperaZim;
 
-use library\utils\File;
 use library\network\Query;
+use library\filesystem\File;
 use library\plugin\PluginToolkit;
 use ImperaZim\commands\FormExampleCommand;
 use ImperaZim\commands\MenuExampleCommand;
@@ -34,7 +34,12 @@ final class PluginExample extends PluginToolkit {
   * Called when the plugin is enabled.
   */
   protected function onEnable(): void {
-    $this->settings = new File($this, 'settings');
+    $this->settings = new File(
+      directoryOrConfig: $this->getServerPath(),
+      fileName: 'settings',
+      fileType: File::TYPE_YML,
+      autoGenerate: true
+    );
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
       commands: [

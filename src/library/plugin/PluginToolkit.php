@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace library\plugin;
 
+use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\plugin\PluginBase;
-use Symfony\Component\Filesystem\Path;
 
 /**
 * Class PluginToolkit
@@ -31,5 +31,13 @@ abstract class PluginToolkit extends PluginBase {
   public function getEnvironment(): ?string {
     return $this->environment;
   }
+  
+  /**
+   * Gets the data path of the server.
+   * @return string The serve data path.
+   */
+   public function getServerPath(): string {
+     return Server::getInstance()->getDataPath();
+   }
 
 }

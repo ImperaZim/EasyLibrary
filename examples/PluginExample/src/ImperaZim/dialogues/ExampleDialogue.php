@@ -73,10 +73,10 @@ final class ExampleDialogue extends Dialogue {
         mode: 0,
         type: 1,
         onclick: new DialogueButtonResponse(
-          function (Player $player, DialogueButton $button): void {
+          function (Player $player, DialogueButton $button, Dialogue &$dialogue): void {
             $player->sendMessage("you clicked {$button->getName()}");
           }
-        ),
+        )
       );
     }
     return $buttons;
