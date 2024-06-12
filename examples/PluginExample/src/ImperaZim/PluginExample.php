@@ -39,7 +39,7 @@ final class PluginExample extends PluginToolkit {
         join: ['plugin_data', $this->getName(), 'tests']
       ),
       fileName: 'settings',
-      fileType: File::TYPE_YML,
+      fileType: File::TYPE_YAML,
       autoGenerate: true
     );
     $this->settings->set([
