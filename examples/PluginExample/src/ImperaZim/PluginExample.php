@@ -13,6 +13,13 @@ use ImperaZim\commands\DialogueExampleCommand;
 
 use pocketmine\utils\SingletonTrait;
 
+use pocketmine\item\Item;
+use pocketmine\item\Pickaxe;
+use pocketmine\item\ToolTier;
+use pocketmine\item\ItemTypeIds;
+use pocketmine\item\ItemIdentifier;
+use pocketmine\item\enchantment\ItemEnchantmentTags;
+
 /**
 * Class PluginExample
 * @package ImperaZim
@@ -112,6 +119,10 @@ final class PluginExample extends PluginToolkit {
         ]
       ]
     );
+
+    $registeredItems = $this->registerItems();
+    var_dump($registeredItems);
+
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
       commands: [
@@ -120,6 +131,18 @@ final class PluginExample extends PluginToolkit {
         DialogueExampleCommand::base()
       ]
     );
+  }
+
+  public function registerItems(): array {
+    $item1 = new Pickaxe(
+      new ItemIdentifier(ItemTypeIds::newId()),
+      "Factored Diamond Pickaxe",
+      ToolTier::DIAMOND,
+      [ItemEnchantmentTags::PICKAXE]
+    );
+    return [
+      ItemFactory::register($item1)
+    ];
   }
 
   /**
