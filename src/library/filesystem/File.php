@@ -282,8 +282,10 @@ final class File {
     * @return bool true se a operação for bem-sucedida, false se falhar.
     */
     public function set(array $keyValuePairs): bool {
+      $fileContent = $this->readFile();
+      $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
       if (isset($keyValuePairs['-all']) && is_array($keyValuePairs['-all'])) {
-        $content = $this->serializeContent($this->fileType, $keyValuePairs['-all']);
+        $content = $this->serializeContent($extension, $keyValuePairs['-all']);
         try {
           $this->writeFile($content);
           return true;
@@ -291,8 +293,6 @@ final class File {
           return false;
         }
       }
-      $fileContent = $this->readFile();
-      $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
       $data = $this->deserializeContent($extension, $fileContent);
       foreach ($keyValuePairs as $keyPath => $value) {
         $keys = explode('.', $keyPath);
