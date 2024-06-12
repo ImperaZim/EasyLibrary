@@ -200,13 +200,6 @@ final class Path {
             'extension' => $fileExtension
           ]
         ];
-        $filesInfo[] = new File(
-          directoryOrConfig: $folder,
-          fileName: $fileName,
-          fileType: 'file:' . $fileExtension,
-          autoGenerate: true,
-          readCommand: $this->deserializeContent($fileContents, $fileExtension)
-        );
       }
     }
     return $filesInfo;
