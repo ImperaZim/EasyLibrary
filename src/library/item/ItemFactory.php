@@ -91,7 +91,7 @@ final class ItemFactory {
         throw new ItemException("Error decoding JSON: " . json_last_error_msg());
       }
       
-      $vanillaName = $data['vanillaName'] ?? null;
+      $vanillaName = $data->vanillaName ?? null;
       if (isset(self::$registeredItems[$vanillaName])) {
         $item = clone self::$registeredItems[$vanillaName];
       }
@@ -107,8 +107,8 @@ final class ItemFactory {
         throw new ItemException("Unexpected item $vanillaName.");
       }
 
-      $item->setCount($data['count'] ?? 1);
-      $nbt = $data['nbt'] ?? null;
+      $item->setCount($data->count ?? 1);
+      $nbt = $data->nbt ?? null;
       if ($nbt !== null) {
         $nbtData = base64_decode($nbt, true);
         if ($nbtData === false) {
