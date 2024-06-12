@@ -40,6 +40,12 @@ final class PluginExample extends PluginToolkit {
       fileType: File::TYPE_YML,
       autoGenerate: true
     );
+    $this->settings->set([
+      '-all' => [
+        form_command_name => ['form'],
+        form_command_description => '§7Form example command!',
+      ]
+    ]);
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
       commands: [
