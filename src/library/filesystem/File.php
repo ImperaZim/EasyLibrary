@@ -18,8 +18,8 @@ use function json_decode;
 use function str_replace;
 use function array_fill_keys;
 
+use const JSON_PRETTY_PRINT;
 use const YAML_UTF8_ENCODING;
-use const JSON_THROW_ON_ERROR;
 
 use library\utils\Config;
 use library\filesystem\trait\FileExtensionTypes;
@@ -146,7 +146,7 @@ final class File {
     $content = match ($fileType) {
       'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
       'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
-      'json' => json_encode($data, JSON_THROW_ON_ERROR),
+      'json' => json_encode($data, JSON_PRETTY_PRINT),
       'txt' => $this->writeList(array_keys($data)),
       default => throw new FileSystemException("Unsupported file type: {$fileType}")
       };
@@ -164,7 +164,7 @@ final class File {
       $data = match ($extension) {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
-        'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_THROW_ON_ERROR),
+        'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
         'txt' => array_fill_keys($this->parseList($fileContent), true),
       default => throw new FileSystemException("Unsupported file type: $extension")
       };
