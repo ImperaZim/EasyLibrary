@@ -136,7 +136,7 @@ final class PluginExample extends PluginToolkit {
       );
       return [
         ItemFactory::register($item1) => $item1,
-        ItemFactory::register($item2, 'refactored_pickaxe') => $item2,
+        ItemFactory::register($item2) => $item2,
       ];
     };
     foreach ($registeredItems() as $name => $item) {

@@ -43,13 +43,10 @@ final class ItemFactory {
   /**
   * Register a new item.
   * @param Item $item
-  * @param string $name
   * @return string
   */
-  public static function register(Item $item, ?string $name = null): string {
-    if ($name === null) {
+  public static function register(Item $item): string {
       $name = strtolower(str_replace(' ', '_', $item->getVanillaName()));
-    }
     self::$registeredItems[$name] = $item;
     return $name;
   }
