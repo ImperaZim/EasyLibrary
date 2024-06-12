@@ -15,7 +15,6 @@ use function array_keys;
 use function yaml_parse;
 use function json_encode;
 use function json_decode;
-use function json_decode;
 use function str_replace;
 use function array_fill_keys;
 
