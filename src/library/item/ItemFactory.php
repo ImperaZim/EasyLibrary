@@ -42,11 +42,14 @@ final class ItemFactory {
 
   /**
   * Register a new item.
-  * @param Item $item 
+  * @param Item $item
+  * @param string $name
   * @return string
   */
-  public static function register(Item $item): string {
-    $name = strtolower(str_replace(' ', '_', $item->getVanillaName()));
+  public static function register(Item $item, ?string $name = null): string {
+    if ($name === null) {
+      $name = strtolower(str_replace(' ', '_', $item->getVanillaName()));
+    }
     self::$registeredItems[$name] = $item;
     return $name;
   }
@@ -90,7 +93,7 @@ final class ItemFactory {
       if (json_last_error() !== JSON_ERROR_NONE) {
         throw new ItemException("Error decoding JSON: " . json_last_error_msg());
       }
-      
+
       $vanillaName = $data->vanillaName ?? null;
       if (isset(self::$registeredItems[$vanillaName])) {
         $item = clone self::$registeredItems[$vanillaName];

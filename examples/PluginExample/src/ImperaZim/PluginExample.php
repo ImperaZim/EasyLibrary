@@ -121,13 +121,30 @@ final class PluginExample extends PluginToolkit {
       ]
     );
 
-    $registeredItems = $this->registerItems();
-    foreach ($registeredItems as $name => $item) {
+    $registeredItems = function(): array {
+      $item1 = new Pickaxe(
+        new ItemIdentifier(ItemTypeIds::newId()),
+        "Factored Diamond Pickaxe",
+        ToolTier::DIAMOND,
+        [ItemEnchantmentTags::PICKAXE]
+      );
+      $item2 = new Pickaxe(
+        new ItemIdentifier(ItemTypeIds::newId()),
+        "Refactored Diamond Pickaxe",
+        ToolTier::DIAMOND,
+        [ItemEnchantmentTags::PICKAXE]
+      );
+      return [
+        ItemFactory::register($item1) => $item1,
+        ItemFactory::register($item2, 'refactored_pickaxe') => $item2,
+      ];
+    };
+    foreach ($registeredItems() as $name => $item) {
       $serialize = ItemFactory::jsonSerialize($item);
       var_dump([
         $name => [
           "serialized" => $serialize,
-          "deserialized" => ItemFactory::jsonDeserialize($serialize)
+          "deserialized" => ItemFactory::jsonDeserialize($serialize)->__toString()
         ]
       ]);
     }
@@ -140,18 +157,6 @@ final class PluginExample extends PluginToolkit {
         DialogueExampleCommand::base()
       ]
     );
-  }
-
-  public function registerItems(): array {
-    $item1 = new Pickaxe(
-      new ItemIdentifier(ItemTypeIds::newId()),
-      "Factored Diamond Pickaxe",
-      ToolTier::DIAMOND,
-      [ItemEnchantmentTags::PICKAXE]
-    );
-    return [
-      ItemFactory::register($item1) => $item1
-    ];
   }
 
   /**
