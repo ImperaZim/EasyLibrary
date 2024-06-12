@@ -123,7 +123,13 @@ final class PluginExample extends PluginToolkit {
 
     $registeredItems = $this->registerItems();
     foreach ($registeredItems as $name => $item) {
-      var_dump([$name => ItemFactory::jsonSerialize($item)]);
+      $serialize = ItemFactory::jsonSerialize($item);
+      var_dump([
+        $name => [
+          "serialized" => $serialize,
+          "deserialized" => ItemFactory::jsonDeserialize($serialize)
+        ]
+      ]);
     }
 
     $this->getServer()->getCommandMap()->registerAll(
