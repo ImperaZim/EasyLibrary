@@ -152,14 +152,7 @@ final class File {
       };
       return $content;
     }
-
-    /**
-    * Deserializes the content based on the file extension.
-    * @param string $extension The extension of the file (e.g., 'json', 'yml').
-    * @param string $fileContent The content of the file to be deserialized.
-    * @return array The deserialized data.
-    * @throws FileSystemException If the file type is unsupported.
-    */
+    
     /**
     * Deserializes the content based on the file extension.
     * @param string $extension The extension of the file (e.g., 'json', 'yml').
@@ -284,8 +277,10 @@ final class File {
     public function set(array $keyValuePairs): bool {
       $fileContent = $this->readFile();
       $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
-      if (isset($keyValuePairs['-all']) && is_array($keyValuePairs['-all'])) {
-        $content = $this->serializeContent($extension, $keyValuePairs['-all']);
+      $data = $this->deserializeContent($extension, $fileContent);
+
+      if (isset($keyValuePairs['--override']) && is_array($keyValuePairs['--override'])) {
+        $content = $this->serializeContent($extension, $keyValuePairs['--override']);
         try {
           $this->writeFile($content);
           return true;
@@ -293,21 +288,26 @@ final class File {
           return false;
         }
       }
-      $data = $this->deserializeContent($extension, $fileContent);
-      foreach ($keyValuePairs as $keyPath => $value) {
-        $keys = explode('.', $keyPath);
-        $nestedArray = &$data;
-        foreach ($keys as $key) {
-          if (!is_array($nestedArray)) {
-            $nestedArray = [];
+
+      if (isset($keyValuePairs['--merge']) && is_array($keyValuePairs['--merge'])) {
+        $this->mergeArrays($data, $keyValuePairs['--merge']);
+      } else {
+        foreach ($keyValuePairs as $keyPath => $value) {
+          $keys = explode('.', $keyPath);
+          $nestedArray = &$data;
+          foreach ($keys as $key) {
+            if (!is_array($nestedArray)) {
+              $nestedArray = [];
+            }
+            if (!isset($nestedArray[$key])) {
+              $nestedArray[$key] = [];
+            }
+            $nestedArray = &$nestedArray[$key];
           }
-          if (!isset($nestedArray[$key])) {
-            $nestedArray[$key] = [];
-          }
-          $nestedArray = &$nestedArray[$key];
+          $nestedArray = $value;
         }
-        $nestedArray = $value;
       }
+
       $content = $this->serializeContent($extension, $data);
       try {
         $this->writeFile($content);
@@ -316,6 +316,19 @@ final class File {
         return false;
       }
     }
+
+    private function mergeArrays(array &$original, array $newData): void {
+      foreach ($newData as $key => $value) {
+        if (is_array($value) && isset($original[$key]) && is_array($original[$key])) {
+          $this->mergeArrays($original[$key], $value);
+        } else {
+          if (!isset($original[$key])) {
+            $original[$key] = $value;
+          }
+        }
+      }
+    }
+
 
     /**
     * Returns a string representation of the File.

@@ -35,15 +35,80 @@ final class PluginExample extends PluginToolkit {
   */
   protected function onEnable(): void {
     $this->settings = new File(
-      directoryOrConfig: $this->getServerPath(join: ['tests']),
+      directoryOrConfig: $this->getServerPath(
+        join: ['plugin_data', $this->getName(), 'tests']
+      ),
       fileName: 'settings',
       fileType: File::TYPE_YML,
       autoGenerate: true
     );
     $this->settings->set([
-      '-all' => [
-        'form_command_name' => ['form'],
-        'form_command_description' => '§7Form example command!',
+      '--merge' => [
+        'form' => [
+          'command' => [
+            'name' => ['form'],
+            'description' => '§7Form example command!'
+          ],
+          'data' => [
+            'long_form' => [
+              'title' => 'LongForm Example Title',
+              'content' => '§7Any text:',
+              'buttons' => [
+                'button_1' => [
+                  'text' => 'Button with url image',
+                  'image' => 'url|https://picsum.photos/200/200'
+                ],
+                'button_2' => [
+                  'text' => ['Button with resourcepack image', 'Content example'],
+                  'image' => 'path|textures/items/diamond_sword.png'
+                ]
+              ]
+            ],
+            'modal_form' => [
+              'title' => 'ModalForm Example Title',
+              'content' => '§7Any text:',
+              'buttons' => [
+                'button_yes' => [
+                  'text' => 'Button Yes'
+                ],
+                'button_no' => [
+                  'text' => 'Button No'
+                ]
+              ]
+            ],
+            'custom_form' => [
+              'title' => 'CustomForm Example Title'
+            ]
+          ]
+        ],
+        'menu' => [
+          'command' => [
+            'name' => ['menu'],
+            'description' => '§7Menu example command!'
+          ],
+          'data' => [
+            'title' => 'Menu Example Name',
+            'items' => []
+          ]
+        ],
+        'dialogue' => [
+          'command' => [
+            'name' => ['dialogue'],
+            'description' => '§7Dialogue example command!'
+          ],
+          'data' => [
+            'name' => 'Dialogue Example Name',
+            'text' => 'Dialogue Example Text',
+            'texture' => [
+              'type' => 'dialogue:default',
+              'typeId' => 0,
+            ],
+            'buttons' => [
+              0 => 'Button 1',
+              1 => 'Button 2'
+            ]
+          ]
+        ]
       ]
     ]);
     $this->getServer()->getCommandMap()->registerAll(

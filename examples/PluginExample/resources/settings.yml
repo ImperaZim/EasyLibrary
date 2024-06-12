@@ -59,3 +59,64 @@ dialogue_texture:
 dialogue_buttons:
   0: 'Button 1'
   1: 'Button 2'
+
+# Form Settings 
+
+  # Command
+form_command_name: ['form']
+form_command_description: '§7Form example command!' 
+
+  # Form [LongForm]
+long_form_title: 'LongForm Example Title' 
+long_form_content: '§7Any text:' 
+long_form_buttons: 
+  form_button_1:
+    text: 'Button with url image' 
+    image: 'url|https://picsum.photos/200/200'
+  form_button_2:
+    text: ['Button with resourcepack image', 'Content example'] 
+    image: 'path|textures/items/diamond_sword.png'
+
+  # Form [ModalForm]
+modal_form_title: 'ModalForm Example Title' 
+modal_form_content: '§7Any text:' 
+modal_form_buttons: 
+  button_yes:
+    text: 'Button Yes'
+  button_no:
+    text: 'Button No'
+
+  # Form [CustomForm]
+custom_form_title: 'CustomForm Example Title' 
+
+
+
+# Menu settings 
+
+  # Command
+menu_command_name: ['menu']
+menu_command_description: '§7Menu example command!' 
+
+  # Menu 
+menu_title: 'Menu Example Name'
+menu_contents: [] # Use Item_Serielized
+
+
+
+# Dialogue settings 
+
+  # Command
+dialogue_command_name: ['dialogue']
+dialogue_command_description: '§7Dialogue example command!' 
+
+  # Dialogue 
+dialogue_name: 'Dialogue Example Name'
+dialogue_text: 'Dialogue Example Text' 
+dialogue_texture: 
+  # In [DialogueTextureTypes]
+  type: 'dialogue:default'
+  # In [DefaultDialogueTexture]
+  typeId: 0
+dialogue_buttons:
+  0: 'Button 1'
+  1: 'Button 2'
