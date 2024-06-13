@@ -4,20 +4,22 @@ declare(strict_types = 1);
 
 namespace library\plugin;
 
-use Exception;
 use pocketmine\Server;
 use library\filesystem\Path;
 use library\filesystem\File;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLoader;
+use pocketmine\utils\SingletonTrait;
 use pocketmine\plugin\ResourceProvider;
 use pocketmine\plugin\PluginDescription;
+use \Exception;
 
 /**
 * Class PluginToolkit
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
+  use SingletonTrait;
 
   /** @var string|null */
   private ?string $environment = null;
@@ -31,6 +33,23 @@ abstract class PluginToolkit extends PluginBase {
     private ResourceProvider $resourceProvider
   ) {
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
+  }
+
+  /**
+  * Sets the environment for the plugin (e.g., 'production', 'development').
+  * @param string $environment The environment to set.
+  * @return void
+  */
+  public function setEnvironment(string $environment): void {
+    $this->environment = strtolower(trim($environment));
+  }
+
+  /**
+  * Gets the current environment for the plugin.
+  * @return string|null The current environment, or null if not set.
+  */
+  public function getEnvironment(): ?string {
+    return $this->environment;
   }
 
   /**
@@ -77,8 +96,8 @@ abstract class PluginToolkit extends PluginBase {
     }
 
     $fileExtension = str_replace('file:', '', $fileType);
-    $baseFileName = str_replace('.' . $fileExtension, '', $fileName);
-    $relativeDirectory = str_replace([$this->file, 'resources', '//'], [$this->dataFolder, '', '/'], $fileDirectory . '/');
+    $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
+    $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
 
     return new File(
       directoryOrConfig: $relativeDirectory,
@@ -100,10 +119,10 @@ abstract class PluginToolkit extends PluginBase {
   /**
   * Gets the data path of the server.
   * @param array|null $join Continue paths.
-  * @return string The server data path.
+  * @return string The serve data path.
   */
   public function getServerPath(?array $join = null): string {
-    $path = $this->server->getDataPath();
+    $path = Server::getInstance()->getDataPath();
     if ($join !== null) {
       if (strtolower($join[0]) === 'join:data') {
         $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
@@ -111,7 +130,7 @@ abstract class PluginToolkit extends PluginBase {
         $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
       }
     }
-    return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    return trim($path . DIRECTORY_SEPARATOR);
   }
 
 }

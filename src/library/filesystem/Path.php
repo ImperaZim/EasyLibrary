@@ -187,23 +187,18 @@ final class Path {
       new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
       RecursiveIteratorIterator::SELF_FIRST
     );
+
     foreach ($files as $file) {
       if ($file->isFile()) {
-        $filePath = $file->getPathname();
-        $fileName = $file->getBasename();
-        $fileExtension = $file->getExtension();
-        $fileContents = file_get_contents($filePath);
-
         $filesInfo[] = [
           'directory' => $file->getPath(),
-          'fileName' => $fileName,
-          'fileType' => File::match($fileExtension),
-          'content' => File::jsonDeserialize($fileExtension, $fileContents)
+          'fileName' => $file->getBasename(),
+          'fileType' => File::match($file->getExtension()),
+          'content' => File::jsonDeserialize($file->getExtension(), file_get_contents($filePath))
         ];
       }
     }
     return $filesInfo;
   }
-
 
 }
