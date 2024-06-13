@@ -79,7 +79,7 @@ final class File {
   }
 
   public static function clone(): self {
-    return self(clone: true);
+    return new self(clone: true);
   }
 
   /**
