@@ -139,6 +139,27 @@ final class File {
     return $extensions[$this->fileType] ?? $defaultValue;
   }
 
+  /**
+  * Serializes the content based on the file type.
+  * @param string $fileType The type of the file (e.g., 'json', 'yml').
+  * @param array $data The key-value pairs to be serialized.
+  * @return string The serialized content.
+  * @throws FileSystemException If the file type is unsupported.
+  */
+  public static function jsonSerialize(string $fileType, array $data): string {
+    return $this->serializeContent($fileType, $data);
+  }
+
+  /**
+  * Deserializes the content based on the file extension.
+  * @param string $extension The extension of the file (e.g., 'json', 'yml').
+  * @param string $fileContent The content of the file to be deserialized.
+  * @return array The deserialized data.
+  * @throws FileSystemException If the file type is unsupported.
+  */
+  public static function jsonDeserialize(string $extension, string $fileContent): array {
+    return $this->deserializeContent($extension, $fileContent);
+  }
 
   /**
   * Serializes the content based on the file type.
@@ -148,172 +169,146 @@ final class File {
   * @throws FileSystemException If the file type is unsupported.
   */
   private function serializeContent(string $fileType, array $data): string {
-    $content = match ($fileType) {
-      'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
-      'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
-      'json' => json_encode($data, JSON_PRETTY_PRINT),
-      'txt' => $this->writeList(array_keys($data)),
-      default => throw new FileSystemException("Unsupported file type: {$fileType}")
+    if (!in_array($fileType, ['yml', 'yaml', 'json', 'txt'])) {
+      return match ($fileType) {
+        'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
+        'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
+        'json' => json_encode($data, JSON_PRETTY_PRINT),
+        'txt' => $this->writeList(array_keys($data))
       };
-      return $content;
     }
+    throw new FileSystemException("Unsupported file type: {$fileType}");
+  }
 
-    /**
-    * Deserializes the content based on the file extension.
-    * @param string $extension The extension of the file (e.g., 'json', 'yml').
-    * @param string $fileContent The content of the file to be deserialized.
-    * @return array The deserialized data.
-    * @throws FileSystemException If the file type is unsupported.
-    */
-    private function deserializeContent(string $extension, string $fileContent): array {
-      $data = match ($extension) {
+  /**
+  * Deserializes the content based on the file extension.
+  * @param string $extension The extension of the file (e.g., 'json', 'yml').
+  * @param string $fileContent The content of the file to be deserialized.
+  * @return array The deserialized data.
+  * @throws FileSystemException If the file type is unsupported.
+  */
+  private function deserializeContent(string $extension, string $fileContent): array {
+    if (!in_array($fileType, ['yml', 'yaml', 'json', 'txt'])) {
+      return match ($extension) {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
         'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
-        'txt' => array_fill_keys($this->parseList($fileContent), true),
-      default => throw new FileSystemException("Unsupported file type: $extension")
+        'txt' => array_fill_keys($this->parseList($fileContent), true)
       };
-      return $data;
     }
+    throw new FileSystemException("Unsupported file type: {$fileType}");
+  }
 
-    /**
-    * Load a configuration fload
-    * @return boolean
-    */
-    public function loadConfig(): bool {
-      $config = $this->directoryOrConfig;
-      if (!$config instanceof Config) {
-        return false;
-      }
-      return $config->getPlugin()->saveResource($config->getPath());
+  /**
+  * Load a configuration fload
+  * @return boolean
+  */
+  public function loadConfig(): bool {
+    $config = $this->directoryOrConfig;
+    if (!$config instanceof Config) {
+      return false;
     }
+    return $config->getPlugin()->saveResource($config->getPath());
+  }
 
-    /**
-    * Check if the file exists.
-    * @return bool
-    */
-    public function fileExists(): bool {
-      return file_exists($this->getFilePath());
+  /**
+  * Check if the file exists.
+  * @return bool
+  */
+  public function fileExists(): bool {
+    return file_exists($this->getFilePath());
+  }
+
+  /**
+  * Create the file if it does not exist.
+  * @return void
+  * @throws FileSystemException If the file cannot be created.
+  */
+  private function createFile(): void {
+    $filePath = $this->getFilePath();
+    if (file_put_contents($filePath, '') === false) {
+      throw new FileSystemException("Unable to create file: $filePath");
     }
+  }
 
-    /**
-    * Create the file if it does not exist.
-    * @return void
-    * @throws FileSystemException If the file cannot be created.
-    */
-    private function createFile(): void {
-      $filePath = $this->getFilePath();
-      if (file_put_contents($filePath, '') === false) {
-        throw new FileSystemException("Unable to create file: $filePath");
-      }
+  /**
+  * Delete the file.
+  * @return void
+  * @throws FileSystemException If the file cannot be deleted.
+  */
+  public function deleteFile(): void {
+    $filePath = $this->getFilePath();
+    if (!unlink($filePath)) {
+      throw new FileSystemException("Unable to delete file: $filePath");
     }
+  }
 
-    /**
-    * Delete the file.
-    * @return void
-    * @throws FileSystemException If the file cannot be deleted.
-    */
-    public function deleteFile(): void {
-      $filePath = $this->getFilePath();
-      if (!unlink($filePath)) {
-        throw new FileSystemException("Unable to delete file: $filePath");
-      }
+  /**
+  * Read the file content.
+  * @return string
+  * @throws FileSystemException If the file cannot be read.
+  */
+  public function readFile(): string {
+    if (!$this->fileExists()) {
+      throw new FileSystemException("File not found: " . $this->getFilePath());
     }
-
-    /**
-    * Read the file content.
-    * @return string
-    * @throws FileSystemException If the file cannot be read.
-    */
-    public function readFile(): string {
-      if (!$this->fileExists()) {
-        throw new FileSystemException("File not found: " . $this->getFilePath());
-      }
-      $content = file_get_contents($this->getFilePath());
-      if ($content === false) {
-        throw new FileSystemException("Unable to read file: " . $this->getFilePath());
-      }
-      return $content;
+    $content = file_get_contents($this->getFilePath());
+    if ($content === false) {
+      throw new FileSystemException("Unable to read file: " . $this->getFilePath());
     }
+    return $content;
+  }
 
-    /**
-    * Write content to the file.
-    * @param string $content The content to write.
-    * @return void
-    * @throws FileSystemException If the file cannot be written.
-    */
-    public function writeFile(string $content): void {
-      $result = file_put_contents($this->getFilePath(), $content);
-      if ($result === false) {
-        throw new FileSystemException("Unable to write to file: " . $this->getFilePath());
-      }
+  /**
+  * Write content to the file.
+  * @param string $content The content to write.
+  * @return void
+  * @throws FileSystemException If the file cannot be written.
+  */
+  public function writeFile(string $content): void {
+    $result = file_put_contents($this->getFilePath(), $content);
+    if ($result === false) {
+      throw new FileSystemException("Unable to write to file: " . $this->getFilePath());
     }
+  }
 
-    /**
-    * Get a value from the file based on the given key path.
-    * @param string|null $keyPath The key path to the value.
-    * @param mixed $defaultValue The default value to return if the key path is not found.
-    * @return mixed The value found at the key path, or the default value if not found.
-    */
-    public function get(?string $keyPath = null, mixed $defaultValue = null): mixed {
-      if ($keyPath === null) {
-        $fileContent = $this->readFile();
-        $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
-        return $this->deserializeContent($extension, $fileContent);
-      }
+  /**
+  * Get a value from the file based on the given key path.
+  * @param string|null $keyPath The key path to the value.
+  * @param mixed $defaultValue The default value to return if the key path is not found.
+  * @return mixed The value found at the key path, or the default value if not found.
+  */
+  public function get(?string $keyPath = null, mixed $defaultValue = null): mixed {
+    if ($keyPath === null) {
       $fileContent = $this->readFile();
       $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
-      $data = $this->deserializeContent($extension, $fileContent);
-      $keys = explode('.', $keyPath);
-      foreach ($keys as $key) {
-        if (!isset($data[$key])) {
-          return $defaultValue;
-        }
-        $data = $data[$key];
-      }
-      return $data;
+      return $this->deserializeContent($extension, $fileContent);
     }
-
-    /**
-    * Set a value in the file based on the given key path.
-    * @param array $keyValuePairs The key-value pairs to set.
-    * @return bool true se a operação for bem-sucedida, false se falhar.
-    */
-    public function set(array $keyValuePairs): bool {
-      $fileContent = $this->readFile();
-      $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
-      $data = $this->deserializeContent($extension, $fileContent);
-
-      if (isset($keyValuePairs['--override']) && is_array($keyValuePairs['--override'])) {
-        $content = $this->serializeContent($extension, $keyValuePairs['--override']);
-        try {
-          $this->writeFile($content);
-          return true;
-        } catch (FileSystemException $e) {
-          return false;
-        }
+    $fileContent = $this->readFile();
+    $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
+    $data = $this->deserializeContent($extension, $fileContent);
+    $keys = explode('.', $keyPath);
+    foreach ($keys as $key) {
+      if (!isset($data[$key])) {
+        return $defaultValue;
       }
+      $data = $data[$key];
+    }
+    return $data;
+  }
 
-      if (isset($keyValuePairs['--merge']) && is_array($keyValuePairs['--merge'])) {
-        $this->mergeArrays($data, $keyValuePairs['--merge']);
-      } else {
-        foreach ($keyValuePairs as $keyPath => $value) {
-          $keys = explode('.', $keyPath);
-          $nestedArray = &$data;
-          foreach ($keys as $key) {
-            if (!is_array($nestedArray)) {
-              $nestedArray = [];
-            }
-            if (!isset($nestedArray[$key])) {
-              $nestedArray[$key] = [];
-            }
-            $nestedArray = &$nestedArray[$key];
-          }
-          $nestedArray = $value;
-        }
-      }
+  /**
+  * Set a value in the file based on the given key path.
+  * @param array $keyValuePairs The key-value pairs to set.
+  * @return bool true se a operação for bem-sucedida, false se falhar.
+  */
+  public function set(array $keyValuePairs): bool {
+    $fileContent = $this->readFile();
+    $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
+    $data = $this->deserializeContent($extension, $fileContent);
 
-      $content = $this->serializeContent($extension, $data);
+    if (isset($keyValuePairs['--override']) && is_array($keyValuePairs['--override'])) {
+      $content = $this->serializeContent($extension, $keyValuePairs['--override']);
       try {
         $this->writeFile($content);
         return true;
@@ -322,31 +317,59 @@ final class File {
       }
     }
 
-    private function mergeArrays(array &$original, array $newData): void {
-      foreach ($newData as $key => $value) {
-        if (is_array($value) && isset($original[$key]) && is_array($original[$key])) {
-          $this->mergeArrays($original[$key], $value);
-        } else {
-          if (!isset($original[$key])) {
-            $original[$key] = $value;
+    if (isset($keyValuePairs['--merge']) && is_array($keyValuePairs['--merge'])) {
+      $this->mergeArrays($data, $keyValuePairs['--merge']);
+    } else {
+      foreach ($keyValuePairs as $keyPath => $value) {
+        $keys = explode('.', $keyPath);
+        $nestedArray = &$data;
+        foreach ($keys as $key) {
+          if (!is_array($nestedArray)) {
+            $nestedArray = [];
           }
+          if (!isset($nestedArray[$key])) {
+            $nestedArray[$key] = [];
+          }
+          $nestedArray = &$nestedArray[$key];
         }
+        $nestedArray = $value;
       }
     }
 
-
-    /**
-    * Returns a string representation of the File.
-    * @return string Returns the string representation.
-    */
-    public function __toString(): string {
-      $type = $this->getFileExtension('Unknown');
-      return sprintf(
-        'File (Type: %s) %s: %s',
-        strtoupper($type),
-        $this->fileName . '.' . pathinfo($this->fileName, PATHINFO_EXTENSION),
-        $this->readFile()
-      );
+    $content = $this->serializeContent($extension, $data);
+    try {
+      $this->writeFile($content);
+      return true;
+    } catch (FileSystemException $e) {
+      return false;
     }
-
   }
+
+  private function mergeArrays(array &$original, array $newData): void {
+    foreach ($newData as $key => $value) {
+      if (is_array($value) && isset($original[$key]) && is_array($original[$key])) {
+        $this->mergeArrays($original[$key], $value);
+      } else {
+        if (!isset($original[$key])) {
+          $original[$key] = $value;
+        }
+      }
+    }
+  }
+
+
+  /**
+  * Returns a string representation of the File.
+  * @return string Returns the string representation.
+  */
+  public function __toString(): string {
+    $type = $this->getFileExtension('Unknown');
+    return sprintf(
+      'File (Type: %s) %s: %s',
+      strtoupper($type),
+      $this->fileName . '.' . pathinfo($this->fileName, PATHINFO_EXTENSION),
+      $this->readFile()
+    );
+  }
+
+}

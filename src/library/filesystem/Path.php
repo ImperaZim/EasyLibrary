@@ -6,6 +6,7 @@ namespace library\filesystem;
 
 use ZipArchive;
 use DirectoryIterator;
+use library\filesystem\File;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use library\filesystem\exception\FileSystemException;
@@ -15,7 +16,7 @@ use library\filesystem\exception\FileSystemException;
 * @package library\filesystem
 */
 final class Path {
-  
+
   /**
   * Path constructor.
   * @param string $sourceFolder The source folder for operations.
@@ -36,11 +37,11 @@ final class Path {
       }
     }
   }
-  
+
   /**
-   * Gets the Source folder. 
-   * @return string
-   */
+  * Gets the Source folder.
+  * @return string
+  */
   public function getFolder(): string {
     return $this->sourceFolder;
   }
@@ -150,7 +151,7 @@ final class Path {
       }
     }
   }
-  
+
   /**
   * Deletes a folder and its contents recursively.
   * @throws FileSystemException If an error occurs during the delete process.
@@ -174,7 +175,7 @@ final class Path {
       throw new FileSystemException('Failed to delete the folder ' . $folder);
     }
   }
-  
+
   /**
   * Gets information about files in the resources directory and creates Path objects.
   * @param string $folder
@@ -183,29 +184,26 @@ final class Path {
   public static function getRecursiveFiles(string $folder): array {
     $filesInfo = [];
     $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
-        RecursiveIteratorIterator::SELF_FIRST
+      new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
+      RecursiveIteratorIterator::SELF_FIRST
     );
     foreach ($files as $file) {
-        if ($file->isFile()) {
-            $filePath = $file->getPathname();
-            $fileName = $file->getBasename();
-            $fileExtension = $file->getExtension();
-            $fileContents = file_get_contents($filePath);
+      if ($file->isFile()) {
+        $filePath = $file->getPathname();
+        $fileName = $file->getBasename();
+        $fileExtension = $file->getExtension();
+        $fileContents = file_get_contents($filePath);
 
-            $filesInfo[] = [
-                'directory' => $file->getPath(),
-                'fileName' => $fileName,
-                'fileType' => 'file:' . $fileExtension,
-                'data' => [
-                    'content' => $fileContents,
-                    'extension' => $fileExtension
-                ]
-            ];
-        }
+        $filesInfo[] = [
+          'directory' => $file->getPath(),
+          'fileName' => $fileName,
+          'fileType' => 'file:' . $fileExtension,
+          'content' => File::jsonDeserialize($fileExtension, $fileContents)
+        ];
+      }
     }
     return $filesInfo;
-}
+  }
 
-  
+
 }

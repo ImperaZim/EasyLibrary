@@ -4,30 +4,17 @@ declare(strict_types = 1);
 
 namespace ImperaZim;
 
-use library\network\Query;
 use library\filesystem\File;
-use library\filesystem\Path;
 use library\plugin\PluginToolkit;
 use ImperaZim\commands\FormExampleCommand;
 use ImperaZim\commands\MenuExampleCommand;
 use ImperaZim\commands\DialogueExampleCommand;
-
-use pocketmine\utils\SingletonTrait;
-
-use library\item\ItemFactory;
-use pocketmine\item\Item;
-use pocketmine\item\Pickaxe;
-use pocketmine\item\ToolTier;
-use pocketmine\item\ItemTypeIds;
-use pocketmine\item\ItemIdentifier;
-use pocketmine\item\enchantment\ItemEnchantmentTags;
 
 /**
 * Class PluginExample
 * @package ImperaZim
 */
 final class PluginExample extends PluginToolkit {
-  use SingletonTrait;
 
   /** @var File */
   private File $settings;
@@ -121,33 +108,11 @@ final class PluginExample extends PluginToolkit {
         ]
       ]
     );
-
-    $registeredItems = function(): array {
-      $item1 = new Pickaxe(
-        new ItemIdentifier(ItemTypeIds::newId()),
-        "Factored Diamond Pickaxe",
-        ToolTier::DIAMOND,
-        [ItemEnchantmentTags::PICKAXE]
-      );
-      return [
-        ItemFactory::register($item1) => $item1
-      ];
-    };
-    foreach ($registeredItems() as $name => $item) {
-      $serialize = ItemFactory::jsonSerialize($item);
-      var_dump([
-        $name => [
-          "serialized" => $serialize,
-          "deserialized" => ItemFactory::jsonDeserialize($serialize)->__toString()
-        ]
-      ]);
-    }
     
-    $resourcePath = $this->getResourcesDirectory();
-    var_dump(Path::getRecursiveFiles($resourcePath));
-
+    $this->saveRecursiveResources();
+    
     $this->getServer()->getCommandMap()->registerAll(
-      fallbackPrefix: 'PluginExample',
+      fallbackPrefix: $this->getName(),
       commands: [
         FormExampleCommand::base(),
         MenuExampleCommand::base(),
