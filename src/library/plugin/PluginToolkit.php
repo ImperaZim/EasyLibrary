@@ -52,7 +52,7 @@ abstract class PluginToolkit extends PluginBase {
           if ($fileName !== null && $fileType !== null && $fileContent !== null && $fileDirectory !== null) {
             $sExt = str_replace('file:', '', $fileType);
             $fileName = str_replace('.' . $sExt, '', $fileName);
-            $fileDirectory = str_replace([$this->file, 'resources'], [$this->dataFolder, ''], $fileDirectory);
+            $fileDirectory = str_replace([$this->file, 'resources/'], [$this->dataFolder, ''], $fileDirectory);
             $loadedFiles[] = new File(
               directoryOrConfig: $fileDirectory,
               fileName: $fileName,
