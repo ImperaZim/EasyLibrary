@@ -50,7 +50,7 @@ abstract class PluginToolkit extends PluginBase {
           $fileDirectory = $file['directory'] ?? null;
 
           if ($fileName !== null && $fileType !== null && $fileContent !== null && $fileDirectory !== null) {
-            $loadedFiles = str_replace($this->file, $this->dataFolder, $fileDirectory);
+            $fileDirectory = str_replace($this->file, $this->dataFolder, $fileDirectory);
             $loadedFiles[] = new File(
               directoryOrConfig: $fileDirectory,
               fileName: $fileName,
