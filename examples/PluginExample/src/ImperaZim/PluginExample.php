@@ -6,6 +6,7 @@ namespace ImperaZim;
 
 use library\filesystem\File;
 use library\plugin\PluginToolkit;
+use pocketmine\utils\SingletonTrait;
 use ImperaZim\commands\FormExampleCommand;
 use ImperaZim\commands\MenuExampleCommand;
 use ImperaZim\commands\DialogueExampleCommand;
@@ -15,6 +16,7 @@ use ImperaZim\commands\DialogueExampleCommand;
 * @package ImperaZim
 */
 final class PluginExample extends PluginToolkit {
+  use SingletonTrait;
 
   /** @var File */
   private File $settings;
@@ -108,9 +110,9 @@ final class PluginExample extends PluginToolkit {
         ]
       ]
     );
-    
+
     $this->saveRecursiveResources();
-    
+
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: $this->getName(),
       commands: [

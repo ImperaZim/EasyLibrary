@@ -4,24 +4,20 @@ declare(strict_types = 1);
 
 namespace library\plugin;
 
+use Exception;
 use pocketmine\Server;
 use library\filesystem\Path;
 use library\filesystem\File;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLoader;
-use pocketmine\utils\SingletonTrait;
 use pocketmine\plugin\ResourceProvider;
 use pocketmine\plugin\PluginDescription;
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use Exception;
 
 /**
 * Class PluginToolkit
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
-  use SingletonTrait;
 
   /** @var string|null */
   private ?string $environment = null;
