@@ -23,7 +23,7 @@ trait FileExtensionTypes {
   public const TYPE_TXT = 'file:txt';
 
   public static function match(string $fileType): ?string {
-    if (!in_array($fileType, ['yml', 'yaml', 'json', 'txt'])) {
+    if (in_array($fileType, ['yml', 'yaml', 'json', 'txt'])) {
       return match ($fileType) {
         'yml' => self::TYPE_YML,
         'yaml' => self::TYPE_YAML,
@@ -31,6 +31,7 @@ trait FileExtensionTypes {
         'txt' => self::TYPE_TXT
       };
     }
+    return null;
   }
 
 }
