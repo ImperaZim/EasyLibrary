@@ -38,40 +38,48 @@ final class File {
   * @param string $fileName The name of the file.
   * @param string $fileType The type of the file.
   * @param bool|null $autoGenerate Whether to generate the file if it does not exist.
+  * @param bool|null $clone Get this class with empty data.
   * @param array|null $readCommand The initial query.
   * @throws FileSystemException If the file type is invalid or the file cannot be created.
   */
   public function __construct(
-    private string|Config $directoryOrConfig,
+    private string|Config|null $directoryOrConfig = null,
     private ?string $fileName = null,
     private ?string $fileType = null,
     private ?bool $autoGenerate = false,
-    private ?array $readCommand = null
+    private ?array $readCommand = null,
+    private ?bool $clone = false
   ) {
-    if ($directoryOrConfig instanceof Config) {
-      $config = $directoryOrConfig;
-      $filePath = $config->getPath();
-      $directory = dirname($filePath);
-      $fileName = basename($filePath, str_replace('file:', '.', TYPE_YML));
-      $fileType = self::TYPE_YML;
-    } else {
-      $directory = $directoryOrConfig;
-    }
-    if (!in_array($fileType, $this->getFileTypes())) {
-      throw new FileSystemException("Invalid file type: $fileType");
-    }
-    $this->directoryOrConfig = $directory;
-    $this->fileName = $fileName ?? '';
-    $this->fileType = $fileType ?? self::TYPE_YML;
-    if ($autoGenerate) {
-      new Path($directory, true);
-      if (!$this->fileExists()) {
-        $this->createFile();
+    if (!$clone) {
+      if ($directoryOrConfig instanceof Config) {
+        $config = $directoryOrConfig;
+        $filePath = $config->getPath();
+        $directory = dirname($filePath);
+        $fileName = basename($filePath, str_replace('file:', '.', TYPE_YML));
+        $fileType = self::TYPE_YML;
+      } else {
+        $directory = $directoryOrConfig;
       }
-      if ($readCommand !== null) {
-        $this->set($readCommand);
+      if (!in_array($fileType, $this->getFileTypes())) {
+        throw new FileSystemException("Invalid file type: $fileType");
+      }
+      $this->directoryOrConfig = $directory;
+      $this->fileName = $fileName ?? '';
+      $this->fileType = $fileType ?? self::TYPE_YML;
+      if ($autoGenerate) {
+        new Path($directory, true);
+        if (!$this->fileExists()) {
+          $this->createFile();
+        }
+        if ($readCommand !== null) {
+          $this->set($readCommand);
+        }
       }
     }
+  }
+
+  public static function clone(): self {
+    return self(clone: true);
   }
 
   /**
@@ -147,7 +155,7 @@ final class File {
   * @throws FileSystemException If the file type is unsupported.
   */
   public static function jsonSerialize(string $extension, array $data): string {
-    return $this->serializeContent($extension, $data);
+    return self::clone()->serializeContent($extension, $data);
   }
 
   /**
@@ -158,7 +166,7 @@ final class File {
   * @throws FileSystemException If the file type is unsupported.
   */
   public static function jsonDeserialize(string $extension, string $fileContent): array {
-    return $this->deserializeContent($extension, $fileContent);
+    return self::clone()->deserializeContent($extension, $fileContent);
   }
 
   /**
