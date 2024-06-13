@@ -45,7 +45,7 @@ abstract class PluginToolkit extends PluginBase {
         $files = Path::getRecursiveFiles($dir);
         foreach ($files as $file) {
           $fileName = $file['fileName'] ?? null;
-          $fileType = File::match($file['fileType']);
+          $fileType = $file['fileType'] ?? null;
           $fileContent = $file['content'] ?? null;
           $fileDirectory = $file['directory'] ?? null;
 
@@ -53,7 +53,7 @@ abstract class PluginToolkit extends PluginBase {
             $loadedFiles[] = new File(
               directoryOrConfig: $fileDirectory,
               fileName: $fileName,
-              fileType: File::match($fileType),
+              fileType: $fileType,
               autoGenerate: true,
               readCommand: [$loadedFiles => $fileContent]
             );

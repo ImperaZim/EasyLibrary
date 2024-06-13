@@ -197,7 +197,7 @@ final class Path {
         $filesInfo[] = [
           'directory' => $file->getPath(),
           'fileName' => $fileName,
-          'fileType' => 'file:' . $fileExtension,
+          'fileType' => File::match($fileExtension),
           'content' => File::jsonDeserialize($fileExtension, $fileContents)
         ];
       }
