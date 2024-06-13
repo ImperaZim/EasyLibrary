@@ -111,8 +111,7 @@ final class PluginExample extends PluginToolkit {
       ]
     );
 
-    var_dump($this->saveRecursiveResources());
-
+    $this->saveRecursiveResources();
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: $this->getName(),
       commands: [
