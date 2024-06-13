@@ -7,6 +7,9 @@ namespace library\plugin;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\plugin\PluginBase;
+use pocketmine\plugin\PluginLoader;
+use pocketmine\plugin\ResourceProvider;
+use pocketmine\plugin\PluginDescription;
 
 /**
 * Class PluginToolkit
@@ -14,6 +17,17 @@ use pocketmine\plugin\PluginBase;
 */
 abstract class PluginToolkit extends PluginBase {
   private ?string $environment = null;
+  
+  public function __construct(
+		private PluginLoader $loader,
+		private Server $server,
+		private PluginDescription $description,
+		private string $dataFolder,
+		private string $file,
+		private ResourceProvider $resourceProvider
+	){
+	  parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
+	}
 
   /**
   * Sets the environment for the plugin (e.g., 'production', 'development').
@@ -30,6 +44,16 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function getEnvironment(): ?string {
     return $this->environment;
+  }
+  
+  /**
+  * Gets the plugin resources path.
+  * @return string The plugin resource data path.
+  */
+  public function getResourcePath(): string {
+    return implode(
+      '/', [$this->file, "resources"]
+    ) . DIRECTORY_SEPARATOR;
   }
 
   /**
