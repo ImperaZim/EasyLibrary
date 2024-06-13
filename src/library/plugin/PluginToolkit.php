@@ -39,36 +39,54 @@ abstract class PluginToolkit extends PluginBase {
   * @return array|null
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
-    if (is_dir($dir = $this->getResourcesDirectory())) {
-      $loadedFiles = [];
-      try {
-        $files = Path::getRecursiveFiles($dir);
-        foreach ($files as $file) {
-          $fileName = $file['fileName'] ?? null;
-          $fileType = $file['fileType'] ?? null;
-          $fileContent = $file['content'] ?? null;
-          $fileDirectory = $file['directory'] ?? null;
-
-          if ($fileName !== null && $fileType !== null && $fileContent !== null && $fileDirectory !== null) {
-            $sExt = str_replace('file:', '', $fileType);
-            $fileName = str_replace('.' . $sExt, '', $fileName);
-            $fileDirectory = str_replace([$this->file, 'resources/'], [$this->dataFolder, ''], $fileDirectory);
-            $loadedFiles[] = new File(
-              directoryOrConfig: $fileDirectory,
-              fileName: $fileName,
-              fileType: $fileType,
-              autoGenerate: true,
-              readCommand: [$loadType => $fileContent]
-            );
-          }
-        }
-      } catch (Exception $e) {
-        $this->getLogger()->error("Erro ao carregar recursos: " . $e->getMessage());
-        return null;
-      }
-      return $loadedFiles;
+    if (!is_dir($dir = $this->getResourcesDirectory())) {
+      return null;
     }
-    return null;
+
+    $loadedFiles = [];
+    try {
+      $files = Path::getRecursiveFiles($dir);
+      foreach ($files as $file) {
+        $processedFile = $this->processFile($file, $loadType);
+        if ($processedFile !== null) {
+          $loadedFiles[] = $processedFile;
+        }
+      }
+    } catch (Exception $e) {
+      $this->getLogger()->error("Erro ao carregar recursos: " . $e->getMessage());
+      return null;
+    }
+
+    return $loadedFiles;
+  }
+
+  /**
+  * Process a single file entry from the recursive file listing.
+  * @param array $file
+  * @param string|null $loadType
+  * @return File|null
+  */
+  private function processFile(array $file, ?string $loadType): ?File {
+    $fileName = $file['fileName'] ?? null;
+    $fileType = $file['fileType'] ?? null;
+    $fileContent = $file['content'] ?? null;
+    $fileDirectory = $file['directory'] ?? null;
+
+    if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
+      return null;
+    }
+
+    $fileExtension = str_replace('file:', '', $fileType);
+    $baseFileName = str_replace('.' . $fileExtension, '', $fileName);
+    $relativeDirectory = str_replace([$this->file, 'resources/'], [$this->dataFolder, ''], $fileDirectory);
+
+    return new File(
+      directoryOrConfig: $relativeDirectory,
+      fileName: $baseFileName,
+      fileType: $fileType,
+      autoGenerate: true,
+      readCommand: [$loadType => $fileContent]
+    );
   }
 
   /**
@@ -95,5 +113,5 @@ abstract class PluginToolkit extends PluginBase {
     }
     return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
   }
-  
+
 }
