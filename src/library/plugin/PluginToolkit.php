@@ -48,9 +48,9 @@ abstract class PluginToolkit extends PluginBase {
   
   /**
   * Gets the plugin resources path.
-  * @return string The plugin resource data path.
+  * @return string The plugin resource path.
   */
-  public function getResourcePath(): string {
+  public function getResourcesDirectory(): string {
     return implode(
       '/', [$this->file, "resources"]
     ) . DIRECTORY_SEPARATOR;

@@ -143,7 +143,7 @@ final class PluginExample extends PluginToolkit {
       ]);
     }
     
-    $resourcePath = new Path($this->getResourcePath());
+    $resourcePath = new Path($this->getResourcesDirectory());
     var_dump($resourcePath->getRecursiveFiles());
 
     $this->getServer()->getCommandMap()->registerAll(
