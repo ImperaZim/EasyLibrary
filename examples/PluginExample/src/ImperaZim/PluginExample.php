@@ -143,8 +143,8 @@ final class PluginExample extends PluginToolkit {
       ]);
     }
     
-    $resourcePath = new Path($this->getResourcesDirectory());
-    var_dump($resourcePath->getRecursiveFiles());
+    $resourcePath = $this->getResourcesDirectory();
+    var_dump(Path::getRecursiveFiles($resourcePath));
 
     $this->getServer()->getCommandMap()->registerAll(
       fallbackPrefix: 'PluginExample',
