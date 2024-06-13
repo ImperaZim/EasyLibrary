@@ -23,12 +23,12 @@ abstract class PluginToolkit extends PluginBase {
   private ?string $environment = null;
 
   public function __construct(
-    PluginLoader $loader,
-    Server $server,
-    PluginDescription $description,
-    string $dataFolder,
-    string $file,
-    ResourceProvider $resourceProvider
+    private PluginLoader $loader,
+    private Server $server,
+    private PluginDescription $description,
+    private string $dataFolder,
+    private string $file,
+    private ResourceProvider $resourceProvider
   ) {
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
