@@ -78,7 +78,7 @@ abstract class PluginToolkit extends PluginBase {
 
     $fileExtension = str_replace('file:', '', $fileType);
     $baseFileName = str_replace('.' . $fileExtension, '', $fileName);
-    $relativeDirectory = str_replace([$this->file, 'resources', '//'], [$this->dataFolder, '', '/'], $fileDirectory);
+    $relativeDirectory = str_replace([$this->file, 'resources', '//'], [$this->dataFolder, '', '/'], $fileDirectory . '/');
 
     return new File(
       directoryOrConfig: $relativeDirectory,
