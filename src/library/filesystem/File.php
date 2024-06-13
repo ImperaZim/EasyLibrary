@@ -141,13 +141,13 @@ final class File {
 
   /**
   * Serializes the content based on the file type.
-  * @param string $fileType The type of the file (e.g., 'json', 'yml').
+  * @param string $extension The type of the file (e.g., 'json', 'yml').
   * @param array $data The key-value pairs to be serialized.
   * @return string The serialized content.
   * @throws FileSystemException If the file type is unsupported.
   */
-  public static function jsonSerialize(string $fileType, array $data): string {
-    return $this->serializeContent($fileType, $data);
+  public static function jsonSerialize(string $extension, array $data): string {
+    return $this->serializeContent($extension, $data);
   }
 
   /**
@@ -163,21 +163,21 @@ final class File {
 
   /**
   * Serializes the content based on the file type.
-  * @param string $fileType The type of the file (e.g., 'json', 'yml').
+  * @param string $extension The type of the file (e.g., 'json', 'yml').
   * @param array $data The key-value pairs to be serialized.
   * @return string The serialized content.
   * @throws FileSystemException If the file type is unsupported.
   */
-  private function serializeContent(string $fileType, array $data): string {
-    if (!in_array($fileType, ['yml', 'yaml', 'json', 'txt'])) {
-      return match ($fileType) {
+  private function serializeContent(string $extension, array $data): string {
+    if (!in_array($extension, ['yml', 'yaml', 'json', 'txt'])) {
+      return match ($extension) {
         'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'json' => json_encode($data, JSON_PRETTY_PRINT),
         'txt' => $this->writeList(array_keys($data))
       };
     }
-    throw new FileSystemException("Unsupported file type: {$fileType}");
+    throw new FileSystemException("Unsupported file type: {$extension}");
   }
 
   /**
@@ -188,7 +188,7 @@ final class File {
   * @throws FileSystemException If the file type is unsupported.
   */
   private function deserializeContent(string $extension, string $fileContent): array {
-    if (!in_array($fileType, ['yml', 'yaml', 'json', 'txt'])) {
+    if (!in_array($extension, ['yml', 'yaml', 'json', 'txt'])) {
       return match ($extension) {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
@@ -196,7 +196,7 @@ final class File {
         'txt' => array_fill_keys($this->parseList($fileContent), true)
       };
     }
-    throw new FileSystemException("Unsupported file type: {$fileType}");
+    throw new FileSystemException("Unsupported file type: {$extension}");
   }
 
   /**
