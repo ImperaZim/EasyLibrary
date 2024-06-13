@@ -55,7 +55,7 @@ abstract class PluginToolkit extends PluginBase {
               fileName: $fileName,
               fileType: $fileType,
               autoGenerate: true,
-              readCommand: [$loadedFiles => $fileContent]
+              readCommand: [$loadType => $fileContent]
             );
           }
         }
