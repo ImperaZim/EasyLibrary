@@ -5,14 +5,18 @@ declare(strict_types = 1);
 namespace library\plugin;
 
 use pocketmine\Server;
-use library\filesystem\Path;
-use library\filesystem\File;
+use pocketmine\event\Listener;
+use pocketmine\command\Command;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLoader;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\plugin\ResourceProvider;
 use pocketmine\plugin\PluginDescription;
-use \Exception;
+
+use library\filesystem\Path;
+use library\filesystem\File;
+use library\database\DatabaseManager;
+use library\plugin\exception\PluginException;
 
 /**
 * Class PluginToolkit
@@ -21,8 +25,8 @@ use \Exception;
 abstract class PluginToolkit extends PluginBase {
   use SingletonTrait;
 
-  /** @var string|null */
-  private ?string $environment = null;
+  /** @var mysqli */
+  private mysqli $connection;
 
   public function __construct(
     private PluginLoader $loader,
@@ -36,20 +40,66 @@ abstract class PluginToolkit extends PluginBase {
   }
 
   /**
-  * Sets the environment for the plugin (e.g., 'production', 'development').
-  * @param string $environment The environment to set.
+  * Register multiple commands.
+  * @param Command[] $commands An array of Command instances to register.
   * @return void
   */
-  public function setEnvironment(string $environment): void {
-    $this->environment = strtolower(trim($environment));
+  public function registerCommands(array $commands): void {
+    $commandMap = $this->getServer()->getCommandMap();
+    foreach ($commands as $command) {
+      if ($command instanceof Command) {
+        $commandMap->register($this->getName(), $command);
+      } else {
+        throw new PluginException("Tried to register an invalid command.");
+      }
+    }
   }
 
   /**
-  * Gets the current environment for the plugin.
-  * @return string|null The current environment, or null if not set.
+  * Register multiple event listeners.
+  * @param Listener[] $listeners An array of Listener instances to register.
+  * @return void
   */
-  public function getEnvironment(): ?string {
-    return $this->environment;
+  public function registerListeners(array $listeners): void {
+    foreach ($listeners as $listener) {
+      if ($listener instanceof Listener) {
+        $this->server->getPluginManager()->registerEvents($listener, $this);
+      } else {
+        throw new PluginException("Tried to register an invalid listener.");
+      }
+    }
+  }
+
+  /**
+  * Get an instance of DatabaseManager.
+  */
+  public function getDatabaseManager(): DatabaseManager {
+    return new DatabaseManager($this);
+  }
+
+  /**
+  * Gets the data path of the server.
+  * @param array|null $join Continue paths.
+  * @return string The serve data path.
+  */
+  public function getServerPath(?array $join = null): string {
+    $path = $this->server->getDataPath();
+    if ($join !== null) {
+      if (strtolower($join[0]) === 'join:data') {
+        $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
+      } else {
+        $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
+      }
+    }
+    return trim($path . DIRECTORY_SEPARATOR);
+  }
+
+  /**
+  * Gets the plugin resources path.
+  * @return string The plugin resource path.
+  */
+  public function getResourcesDirectory(): string {
+    return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
   }
 
   /**
@@ -72,7 +122,7 @@ abstract class PluginToolkit extends PluginBase {
         }
       }
     } catch (Exception $e) {
-      $this->getLogger()->error("Erro ao carregar recursos: " . $e->getMessage());
+      throw new PluginException("Erro ao carregar recursos: " . $e->getMessage());
       return null;
     }
 
@@ -106,31 +156,6 @@ abstract class PluginToolkit extends PluginBase {
       autoGenerate: true,
       readCommand: [$loadType => $fileContent]
     );
-  }
-
-  /**
-  * Gets the plugin resources path.
-  * @return string The plugin resource path.
-  */
-  public function getResourcesDirectory(): string {
-    return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
-  }
-
-  /**
-  * Gets the data path of the server.
-  * @param array|null $join Continue paths.
-  * @return string The serve data path.
-  */
-  public function getServerPath(?array $join = null): string {
-    $path = Server::getInstance()->getDataPath();
-    if ($join !== null) {
-      if (strtolower($join[0]) === 'join:data') {
-        $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
-      } else {
-        $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
-      }
-    }
-    return trim($path . DIRECTORY_SEPARATOR);
   }
 
 }

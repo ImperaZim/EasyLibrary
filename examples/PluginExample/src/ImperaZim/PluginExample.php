@@ -110,10 +110,8 @@ final class PluginExample extends PluginToolkit {
         ]
       ]
     );
-
     $this->saveRecursiveResources();
-    $this->getServer()->getCommandMap()->registerAll(
-      fallbackPrefix: $this->getName(),
+    $this->registerCommands(
       commands: [
         FormExampleCommand::base(),
         MenuExampleCommand::base(),
