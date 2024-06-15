@@ -160,7 +160,7 @@ final class File {
   * @throws FileSystemException If the file type is unsupported.
   */
   private function serializeContent(string $extension, array $data): string {
-    if (in_array($extension, ['yml', 'yaml', 'json', 'txt'])) {
+    if (in_array($extension, $this->getExtensions())) {
       return match ($extension) {
         'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
@@ -179,7 +179,7 @@ final class File {
   * @throws FileSystemException If the file type is unsupported.
   */
   private function deserializeContent(string $extension, string $fileContent): array {
-    if (in_array($extension, ['yml', 'yaml', 'json', 'txt'])) {
+    if (in_array($extension, $this->getExtensions())) {
       return match ($extension) {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
