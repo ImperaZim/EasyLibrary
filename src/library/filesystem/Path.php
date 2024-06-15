@@ -6,7 +6,6 @@ namespace library\filesystem;
 
 use ZipArchive;
 use DirectoryIterator;
-use library\filesystem\File;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use library\filesystem\exception\FileSystemException;
@@ -193,7 +192,7 @@ final class Path {
         $filesInfo[] = [
           'directory' => $file->getPath(),
           'fileName' => $file->getBasename(),
-          'fileType' => File::match($file->getExtension()),
+          'fileType' => File::getTypeByExtension($file->getExtension()),
           'content' => File::jsonDeserialize($file->getExtension(), file_get_contents($filePath))
         ];
       }

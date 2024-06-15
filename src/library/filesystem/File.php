@@ -58,9 +58,9 @@ final class File {
         $fileName = basename($filePath, str_replace('file:', '.', TYPE_YML));
         $fileType = self::TYPE_YML;
       } else {
-        $directory = $directoryOrConfig;
+        $directory = str_replace('//', '/', $directoryOrConfig . '/');
       }
-      if (!in_array($fileType, $this->getFileTypes())) {
+      if (!in_array($fileType, self::getTypes())) {
         throw new FileSystemException("Invalid file type: $fileType");
       }
       $this->directoryOrConfig = $directory;
@@ -99,19 +99,6 @@ final class File {
   }
 
   /**
-  * Get the available file extension based on FileExtensionTypes
-  * @return array
-  */
-  private function getFileTypes(): array {
-    return [
-      self::TYPE_YML,
-      self::TYPE_YAML,
-      self::TYPE_JSON,
-      self::TYPE_TXT
-    ];
-  }
-
-  /**
   * @return string[]
   */
   public function parseList(string $content) : array {
@@ -140,11 +127,7 @@ final class File {
   * @return string
   */
   private function getFileExtension(?string $defaultValue = ''): string {
-    $extensions = [];
-    foreach ($this->getFileTypes() as $ext) {
-      $extensions[$ext] = str_replace('file:', '.', $ext);
-    }
-    return $extensions[$this->fileType] ?? $defaultValue;
+    return self::getExtensionByType($this->fileType) ?? $defaultValue;
   }
 
   /**

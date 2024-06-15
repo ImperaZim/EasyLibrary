@@ -25,6 +25,9 @@ use library\plugin\exception\PluginException;
 abstract class PluginToolkit extends PluginBase {
   use SingletonTrait;
 
+  /** @var array */
+  private array $database = null;
+  
   /** @var mysqli */
   private mysqli $connection;
 
@@ -68,6 +71,14 @@ abstract class PluginToolkit extends PluginBase {
         throw new PluginException("Tried to register an invalid listener.");
       }
     }
+  }
+
+  /**
+  * Get an DDatabase
+  * return mysqli;
+  */
+  public function getDatabase(): string {
+    return $this->database;
   }
 
   /**
