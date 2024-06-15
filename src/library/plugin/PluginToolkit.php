@@ -26,7 +26,7 @@ abstract class PluginToolkit extends PluginBase {
   use SingletonTrait;
 
   /** @var array */
-  private array $database = null;
+  private array $database;
   
   /** @var mysqli */
   private mysqli $connection;
@@ -77,7 +77,7 @@ abstract class PluginToolkit extends PluginBase {
   * Get an DDatabase
   * return mysqli;
   */
-  public function getDatabase(): string {
+  public function getDatabase(): mixed {
     return $this->database;
   }
 
