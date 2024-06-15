@@ -24,7 +24,7 @@ use library\plugin\exception\PluginException;
 abstract class PluginToolkit extends PluginBase {
 
   /** @var array */
-  private array $database;
+  private ?array $database = null;
   
   /** @var mysqli */
   private mysqli $connection;
