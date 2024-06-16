@@ -20,9 +20,6 @@ final class PluginExample extends PluginToolkit {
 
   /** @var File */
   private File $settings;
-  
-  /** @var array */
-  private array $database = [1, 2, 3];
 
   /**
   * Called when the plugin is loaded.
@@ -35,7 +32,6 @@ final class PluginExample extends PluginToolkit {
   * Called when the plugin is enabled.
   */
   protected function onEnable(): void {
-    var_dump($this->getDatabase());
     $this->settings = new File(
       directoryOrConfig: $this->getServerPath(
         join: ['plugin_data', $this->getName(), 'tests']

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace library\item;
 
+use Exception;
 use pocketmine\item\Item;
 use pocketmine\nbt\TreeRoot;
 use pocketmine\scheduler\AsyncTask;
@@ -27,17 +28,21 @@ final class ItemFactory {
   private static array $registeredItems = [];
 
   public static function init(AsyncPool $asyncPool): void {
-    $asyncPool->addWorkerStartHook(function(int $worker) use ($asyncPool): void {
-      $asyncPool->submitTaskToWorker(new class extends AsyncTask {
-        public function onRun() : void {
-          foreach (ItemFactory::getRegisteredItems() as $name => $item) {
-            GlobalItemDataHandlers::getDeserializer()->map($item->getTypeId(), fn() => clone $item);
-            GlobalItemDataHandlers::getSerializer()->map($item, fn() => new SavedItemData($item->getTypeId()));
-            StringToItemParser::getInstance()->register($name, fn() => clone $item);
+    try {
+      $asyncPool->addWorkerStartHook(function(int $worker) use ($asyncPool): void {
+        $asyncPool->submitTaskToWorker(new class extends AsyncTask {
+          public function onRun() : void {
+            foreach (ItemFactory::getRegisteredItems() as $name => $item) {
+              GlobalItemDataHandlers::getDeserializer()->map($item->getTypeId(), fn() => clone $item);
+              GlobalItemDataHandlers::getSerializer()->map($item, fn() => new SavedItemData($item->getTypeId()));
+              StringToItemParser::getInstance()->register($name, fn() => clone $item);
+            }
           }
-        }
-      }, $worker);
-    });
+        }, $worker);
+      });
+    } catch (Exception $e) {
+      throw new ItemException("");
+    }
   }
 
   /**
@@ -46,9 +51,13 @@ final class ItemFactory {
   * @return string
   */
   public static function register(Item $item): string {
+    try {
       $name = strtolower(str_replace(' ', '_', $item->getVanillaName()));
-    self::$registeredItems[$name] = $item;
-    return $name;
+      self::$registeredItems[$name] = $item;
+      return $name;
+    } catch (Exception $e) {
+      throw new ItemException("");
+    }
   }
 
   /**
@@ -65,17 +74,21 @@ final class ItemFactory {
   * @return string
   */
   public static function jsonSerialize(Item $item): string {
-    $data = [
-      "vanillaName" => strtolower(str_replace(' ', '_', $item->getVanillaName()))
-    ];
-    if ($item->getCount() !== 1) {
-      $data["count"] = $item->getCount();
+    try {
+      $data = [
+        "vanillaName" => strtolower(str_replace(' ', '_', $item->getVanillaName()))
+      ];
+      if ($item->getCount() !== 1) {
+        $data["count"] = $item->getCount();
+      }
+      if ($item->hasNamedTag()) {
+        $nbtSerializer = new LittleEndianNbtSerializer();
+        $data["nbt"] = base64_encode($nbtSerializer->write(new TreeRoot($item->getNamedTag())));
+      }
+      return json_encode($data);
+    } catch (Exception $e) {
+      throw new ItemException("");
     }
-    if ($item->hasNamedTag()) {
-      $nbtSerializer = new LittleEndianNbtSerializer();
-      $data["nbt"] = base64_encode($nbtSerializer->write(new TreeRoot($item->getNamedTag())));
-    }
-    return json_encode($data);
   }
 
   /**
@@ -122,9 +135,8 @@ final class ItemFactory {
         $item->setNamedTag($nbt);
       }
       return $item;
-    } catch (\Throwable $e) {
-      new \crashdump($e);
-      return null;
+    } catch (Exception $e) {
+      throw new ItemException("");
     }
   }
 
