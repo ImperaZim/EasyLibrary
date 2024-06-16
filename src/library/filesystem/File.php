@@ -272,11 +272,11 @@ final class File {
   public function get(?string $keyPath = null, mixed $defaultValue = null): mixed {
     if ($keyPath === null) {
       $fileContent = $this->readFile();
-      $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
+      $extension = self::getExtensionByType($this->getFileType());
       return $this->deserializeContent($extension, $fileContent);
     }
     $fileContent = $this->readFile();
-    $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
+    $extension = self::getExtensionByType($this->getFileType());
     $data = $this->deserializeContent($extension, $fileContent);
     $keys = explode('.', $keyPath);
     foreach ($keys as $key) {
@@ -295,7 +295,7 @@ final class File {
   */
   public function set(array $keyValuePairs): bool {
     $fileContent = $this->readFile();
-    $extension = pathinfo($this->getFilePath(), PATHINFO_EXTENSION);
+    $extension = self::getExtensionByType($this->getFileType());
     $data = $this->deserializeContent($extension, $fileContent);
 
     if (isset($keyValuePairs['--override']) && is_array($keyValuePairs['--override'])) {
