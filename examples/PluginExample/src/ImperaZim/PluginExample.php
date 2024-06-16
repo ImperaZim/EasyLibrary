@@ -17,6 +17,9 @@ use ImperaZim\commands\DialogueExampleCommand;
 */
 final class PluginExample extends PluginToolkit {
   use SingletonTrait;
+  
+  /** @var array */
+  private array $database = [1, 2, 3];
 
   /** @var File */
   private File $settings;
