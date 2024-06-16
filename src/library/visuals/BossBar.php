@@ -5,8 +5,9 @@ declare(strict_types = 1);
 namespace library\visuals;
 
 use GlobalLogger;
+use library\visuals\exception\VisualsException;
+
 use pocketmine\Server;
-use InvalidArgumentException;
 use pocketmine\player\Player;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Attribute;
@@ -28,38 +29,43 @@ class BossBar {
 
   /** @var Player[] */
   private array $players = [];
-  
+
   /** @var string */
   private string $title = "";
-  
+
   /** @var string */
   private string $subTitle = "";
-  
+
   /** @var int */
   private int $color = BossBarColor::PURPLE;
-  
+
   /** @var int|null */
   public ?int $actorId = null;
-  
+
   /** @var AttributeMap */
   private AttributeMap $attributeMap;
-  
+
   /** @var EntityMetadataCollection */
   protected EntityMetadataCollection $propertyManager;
 
   /**
   * BossBar constructor.
-  * This will not spawn the bar, since there would be no players to spawn it to
+  * Initializes a new boss bar instance.
   */
   public function __construct() {
     $this->attributeMap = new AttributeMap();
-    $this->getAttributeMap()->add(AttributeFactory::getInstance()->mustGet(Attribute::HEALTH)->setMaxValue(100.0)->setMinValue(0.0)->setDefaultValue(100.0));
+    $this->getAttributeMap()->add(AttributeFactory::getInstance()->mustGet(Attribute::HEALTH)
+      ->setMaxValue(100.0)
+      ->setMinValue(0.0)
+      ->setDefaultValue(100.0)
+    );
     $this->propertyManager = new EntityMetadataCollection();
     $this->propertyManager->setLong(EntityMetadataProperties::FLAGS, 0
       ^ 1 << EntityMetadataFlags::SILENT
       ^ 1 << EntityMetadataFlags::INVISIBLE
       ^ 1 << EntityMetadataFlags::NO_AI
-      ^ 1 << EntityMetadataFlags::FIRE_IMMUNE);
+      ^ 1 << EntityMetadataFlags::FIRE_IMMUNE
+    );
     $this->propertyManager->setShort(EntityMetadataProperties::MAX_AIR, 400);
     $this->propertyManager->setString(EntityMetadataProperties::NAMETAG, $this->getFullTitle());
     $this->propertyManager->setLong(EntityMetadataProperties::LEAD_HOLDER_EID, -1);
@@ -76,65 +82,90 @@ class BossBar {
   }
 
   /**
-  * Add a single player from this bar.
-  * @param Player[] $players
+  * Add a single player to this bar.
+  * @param Player $player
   * @return static
   */
   public function addPlayer(Player $player): static {
-    if (isset($this->players[$player->getId()])) return $this;
-    $this->sendBossPacket([$player]);
-    $this->players[$player->getId()] = $player;
+    try {
+      if (!isset($this->players[$player->getId()])) {
+        $this->sendBossPacket([$player]);
+        $this->players[$player->getId()] = $player;
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
     return $this;
   }
 
   /**
+  * Add multiple players to this bar.
   * @param Player[] $players
   * @return static
   */
   public function addPlayers(array $players): static {
-    foreach ($players as $player) {
-      $this->addPlayer($player);
+    try {
+      foreach ($players as $player) {
+        $this->addPlayer($player);
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
     return $this;
   }
 
   /**
-  * Removes a single player from this bar.
-  * Use @param Player $player
+  * Remove a single player from this bar.
+  * @param Player $player
   * @return static
   */
   public function removePlayer(Player $player): static {
-    if (!isset($this->players[$player->getId()])) {
-      GlobalLogger::get()->debug("Removed player that was not added to the boss bar (" . $this . ")");
-      return $this;
+    try {
+      if (isset($this->players[$player->getId()])) {
+        $this->sendRemoveBossPacket([$player]);
+        unset($this->players[$player->getId()]);
+      } else {
+        GlobalLogger::get()->debug("Removed player that was not added to the boss bar (" . $this . ")");
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
-    $this->sendRemoveBossPacket([$player]);
-    unset($this->players[$player->getId()]);
     return $this;
   }
 
   /**
+  * Remove multiple players from this bar.
   * @param Player[] $players
   * @return static
   */
   public function removePlayers(array $players): static {
-    foreach ($players as $player) {
-      $this->removePlayer($player);
+    try {
+      foreach ($players as $player) {
+        $this->removePlayer($player);
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
     return $this;
   }
 
   /**
-  * Removes all players from this bar
+  * Remove all players from this bar.
   * @return static
   */
   public function removeAllPlayers(): static {
-    foreach ($this->getPlayers() as $player) $this->removePlayer($player);
+    try {
+      foreach ($this->getPlayers() as $player) {
+        $this->removePlayer($player);
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
     return $this;
   }
 
   /**
-  * The text above the bar
+  * Get the title of the boss bar.
   * @return string
   */
   public function getTitle(): string {
@@ -142,35 +173,45 @@ class BossBar {
   }
 
   /**
-  * Text above the bar. Can be empty. Should be single-line
+  * Set the title of the boss bar.
   * @param string $title
   * @return static
   */
   public function setTitle(string $title = ""): static {
-    $this->title = $title;
-    $this->sendBossTextPacket($this->getPlayers());
+    try {
+      $this->title = $title;
+      $this->sendBossTextPacket($this->getPlayers());
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
     return $this;
   }
 
-  public function getSubTitle(): string
-  {
+  /**
+  * Get the subtitle of the boss bar.
+  * @return string
+  */
+  public function getSubTitle(): string {
     return $this->subTitle;
   }
 
   /**
-  * Optional text below the bar. Can be empty
+  * Set the subtitle of the boss bar.
   * @param string $subTitle
   * @return static
   */
   public function setSubTitle(string $subTitle = ""): static {
-    $this->subTitle = $subTitle;
-    #$this->sendEntityDataPacket($this->getPlayers());
-    $this->sendBossTextPacket($this->getPlayers());
+    try {
+      $this->subTitle = $subTitle;
+      $this->sendBossTextPacket($this->getPlayers());
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
     return $this;
   }
 
   /**
-  * The full title as a combination of the title and its subtitle. Automatically fixes encoding issues caused by newline characters
+  * Get the full title, which includes the title and subtitle.
   * @return string
   */
   public function getFullTitle(): string {
@@ -182,23 +223,31 @@ class BossBar {
   }
 
   /**
+  * Set the percentage of the boss bar.
   * @param float $percentage 0-1
   * @return static
   */
   public function setPercentage(float $percentage): static {
-    $percentage = (float) min(1.0, max(0.0, $percentage));
-    $this->getAttributeMap()->get(Attribute::HEALTH)->setValue($percentage * $this->getAttributeMap()->get(Attribute::HEALTH)->getMaxValue(), true, true);
-    $this->sendBossHealthPacket($this->getPlayers());
-
+    try {
+      $percentage = min(1.0, max(0.0, $percentage));
+      $this->getAttributeMap()->get(Attribute::HEALTH)->setValue($percentage * $this->getAttributeMap()->get(Attribute::HEALTH)->getMaxValue(), true, true);
+      $this->sendBossHealthPacket($this->getPlayers());
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
     return $this;
   }
 
+  /**
+  * Get the current percentage of the boss bar.
+  * @return float
+  */
   public function getPercentage(): float {
     return $this->getAttributeMap()->get(Attribute::HEALTH)->getValue() / 100;
   }
 
   /**
-  * Get the color of the BossBar
+  * Get the color of the boss bar.
   * @return int
   */
   public function getColor(): int {
@@ -206,34 +255,45 @@ class BossBar {
   }
 
   /**
-  * Set the color of the Bstatic
+  * Set the color of the boss bar.
   * @param int $color
   * @return static
   */
   public function setColor(int $color): static {
-    $this->color = $color;
-    $this->sendBossPacket($this->getPlayers());
+    try {
+      $this->color = $color;
+      $this->sendBossPacket($this->getPlayers());
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
     return $this;
   }
 
   /**
+  * Hide the boss bar from specific players.
   * @param Player[] $players
   */
   public function hideFrom(array $players): void {
-    foreach ($players as $player) {
-      if (!$player->isConnected()) continue;
-      $player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($this->actorId ?? $player->getId()));
+    try {
+      foreach ($players as $player) {
+        if ($player->isConnected()) {
+          $player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($this->actorId ?? $player->getId()));
+        }
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
   }
 
   /**
-  * Hides the bar from all registered players
+  * Hide the boss bar from all registered players.
   */
   public function hideFromAll(): void {
     $this->hideFrom($this->getPlayers());
   }
 
   /**
+  * Show the boss bar to specific players.
   * @param Player[] $players
   */
   public function showTo(array $players): void {
@@ -241,131 +301,173 @@ class BossBar {
   }
 
   /**
-  * Displays the bar to all registered players
+  * Show the boss bar to all registered players.
   */
   public function showToAll(): void {
     $this->showTo($this->getPlayers());
   }
 
+  /**
+  * Get the entity associated with the boss bar.
+  * @return Entity|null
+  */
   public function getEntity(): ?Entity {
     if ($this->actorId === null) return null;
     return Server::getInstance()->getWorldManager()->findEntity($this->actorId);
   }
 
   /**
-  * STILL TODO, SHOULD NOT BE USED YET
-  * @param null|Entity $entity
+  * Set the entity associated with the boss bar.
+  * @param Entity|null $entity
   * @return static
-  * TODO: use attributes and properties of the custom entity
+  * @throws VisualsException
   */
   public function setEntity(?Entity $entity = null): static {
-    if ($entity instanceof Entity && ($entity->isClosed() || $entity->isFlaggedForDespawn())) throw new InvalidArgumentException("Entity $entity can not be used since its not valid anymore (closed or flagged for despawn)");
-    if ($this->getEntity() instanceof Entity && !$entity instanceof Player) $this->getEntity()->flagForDespawn();
-    else {
-      $pk = new RemoveActorPacket();
-      $pk->actorUniqueId = $this->actorId;
-      Server::getInstance()->broadcastPackets($this->getPlayers(), [$pk]);
+    try {
+      if ($entity instanceof Entity && ($entity->isClosed() || $entity->isFlaggedForDespawn())) {
+        throw new VisualsException("Entity $entity cannot be used since it is not valid anymore (closed or flagged for despawn)");
+      }
+
+      if ($this->getEntity() instanceof Entity && !$entity instanceof Player) {
+        $this->getEntity()->flagForDespawn();
+      } else {
+        $pk = new RemoveActorPacket();
+        $pk->actorUniqueId = $this->actorId;
+        Server::getInstance()->broadcastPackets($this->getPlayers(), [$pk]);
+      }
+
+      if ($entity instanceof Entity) {
+        $this->actorId = $entity->getId();
+        $this->attributeMap = $entity->getAttributeMap();
+        $this->getAttributeMap()->add($entity->getAttributeMap()->get(Attribute::HEALTH));
+        $this->propertyManager = $entity->getNetworkProperties();
+        if (!$entity instanceof Player) $entity->despawnFromAll();
+      } else {
+        $this->actorId = Entity::nextRuntimeId();
+      }
+
+      $this->sendBossPacket($this->getPlayers());
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
-    if ($entity instanceof Entity) {
-      $this->actorId = $entity->getId();
-      $this->attributeMap = $entity->getAttributeMap();
-      $this->getAttributeMap()->add($entity->getAttributeMap()->get(Attribute::HEALTH));
-      $this->propertyManager = $entity->getNetworkProperties();
-      if (!$entity instanceof Player) $entity->despawnFromAll();
-    } else {
-      $this->actorId = Entity::nextRuntimeId();
-    }
-    $this->sendBossPacket($this->getPlayers());
     return $this;
   }
 
   /**
-  * @param bool $removeEntity Be careful with this. If set to true, the entity will be deleted.
+  * Reset the entity associated with the boss bar.
+  * @param bool $removeEntity
   * @return static
   */
   public function resetEntity(bool $removeEntity = false): static {
-    if ($removeEntity && $this->getEntity() instanceof Entity && !$this->getEntity() instanceof Player) $this->getEntity()->close();
-    return $this->setEntity();
+    try {
+      if ($removeEntity && $this->getEntity() instanceof Entity && !$this->getEntity() instanceof Player) {
+        $this->getEntity()->close();
+      }
+      $this->setEntity();
+    } catch (VisualsException $e) {
+      new \crashdump($e);
+    }
+    return $this;
   }
 
   /**
+  * Send the boss bar packet to players.
   * @param Player[] $players
   */
   protected function sendBossPacket(array $players): void {
-    foreach ($players as $player) {
-      if (!$player->isConnected()) continue;
-      $player->getNetworkSession()->sendDataPacket(BossEventPacket::show($this->actorId ?? $player->getId(), $this->getFullTitle(), $this->getPercentage(), 1, $this->getColor()));
+    try {
+      foreach ($players as $player) {
+        if ($player->isConnected()) {
+          $player->getNetworkSession()->sendDataPacket(BossEventPacket::show(
+            $this->actorId ?? $player->getId(),
+            $this->getFullTitle(),
+            $this->getPercentage(),
+            1,
+            $this->getColor()
+          ));
+        }
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
   }
 
   /**
+  * Send the remove boss bar packet to players.
   * @param Player[] $players
   */
   protected function sendRemoveBossPacket(array $players): void {
-    foreach ($players as $player) {
-      if (!$player->isConnected()) continue;
-      $player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($this->actorId ?? $player->getId()));
+    try {
+      foreach ($players as $player) {
+        if ($player->isConnected()) {
+          $player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($this->actorId ?? $player->getId()));
+        }
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
   }
 
   /**
+  * Send the boss bar text packet to players.
   * @param Player[] $players
   */
   protected function sendBossTextPacket(array $players): void {
-    foreach ($players as $player) {
-      if (!$player->isConnected()) continue;
-      $player->getNetworkSession()->sendDataPacket(BossEventPacket::title($this->actorId ?? $player->getId(), $this->getFullTitle()));
+    try {
+      foreach ($players as $player) {
+        if ($player->isConnected()) {
+          $player->getNetworkSession()->sendDataPacket(BossEventPacket::title(
+            $this->actorId ?? $player->getId(),
+            $this->getFullTitle()
+          ));
+        }
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
   }
 
   /**
-  * @param Player[] $players
-  */
-  protected function sendAttributesPacket(array $players): void {
-    if ($this->actorId === null) return;
-    $pk = new UpdateAttributesPacket();
-    $pk->actorRuntimeId = $this->actorId;
-    $pk->entries = $this->getAttributeMap()->needSend();
-    Server::getInstance()->broadcastPackets($players, [$pk]);
-  }
-
-  /**
+  * Send the boss bar health packet to players.
   * @param Player[] $players
   */
   protected function sendBossHealthPacket(array $players): void {
-    foreach ($players as $player) {
-      if (!$player->isConnected()) continue;
-      $player->getNetworkSession()->sendDataPacket(BossEventPacket::healthPercent($this->actorId ?? $player->getId(), $this->getPercentage()));
+    try {
+      foreach ($players as $player) {
+        if ($player->isConnected()) {
+          $player->getNetworkSession()->sendDataPacket(BossEventPacket::healthPercent(
+            $this->actorId ?? $player->getId(),
+            $this->getPercentage()
+          ));
+        }
+      }
+    } catch (VisualsException $e) {
+      new \crashdump($e);
     }
   }
 
+  /**
+  * Convert the BossBar object to a string representation.
+  * @return string
+  */
   public function __toString(): string {
     return __CLASS__ . " ID: $this->actorId, Players: " . count($this->players) . ", Title: \"$this->title\", Subtitle: \"$this->subTitle\", Percentage: \"" . $this->getPercentage() . "\", Color: \"" . $this->color . "\"";
   }
 
   /**
-  * @param Player|null $player Only used for DiverseBossBar
+  * Get the attribute map associated with the boss bar.
+  * @param Player|null $player
   * @return AttributeMap
   */
   public function getAttributeMap(Player $player = null): AttributeMap {
     return $this->attributeMap;
   }
 
+  /**
+  * Get the property manager associated with the boss bar.
+  * @return EntityMetadataCollection
+  */
   protected function getPropertyManager(): EntityMetadataCollection {
     return $this->propertyManager;
   }
-
-  /**
-  * @param Player[] $players
-  * @param BossEventPacket $pk
-  * @throws InvalidArgumentException
-  */
-  private function broadcastPacket(array $players, BossEventPacket $pk): void {
-    foreach ($players as $player) {
-      if (!$player->isConnected()) continue;
-      $pk->bossActorUniqueId = $player->getId();
-      $player->getNetworkSession()->sendDataPacket($pk);
-    }
-  }
-
 }

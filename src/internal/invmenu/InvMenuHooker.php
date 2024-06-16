@@ -12,7 +12,7 @@ use internal\invmenu\type\InvMenuTypeRegistry;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 
-final class InvMenuHandler{
+final class InvMenuHooker {
 
 	private static ?Plugin $registrant = null;
 	private static InvMenuTypeRegistry $type_registry;

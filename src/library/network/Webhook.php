@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace library\network;
 
+use library\network\exception\NetworkException;
+
 /**
 * Class Webhook
 * @package library\network
@@ -29,11 +31,15 @@ final class Webhook {
         CURLOPT_RETURNTRANSFER => true,
       ]);
       $response = curl_exec($channel);
+      if ($response === false) {
+        throw new NetworkException(curl_error($channel));
+      }
       $httpCode = curl_getinfo($channel, CURLINFO_HTTP_CODE);
       curl_close($channel);
       return $httpCode >= 200 && $httpCode < 300;
     } catch (\Throwable $e) {
-      var_dump($e);
+      new \crashdump($e);
+      return false;
     }
   }
 }

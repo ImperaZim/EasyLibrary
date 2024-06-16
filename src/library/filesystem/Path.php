@@ -26,14 +26,18 @@ final class Path {
     private string $sourceFolder,
     private ?bool $autoGenerate = false
   ) {
-    if ($autoGenerate) {
-      if (!file_exists($this->getFolder())) {
-        if (!mkdir($this->getFolder(), 0777, true) && !is_dir($this->getFolder())) {
-          throw new FileSystemException('Failed to create the destination folder.');
+    try {
+      if ($autoGenerate) {
+        if (!file_exists($this->getFolder())) {
+          if (!mkdir($this->getFolder(), 0777, true) && !is_dir($this->getFolder())) {
+            throw new FileSystemException('Failed to create the destination folder.');
+          }
+        } elseif (!is_dir($this->getFolder())) {
+          throw new FileSystemException('Source path is not a directory.');
         }
-      } elseif (!is_dir($this->getFolder())) {
-        throw new FileSystemException('Source path is not a directory.');
       }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
     }
   }
 
@@ -53,30 +57,35 @@ final class Path {
   * @throws FileSystemException If an error occurs during the process.
   */
   public function zipCompress(string $zipFileName, string $destinationFolder): ?string {
-    if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true) && !is_dir($destinationFolder)) {
-      throw new FileSystemException('Failed to create the destination folder.');
-    }
-    $zipFilePath = rtrim($destinationFolder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $zipFileName;
-    if (file_exists($zipFilePath)) {
-      unlink($zipFilePath);
-    }
-    $zip = new ZipArchive();
-    if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-      $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($this->getFolder()),
-        RecursiveIteratorIterator::LEAVES_ONLY
-      );
-      foreach ($files as $name => $file) {
-        if (!$file->isDir()) {
-          $filePath = $file->getRealPath();
-          $relativePath = substr($filePath, strlen($this->getFolder()) + 1);
-          $zip->addFile($filePath, $relativePath);
-        }
+    try {
+      if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true) && !is_dir($destinationFolder)) {
+        throw new FileSystemException('Failed to create the destination folder.');
       }
-      $zip->close();
-      return $zipFilePath;
-    } else {
-      throw new FileSystemException('Failed to open the ZIP file for writing.');
+      $zipFilePath = rtrim($destinationFolder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $zipFileName;
+      if (file_exists($zipFilePath)) {
+        unlink($zipFilePath);
+      }
+      $zip = new ZipArchive();
+      if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        $files = new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator($this->getFolder()),
+          RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        foreach ($files as $name => $file) {
+          if (!$file->isDir()) {
+            $filePath = $file->getRealPath();
+            $relativePath = substr($filePath, strlen($this->getFolder()) + 1);
+            $zip->addFile($filePath, $relativePath);
+          }
+        }
+        $zip->close();
+        return $zipFilePath;
+      } else {
+        throw new FileSystemException('Failed to open the ZIP file for writing.');
+      }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
+      return null;
     }
   }
 
@@ -88,20 +97,25 @@ final class Path {
   * @throws FileSystemException If an error occurs during the process.
   */
   public function unzipExtract(string $zipFileName, string $destinationFolder): ?string {
-    $zipFilePath = rtrim($this->getFolder(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $zipFileName;
-    if (!file_exists($zipFilePath)) {
-      throw new FileSystemException('The ZIP file does not exist.');
-    }
-    if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true) && !is_dir($destinationFolder)) {
-      throw new FileSystemException('Failed to create the destination folder.');
-    }
-    $zip = new ZipArchive();
-    if ($zip->open($zipFilePath) === true) {
-      $zip->extractTo($destinationFolder);
-      $zip->close();
-      return $destinationFolder;
-    } else {
-      throw new FileSystemException('Failed to open the ZIP file for reading.');
+    try {
+      $zipFilePath = rtrim($this->getFolder(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $zipFileName;
+      if (!file_exists($zipFilePath)) {
+        throw new FileSystemException('The ZIP file does not exist.');
+      }
+      if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true) && !is_dir($destinationFolder)) {
+        throw new FileSystemException('Failed to create the destination folder.');
+      }
+      $zip = new ZipArchive();
+      if ($zip->open($zipFilePath) === true) {
+        $zip->extractTo($destinationFolder);
+        $zip->close();
+        return $destinationFolder;
+      } else {
+        throw new FileSystemException('Failed to open the ZIP file for reading.');
+      }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
+      return null;
     }
   }
 
@@ -111,10 +125,14 @@ final class Path {
   * @throws FileSystemException If an error occurs during the copy process.
   */
   public function copyFolderTo(Path|string $destinationFolder): void {
-    if ($destinationFolder instanceof Path) {
-      $destinationFolder = $destinationFolder->getFolder();
+    try {
+      if ($destinationFolder instanceof Path) {
+        $destinationFolder = $destinationFolder->getFolder();
+      }
+      $this->copyFolderRecursive($this->getFolder(), $destinationFolder);
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
     }
-    $this->copyFolderRecursive($this->getFolder(), $destinationFolder);
   }
 
   /**
@@ -124,30 +142,34 @@ final class Path {
   * @throws FileSystemException If an error occurs during the copy process.
   */
   private function copyFolderRecursive(string $sourceFolder, string $destinationFolder): void {
-    if (!file_exists($sourceFolder) || !is_dir($sourceFolder)) {
-      throw new FileSystemException('The source folder does not exist.');
-    }
-    if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true) && !is_dir($destinationFolder)) {
-      throw new FileSystemException('Failed to create the destination folder.');
-    }
-    $files = scandir($sourceFolder);
-    if ($files === false) {
-      throw new FileSystemException('Failed to retrieve the contents of the source folder.');
-    }
-    foreach ($files as $file) {
-      if ($file === '.' || $file === '..') {
-        continue;
+    try {
+      if (!file_exists($sourceFolder) || !is_dir($sourceFolder)) {
+        throw new FileSystemException('The source folder does not exist.');
       }
-      $sourceFilePath = $sourceFolder . DIRECTORY_SEPARATOR . $file;
-      $destinationFilePath = $destinationFolder . DIRECTORY_SEPARATOR . $file;
+      if (!file_exists($destinationFolder) && !mkdir($destinationFolder, 0777, true) && !is_dir($destinationFolder)) {
+        throw new FileSystemException('Failed to create the destination folder.');
+      }
+      $files = scandir($sourceFolder);
+      if ($files === false) {
+        throw new FileSystemException('Failed to retrieve the contents of the source folder.');
+      }
+      foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+          continue;
+        }
+        $sourceFilePath = $sourceFolder . DIRECTORY_SEPARATOR . $file;
+        $destinationFilePath = $destinationFolder . DIRECTORY_SEPARATOR . $file;
 
-      if (is_dir($sourceFilePath)) {
-        $this->copyFolderRecursive($sourceFilePath, $destinationFilePath);
-      } else {
-        if (!copy($sourceFilePath, $destinationFilePath)) {
-          throw new FileSystemException("Failed to copy the file: $sourceFilePath");
+        if (is_dir($sourceFilePath)) {
+          $this->copyFolderRecursive($sourceFilePath, $destinationFilePath);
+        } else {
+          if (!copy($sourceFilePath, $destinationFilePath)) {
+            throw new FileSystemException("Failed to copy the file: $sourceFilePath");
+          }
         }
       }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
     }
   }
 
@@ -156,22 +178,26 @@ final class Path {
   * @throws FileSystemException If an error occurs during the delete process.
   */
   public function deleteFolderRecursive(): void {
-    $folder = $this->getFolder();
-    if (!file_exists($folder) || !is_dir($folder)) {
-      throw new FileSystemException('The folder does not exist or is not a directory.');
-    }
-    $files = new RecursiveIteratorIterator(
-      new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
-      RecursiveIteratorIterator::CHILD_FIRST
-    );
-    foreach ($files as $fileinfo) {
-      $operation = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-      if (!$operation($fileinfo->getRealPath())) {
-        throw new FileSystemException('Failed to delete ' . $fileinfo->getRealPath());
+    try {
+      $folder = $this->getFolder();
+      if (!file_exists($folder) || !is_dir($folder)) {
+        throw new FileSystemException('The folder does not exist or is not a directory.');
       }
-    }
-    if (!rmdir($folder)) {
-      throw new FileSystemException('Failed to delete the folder ' . $folder);
+      $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+      );
+      foreach ($files as $fileinfo) {
+        $operation = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+        if (!$operation($fileinfo->getRealPath())) {
+          throw new FileSystemException('Failed to delete ' . $fileinfo->getRealPath());
+        }
+      }
+      if (!rmdir($folder)) {
+        throw new FileSystemException('Failed to delete the folder ' . $folder);
+      }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
     }
   }
 
@@ -182,20 +208,24 @@ final class Path {
   */
   public static function getRecursiveFiles(string $folder): array {
     $filesInfo = [];
-    $files = new RecursiveIteratorIterator(
-      new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
-      RecursiveIteratorIterator::SELF_FIRST
-    );
+    try {
+      $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST
+      );
 
-    foreach ($files as $file) {
-      if ($file->isFile()) {
-        $filesInfo[] = [
-          'directory' => $file->getPath(),
-          'fileName' => $file->getBasename(),
-          'fileType' => File::getTypeByExtension($file->getExtension()),
-          'content' => File::jsonDeserialize($file->getExtension(), file_get_contents($filePath))
-        ];
+      foreach ($files as $file) {
+        if ($file->isFile()) {
+          $filesInfo[] = [
+            'directory' => $file->getPath(),
+            'fileName' => $file->getBasename(),
+            'fileType' => File::getTypeByExtension($file->getExtension()),
+            'content' => File::jsonDeserialize($file->getExtension(), file_get_contents($file->getRealPath()))
+          ];
+        }
       }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
     }
     return $filesInfo;
   }

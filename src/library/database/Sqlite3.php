@@ -2,18 +2,18 @@
 
 declare(strict_types = 1);
 
-namespace library\filesystem;
+namespace library\database;
 
 use PDO;
 use PDOException;
-use library\filesystem\exception\FileSystemException;
 
 /**
 * Class Sqlite3
-* @package library\filesystem
+* @package library\database
 */
-final class Sqlite3
-{
+final class Sqlite3 {
+
+  /** @var PDO|null */
   private ?PDO $sqlite = null;
 
   /**
@@ -21,7 +21,6 @@ final class Sqlite3
   * @param string $directory The directory of the file.
   * @param string $fileName The name of the file.
   * @param bool|null $autoGenerate Whether to generate the file if it does not exist.
-  * @throws FileSystemException If the file type is invalid or the file cannot be created.
   */
   public function __construct(
     private ?string $directory,
@@ -34,7 +33,7 @@ final class Sqlite3
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
       ]);
     } catch (PDOException $e) {
-      throw new FileSystemException('Failed to create SQLite database: ' . $e->getMessage());
+      new \crashdump($e);
     }
   }
 
@@ -42,7 +41,6 @@ final class Sqlite3
   * Creates tables if they do not exist.
   * @param array $tables An associative array where the key is the table name and the value is the SQL query to create the table.
   * @return void
-  * @throws PDOException
   */
   public function createTableIfNotExists(array $tables): void {
     try {
@@ -51,7 +49,7 @@ final class Sqlite3
         $this->sqlite->exec("CREATE TABLE IF NOT EXISTS $table ($rows)");
       }
     } catch (PDOException $e) {
-      throw new FileSystemException('Failed to create table: ' . $e->getMessage());
+      new \crashdump($e);
     }
   }
 
@@ -60,7 +58,6 @@ final class Sqlite3
   * @param string $table The name of the table to insert data into.
   * @param array $data An associative array where the key is the column name and the value is the value to insert.
   * @return void
-  * @throws PDOException
   */
   public function insert(string $table, array $data): void {
     try {
@@ -72,7 +69,7 @@ final class Sqlite3
       $stmt = $this->sqlite->prepare($sql);
       $stmt->execute($values);
     } catch (PDOException $e) {
-      throw new FileSystemException('Failed to insert data: ' . $e->getMessage());
+      new \crashdump($e);
     }
   }
 
@@ -82,7 +79,6 @@ final class Sqlite3
   * @param string $column The column(s) to select.
   * @param array $filters An array of associative arrays for filtering the results.
   * @return array The selected data.
-  * @throws PDOException
   */
   public function select(string $table, string $column, array $filters = []): array {
     try {
@@ -97,7 +93,7 @@ final class Sqlite3
       $stmt->execute($values);
       return $stmt->fetchAll();
     } catch (PDOException $e) {
-      throw new FileSystemException('Failed to select data: ' . $e->getMessage());
+      new \crashdump($e);
     }
   }
 
@@ -108,22 +104,19 @@ final class Sqlite3
   * @param mixed $value The new value to set.
   * @param array $filters An array of associative arrays for filtering the rows to update.
   * @return bool Whether any rows were updated.
-  * @throws PDOException
   */
   public function update(string $table, string $column, $value, array $filters = []): bool {
     try {
       $sql = "UPDATE $table SET $column = ?";
       $values = [$value];
-
       if (!empty($filters)) {
         $sql .= " WHERE " . $this->buildWhereClause($filters, $values);
       }
-
       $stmt = $this->sqlite->prepare($sql);
       $stmt->execute($values);
       return $stmt->rowCount() > 0;
     } catch (PDOException $e) {
-      throw new FileSystemException('Failed to update data: ' . $e->getMessage());
+      new \crashdump($e);
     }
   }
 
@@ -132,7 +125,6 @@ final class Sqlite3
   * @param string $table The name of the table to check.
   * @param array $conditions An array of associative arrays for the conditions to check.
   * @return bool Whether the record exists.
-  * @throws PDOException
   */
   public function exists(string $table, array $conditions): bool {
     try {
@@ -146,7 +138,7 @@ final class Sqlite3
       $row = $stmt->fetch();
       return $row['count'] > 0;
     } catch (PDOException $e) {
-      throw new FileSystemException('Failed to check existence of data: ' . $e->getMessage());
+      new \crashdump($e);
     }
   }
 

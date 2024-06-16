@@ -6,10 +6,10 @@ namespace internal\invmenu\types;
 
 use Closure;
 use internal\invmenu\InvMenu;
-use internal\invmenu\InvMenuHandler;
+use internal\invmenu\InvMenuHooker;
 use internal\invmenu\type\InvMenuTypeIds;
 
-/**
+/** 
 * Class InvMenuDoubleChest
 * @package internal\invmenu\types
 */
@@ -28,7 +28,7 @@ class InvMenuDoubleChest extends InvMenu {
     private ?Closure $onInteract = null,
     private ?Closure $onClose = null
   ) {
-    parent::__construct(InvMenuHandler::getTypeRegistry()->get(InvMenuTypeIds::TYPE_DOUBLE_CHEST));
+    parent::__construct(InvMenuHooker::getTypeRegistry()->get(InvMenuTypeIds::TYPE_DOUBLE_CHEST));
     $this->setName($name);
     $this->setListener($onInteract);
     $this->setInventoryCloseListener($onClose);

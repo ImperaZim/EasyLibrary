@@ -4,13 +4,14 @@ declare(strict_types = 1);
 
 namespace library\item;
 
-use Exception;
+use library\item\exception\ItemException;
+
 use pocketmine\item\Item;
 use pocketmine\nbt\TreeRoot;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\scheduler\AsyncPool;
 use pocketmine\item\StringToItemParser;
-use library\item\exception\ItemException;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\data\SavedDataLoadingException;
 use pocketmine\data\runtime\RuntimeDataWriter;
@@ -27,6 +28,11 @@ final class ItemFactory {
   /** @var Item[] */
   private static array $registeredItems = [];
 
+  /**
+  * Initializes the ItemFactory by registering item handlers in an asynchronous pool.
+  * @param AsyncPool $asyncPool The asynchronous pool to use for registering item handlers.
+  * @throws ItemException If an error occurs during initialization.
+  */
   public static function init(AsyncPool $asyncPool): void {
     try {
       $asyncPool->addWorkerStartHook(function(int $worker) use ($asyncPool): void {
@@ -40,23 +46,24 @@ final class ItemFactory {
           }
         }, $worker);
       });
-    } catch (Exception $e) {
-      throw new ItemException("");
+    } catch (ItemException $e) {
+      new \crashdump($e);
     }
   }
 
   /**
   * Register a new item.
   * @param Item $item
-  * @return string
+  * @return string|null
   */
-  public static function register(Item $item): string {
+  public static function register(Item $item): ?string {
     try {
       $name = strtolower(str_replace(' ', '_', $item->getVanillaName()));
       self::$registeredItems[$name] = $item;
       return $name;
-    } catch (Exception $e) {
-      throw new ItemException("");
+    } catch (ItemException $e) {
+      new \crashdump($e);
+      return null;
     }
   }
 
@@ -71,9 +78,9 @@ final class ItemFactory {
   /**
   * Gets the serialized item.
   * @param Item $item
-  * @return string
+  * @return string|null
   */
-  public static function jsonSerialize(Item $item): string {
+  public static function jsonSerialize(Item $item): ?string {
     try {
       $data = [
         "vanillaName" => strtolower(str_replace(' ', '_', $item->getVanillaName()))
@@ -86,8 +93,9 @@ final class ItemFactory {
         $data["nbt"] = base64_encode($nbtSerializer->write(new TreeRoot($item->getNamedTag())));
       }
       return json_encode($data);
-    } catch (Exception $e) {
-      throw new ItemException("");
+    } catch (ItemException $e) {
+      new \crashdump($e);
+      return null;
     }
   }
 
@@ -111,13 +119,13 @@ final class ItemFactory {
 
       if ($item === null) {
         if ($vanillaName === null) {
-          throw new ItemException("No search vanillaName [$vanillaName]");
+          throw new ItemException("No vanillaName found in data.");
         }
         $item = StringToItemParser::getInstance()->parse($vanillaName);
       }
 
       if ($item === null) {
-        throw new ItemException("Unexpected item $vanillaName.");
+        throw new ItemException("Failed to create item from vanillaName: $vanillaName.");
       }
 
       $item->setCount($data->count ?? 1);
@@ -135,9 +143,9 @@ final class ItemFactory {
         $item->setNamedTag($nbt);
       }
       return $item;
-    } catch (Exception $e) {
-      throw new ItemException("");
+    } catch (ItemException $e) {
+      new \crashdump($e);
+      return null;
     }
   }
-
 }

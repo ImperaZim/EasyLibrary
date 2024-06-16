@@ -1,18 +1,27 @@
-<?php 
+<?php
 
 declare(strict_types = 1);
+
+use Throwable;
 
 /**
 * Class crashdump
 */
 final class crashdump {
-
   /**
   * crashdump constructor.
-  * @param \Throwable $e The throwable object representing the error.
+  * @param Throwable $error The object representing the error.
   */
-  public function __construct(private \Throwable $e) {
-    \Library::getInstance()->getLogger()->notice($this->getContent());
+  public function __construct(private Throwable $error) {
+    $this->logError();
+  }
+
+  /**
+  * Log the error information.
+  */
+  private function logError(): void {
+    $logger = Library::getInstance()->getLogger();
+    $logger->error($this->getContent());
   }
 
   /**
@@ -21,12 +30,19 @@ final class crashdump {
   * @return string
   */
   private function getContent(): string {
-    return sprintf(
-      "\nError discriminator: %s\nSource: %s (%d)\nsyntax:\n %s\n",
-      $this->e->getMessage(),
-      $this->e->getFile(),
-      $this->e->getLine(),
-      $this->e->getTraceAsString(),
-    );
+    $message = $this->error->getMessage();
+    $file = $this->error->getFile();
+    $line = $this->error->getLine();
+    $trace = $this->error->getTraceAsString();
+
+    $formattedTrace = "Stack trace:\n" . $trace;
+
+    return 
+<<<EOT
+Error message: $message
+Error location: $file ($line)
+
+$formattedTrace
+EOT;
   }
 }

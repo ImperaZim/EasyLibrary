@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace library\plugin;
 
-use ReflectionClass;
 use pocketmine\Server;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
@@ -13,6 +12,7 @@ use pocketmine\plugin\PluginLoader;
 use pocketmine\plugin\ResourceProvider;
 use pocketmine\plugin\PluginDescription;
 
+use ReflectionClass;
 use library\filesystem\Path;
 use library\filesystem\File;
 use library\database\DatabaseManager;
@@ -27,9 +27,15 @@ abstract class PluginToolkit extends PluginBase {
   /** @var array */
   private ?array $database = null;
 
-  /** @var mysqli */
-  private mysqli $connection;
-
+  /**
+  * PluginToolkit construct
+  * @param PluginLoader $loader The plugin loader.
+  * @param Server $server The server instance.
+  * @param PluginDescription $description The plugin description.
+  * @param string $dataFolder The path to the data folder.
+  * @param string $file The file path.
+  * @param ResourceProvider $resourceProvider The resource provider.
+  */
   public function __construct(
     private PluginLoader $loader,
     private Server $server,
@@ -43,57 +49,67 @@ abstract class PluginToolkit extends PluginBase {
 
   /**
   * Retrieves the database configuration.
-  * @return mixed The database configuration array or null.
+  * @return mixed The database instance.
   * @throws PluginException If the database configuration is invalid.
   */
   public function getDatabase(): mixed {
-    $childClass = get_class($this);
-    if (property_exists($childClass, 'database')) {
-      $database = (new ReflectionClass($childClass))->getProperty('database')->getValue($this);
-      if ($this->validateDatabaseConfig($database)) {
-        return $database;
-      } else {
-        throw new PluginException("Database configuration is invalid.");
+    try {
+      $childClass = get_class($this);
+      if (property_exists($childClass, 'database')) {
+        $database = (new ReflectionClass($childClass))->getProperty('database')->getValue($this);
+        if ($this->validateDatabaseConfig($database)) {
+          return DatabaseManager::connect(...array_values($database));
+        } else {
+          throw new PluginException("Database configuration is invalid.");
+        }
       }
+    } catch (PluginException $e) {
+      new \crashdump($e);
     }
-    if ($this->validateDatabaseConfig($this->database)) {
-      return $this->database;
-    } else {
-      throw new PluginException("Database configuration is invalid.");
-    }
+    return $this->database;
   }
 
   /**
   * Validates the database configuration array.
   * @param array|null $database The database configuration array to validate.
   * @return bool True if the configuration is valid, false otherwise.
+  * @throws PluginException If validation fails.
   */
   private function validateDatabaseConfig(?array $database): bool {
-    if (is_array($database)) {
-      $requiredKeys = 'host:username:password:database';
-      foreach (explode(':', $requiredKeys) as $key) {
-        if (!array_key_exists($key, $database)) {
-          return false;
+    try {
+      if (is_array($database)) {
+        $requiredKeys = 'host:username:password:database';
+        foreach (explode(':', $requiredKeys) as $key) {
+          if (!array_key_exists($key, $database)) {
+            return false;
+          }
         }
+        return true;
       }
-      return true;
+      return false;
+    } catch (PluginException $e) {
+      new \crashdump($e);
     }
-    return false;
   }
 
   /**
   * Register multiple commands.
   * @param Command[] $commands An array of Command instances to register.
   * @return void
+  * @throws PluginException If any command is invalid.
   */
   public function registerCommands(array $commands): void {
-    $commandMap = $this->getServer()->getCommandMap();
-    foreach ($commands as $command) {
-      if ($command instanceof Command) {
-        $commandMap->register($this->getName(), $command);
-      } else {
-        throw new PluginException("Tried to register an invalid command.");
+    try {
+      $commandMap = $this->getServer()->getCommandMap();
+      foreach ($commands as $command) {
+        if ($command instanceof Command) {
+          $commandMap->register($this->getName(), $command);
+        } else {
+          throw new PluginException("Tried to register an invalid command.");
+        }
       }
+    } catch (PluginException $e) {
+      new \crashdump($e);
     }
   }
 
@@ -101,53 +117,61 @@ abstract class PluginToolkit extends PluginBase {
   * Register multiple event listeners.
   * @param Listener[] $listeners An array of Listener instances to register.
   * @return void
+  * @throws PluginException If any listener is invalid.
   */
   public function registerListeners(array $listeners): void {
-    foreach ($listeners as $listener) {
-      if ($listener instanceof Listener) {
-        $this->server->getPluginManager()->registerEvents($listener, $this);
-      } else {
-        throw new PluginException("Tried to register an invalid listener.");
+    try {
+      foreach ($listeners as $listener) {
+        if ($listener instanceof Listener) {
+          $this->server->getPluginManager()->registerEvents($listener, $this);
+        } else {
+          throw new PluginException("Tried to register an invalid listener.");
+        }
       }
+    } catch (PluginException $e) {
     }
-  }
-
-  /**
-  * Get an instance of DatabaseManager.
-  */
-  public function getDatabaseManager(): DatabaseManager {
-    return new DatabaseManager($this);
   }
 
   /**
   * Gets the data path of the server.
   * @param array|null $join Continue paths.
-  * @return string The serve data path.
+  * @return string The server data path.
+  * @throws PluginException If there's an error generating the path.
   */
   public function getServerPath(?array $join = null): string {
-    $path = $this->server->getDataPath();
-    if ($join !== null) {
-      if (strtolower($join[0]) === 'join:data') {
-        $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
-      } else {
-        $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
+    try {
+      $path = $this->server->getDataPath();
+      if ($join !== null) {
+        if (strtolower($join[0]) === 'join:data') {
+          $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
+        } else {
+          $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
+        }
       }
+      return trim($path . DIRECTORY_SEPARATOR);
+    } catch (PluginException $e) {
+      new \crashdump($e);
     }
-    return trim($path . DIRECTORY_SEPARATOR);
   }
 
   /**
   * Gets the plugin resources path.
   * @return string The plugin resource path.
+  * @throws PluginException If there's an error getting the resources directory.
   */
   public function getResourcesDirectory(): string {
-    return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
+    try {
+      return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
+    } catch (PluginException $e) {
+      new \crashdump($e);
+    }
   }
 
   /**
   * Load all files in /resources plugin.
   * @param string|null $loadType
   * @return array|null
+  * @throws PluginException If there's an error loading resources.
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
     if (!is_dir($dir = $this->getResourcesDirectory())) {
@@ -163,9 +187,8 @@ abstract class PluginToolkit extends PluginBase {
           $loadedFiles[] = $processedFile;
         }
       }
-    } catch (Exception $e) {
-      throw new PluginException("Erro ao carregar recursos: " . $e->getMessage());
-      return null;
+    } catch (PluginException $e) {
+      new \crashdump($e);
     }
 
     return $loadedFiles;
@@ -176,28 +199,32 @@ abstract class PluginToolkit extends PluginBase {
   * @param array $file
   * @param string|null $loadType
   * @return File|null
+  * @throws PluginException If there's an error processing the file.
   */
   private function processFile(array $file, ?string $loadType): ?File {
-    $fileName = $file['fileName'] ?? null;
-    $fileType = $file['fileType'] ?? null;
-    $fileContent = $file['content'] ?? null;
-    $fileDirectory = $file['directory'] ?? null;
+    try {
+      $fileName = $file['fileName'] ?? null;
+      $fileType = $file['fileType'] ?? null;
+      $fileContent = $file['content'] ?? null;
+      $fileDirectory = $file['directory'] ?? null;
 
-    if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
-      return null;
+      if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
+        return null;
+      }
+
+      $fileExtension = str_replace('file:', '', $fileType);
+      $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
+      $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
+
+      return new File(
+        directoryOrConfig: $relativeDirectory,
+        fileName: $baseFileName,
+        fileType: $fileType,
+        autoGenerate: true,
+        readCommand: [$loadType => $fileContent]
+      );
+    } catch (PluginException $e) {
+      new \crashdump($e);
     }
-
-    $fileExtension = str_replace('file:', '', $fileType);
-    $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
-    $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
-
-    return new File(
-      directoryOrConfig: $relativeDirectory,
-      fileName: $baseFileName,
-      fileType: $fileType,
-      autoGenerate: true,
-      readCommand: [$loadType => $fileContent]
-    );
   }
-
 }

@@ -29,7 +29,7 @@ class InvMenu implements InvMenuTypeIds{
 	 * @return InvMenu
 	 */
 	public static function create(string $identifier, ...$args) : InvMenu{
-		return new InvMenu(InvMenuHandler::getTypeRegistry()->get($identifier), ...$args);
+		return new InvMenu(InvMenuHooker::getTypeRegistry()->get($identifier), ...$args);
 	}
 
 	/**
@@ -54,8 +54,8 @@ class InvMenu implements InvMenuTypeIds{
 	protected ?SharedInvMenuSynchronizer $synchronizer = null;
 
 	public function __construct(InvMenuType $type, ?Inventory $custom_inventory = null){
-		if(!InvMenuHandler::isRegistered()){
-			throw new LogicException("Tried creating menu before calling " . InvMenuHandler::class . "::register()");
+		if(!InvMenuHooker::isRegistered()){
+			throw new LogicException("Tried creating menu before calling " . InvMenuHooker::class . "::register()");
 		}
 		$this->type = $type;
 		$this->inventory = $this->type->createInventory();
@@ -135,13 +135,13 @@ class InvMenu implements InvMenuTypeIds{
 	 * @param string|null $name
 	 * @param (Closure(bool) : void)|null $callback
 	 */
-	final public function send(Player $player, ?string $name = null, ?Closure $callback = null) : void{
+	final public function sendTo(Player $player, ?string $name = null, ?Closure $callback = null) : void{
 		$player->removeCurrentWindow();
 
-		$session = InvMenuHandler::getPlayerManager()->get($player);
+		$session = InvMenuHooker::getPlayerManager()->get($player);
 		$network = $session->network;
 
-		// Avoid players from spamming InvMenu::send() and other similar
+		// Avoid players from spamming InvMenu::sendTo() and other similar
 		// requests and filling up queued tasks in memory.
 		// It would be better if this check were implemented by plugins,
 		// however I suppose it is more convenient if done within InvMenu...
@@ -176,7 +176,7 @@ class InvMenu implements InvMenuTypeIds{
 	}
 
 	/**
-	 * @internal use InvMenu::send() instead.
+	 * @internal use InvMenu::sendTo() instead.
 	 *
 	 * @param Player $player
 	 * @return bool
@@ -195,6 +195,6 @@ class InvMenu implements InvMenuTypeIds{
 			($this->inventory_close_listener)($player, $this->getInventory());
 		}
 
-		InvMenuHandler::getPlayerManager()->get($player)->removeCurrentMenu();
+		InvMenuHooker::getPlayerManager()->get($player)->removeCurrentMenu();
 	}
 }

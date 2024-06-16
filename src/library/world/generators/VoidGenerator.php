@@ -8,6 +8,7 @@ use pocketmine\world\ChunkManager;
 use pocketmine\world\format\Chunk;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\world\generator\Generator;
+use library\world\exception\WorldException;
 
 /**
 * Class VoidGenerator
@@ -36,7 +37,7 @@ class VoidGenerator extends Generator {
       if ($chunkX === 16 && $chunkZ === 16) {
         $chunk->setBlockStateId(0, 64, 0, VanillaBlocks::GRASS()->getStateId());
       }
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
     }
   }

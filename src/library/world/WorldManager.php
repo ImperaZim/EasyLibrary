@@ -26,21 +26,29 @@ final class WorldManager {
   /** @var WM */
   private static WM $worldManager;
 
+  /**
+  * Initializes the WorldManager by registering generatos.
+  * @throws WorldException If an error occurs during initialization.
+  */
   public static function init(
     Library $library,
     WM $worldManager
   ): void {
-    self::$library = $library;
-    self::$worldManager = $worldManager;
-    $generatorsDir = __DIR__ . '/generators';
-    foreach (scandir($generatorsDir) as $file) {
-      if (is_file($generatorsDir . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-        require_once $generatorsDir . '/' . $file;
-        $className = pathinfo($file, PATHINFO_FILENAME);
-        if (class_exists("generators\\$className")) {
-          GeneratorManager::getInstance()->addGenerator("generators\\$className", $className, fn() => null, true);
+    try {
+      self::$library = $library;
+      self::$worldManager = $worldManager;
+      $generatorsDir = __DIR__ . '/generators';
+      foreach (scandir($generatorsDir) as $file) {
+        if (is_file($generatorsDir . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+          require_once $generatorsDir . '/' . $file;
+          $className = pathinfo($file, PATHINFO_FILENAME);
+          if (class_exists("generators\\$className")) {
+            GeneratorManager::getInstance()->addGenerator("generators\\$className", $className, fn() => null, true);
+          }
         }
       }
+    } catch (WorldException $e) {
+      new \crashdump($e);
     }
   }
 
@@ -71,7 +79,7 @@ final class WorldManager {
     try {
       self::load($name);
       return self::$worldManager->getWorldByName($name);
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
       return null;
     }
@@ -84,7 +92,7 @@ final class WorldManager {
   public static function getDefaultWorld(): ?World {
     try {
       return self::$worldManager->getDefaultWorld();
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
       return null;
     }
@@ -114,7 +122,7 @@ final class WorldManager {
           self::load($new);
         }
       }
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
     }
   }
@@ -134,7 +142,7 @@ final class WorldManager {
         return $result;
       }
       return true;
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
       return false;
     }
@@ -152,7 +160,7 @@ final class WorldManager {
         return false;
       }
       return self::$worldManager->unloadWorld($world, false);
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
       return false;
     }
@@ -178,7 +186,7 @@ final class WorldManager {
         )
       );
       return true;
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
       return false;
     }
@@ -200,7 +208,7 @@ final class WorldManager {
       $worldPathOld->copyFolderTo($worldPathNew);
 
       self::renameWorldName($newWorld, $newWorld);
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
     }
   }
@@ -217,7 +225,7 @@ final class WorldManager {
         self::duplicateWorld($name, $backupName);
         return true;
       }
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
     }
     return false;
@@ -240,7 +248,7 @@ final class WorldManager {
         self::load($name);
         return true;
       }
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
     }
     return false;
@@ -259,7 +267,7 @@ final class WorldManager {
         $worldPath->deleteFolderRecursive();
         return true;
       }
-    } catch (\Throwable $e) {
+    } catch (WorldException $e) {
       new \crashdump($e);
     }
     return false;
