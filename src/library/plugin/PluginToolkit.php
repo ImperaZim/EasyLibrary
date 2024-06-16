@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace library\plugin;
 
+use ReflectionClass;
 use pocketmine\Server;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
@@ -41,6 +42,46 @@ abstract class PluginToolkit extends PluginBase {
   }
 
   /**
+  * Retrieves the database configuration.
+  * @return mixed The database configuration array or null.
+  * @throws PluginException If the database configuration is invalid.
+  */
+  public function getDatabase(): mixed {
+    $childClass = get_class($this);
+    if (property_exists($childClass, 'database')) {
+      $database = (new ReflectionClass($childClass))->getProperty('database')->getValue($this);
+      if ($this->validateDatabaseConfig($database)) {
+        return $database;
+      } else {
+        throw new PluginException("Database configuration is invalid.");
+      }
+    }
+    if ($this->validateDatabaseConfig($this->database)) {
+      return $this->database;
+    } else {
+      throw new PluginException("Database configuration is invalid.");
+    }
+  }
+
+  /**
+  * Validates the database configuration array.
+  * @param array|null $database The database configuration array to validate.
+  * @return bool True if the configuration is valid, false otherwise.
+  */
+  private function validateDatabaseConfig(?array $database): bool {
+    if (is_array($database)) {
+      $requiredKeys = 'host:username:password:database';
+      foreach (explode(':', $requiredKeys) as $key) {
+        if (!array_key_exists($key, $database)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /**
   * Register multiple commands.
   * @param Command[] $commands An array of Command instances to register.
   * @return void
@@ -69,18 +110,6 @@ abstract class PluginToolkit extends PluginBase {
         throw new PluginException("Tried to register an invalid listener.");
       }
     }
-  }
-
-  /**
-  * Get an DDatabase
-  * return mysqli;
-  */
-  public function getDatabase(): mixed {
-    $childClass = get_class($this);
-    if (property_exists($childClass, 'database')) {
-      return $this->database ?? (new \ReflectionClass($childClass))->getProperty('database')->getValue($this);
-    }
-    return $this->database;
   }
 
   /**

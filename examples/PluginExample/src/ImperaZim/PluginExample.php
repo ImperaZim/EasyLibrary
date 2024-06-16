@@ -20,6 +20,9 @@ final class PluginExample extends PluginToolkit {
 
   /** @var File */
   private File $settings;
+  
+  /** @var array */
+  private array $database = [1, 2, 3];
 
   /**
   * Called when the plugin is loaded.
