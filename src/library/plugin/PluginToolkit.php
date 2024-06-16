@@ -25,7 +25,7 @@ abstract class PluginToolkit extends PluginBase {
 
   /** @var array */
   private ?array $database = null;
-  
+
   /** @var mysqli */
   private mysqli $connection;
 
@@ -76,6 +76,10 @@ abstract class PluginToolkit extends PluginBase {
   * return mysqli;
   */
   public function getDatabase(): mixed {
+    $childClass = get_class($this);
+    if (property_exists($childClass, 'database')) {
+      return $this->database ?? (new \ReflectionClass($childClass))->getProperty('database')->getValue($this);
+    }
     return $this->database;
   }
 
