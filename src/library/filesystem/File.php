@@ -49,6 +49,7 @@ final class File {
       $this->directoryOrConfig = $directory;
       $this->fileName = $fileName ?? '';
       $this->fileType = $fileType ?? self::TYPE_YML;
+      var_dump($this->directoryOrConfig);
       if ($autoGenerate) {
         new Path($directory, true);
         if (!$this->fileExists()) {
