@@ -90,7 +90,7 @@ final class File {
   * @param string $content The content to parse.
   * @return string[]
   */
-  public function parseList(string $content) : array {
+  public static function parseList(string $content) : array {
     $result = [];
     foreach (explode("\n", trim(str_replace("\r\n", "\n", $content))) as $v) {
       $v = trim($v);
@@ -107,7 +107,7 @@ final class File {
   * @param string[] $entries The list of entries.
   * @return string
   */
-  public function writeList(array $entries) : string {
+  public static function writeList(array $entries) : string {
     return implode("\n", $entries);
   }
 
@@ -127,13 +127,13 @@ final class File {
   * @return string The serialized content.
   * @throws FileSystemException If the file type is unsupported.
   */
-  private function serializeContent(string $extension, array $data): string {
-    if (in_array($extension, $this->getExtensions())) {
+  public static function serializeContent(string $extension, array $data): string {
+    if (in_array($extension, self::getExtensions())) {
       return match ($extension) {
         'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'json' => json_encode($data, JSON_PRETTY_PRINT),
-        'txt' => $this->writeList(array_keys($data))
+        'txt' => self::writeList(array_keys($data))
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -146,13 +146,13 @@ final class File {
   * @return array The deserialized data.
   * @throws FileSystemException If the file type is unsupported.
   */
-  private function deserializeContent(string $extension, string $fileContent): array {
-    if (in_array($extension, $this->getExtensions())) {
+  public static function deserializeContent(string $extension, string $fileContent): array {
+    if (in_array($extension, self::getExtensions())) {
       return match ($extension) {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
         'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
-        'txt' => array_fill_keys($this->parseList($fileContent), true)
+        'txt' => array_fill_keys(self::parseList($fileContent), true)
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -259,11 +259,11 @@ final class File {
       if ($keyPath === null) {
         $fileContent = $this->readFile();
         $extension = self::getExtensionByType($this->getFileType());
-        return $this->deserializeContent($extension, $fileContent);
+        return self::deserializeContent($extension, $fileContent);
       }
       $fileContent = $this->readFile();
       $extension = self::getExtensionByType($this->getFileType());
-      $data = $this->deserializeContent($extension, $fileContent);
+      $data = self::deserializeContent($extension, $fileContent);
       $keys = explode('.', $keyPath);
       foreach ($keys as $key) {
         if (!isset($data[$key])) {
@@ -287,12 +287,12 @@ final class File {
     try {
       $fileContent = $this->readFile();
       $extension = self::getExtensionByType($this->getFileType());
-      $data = $this->deserializeContent($extension, $fileContent);
+      $data = self::deserializeContent($extension, $fileContent);
 
       if (isset($keyValuePairs['--override']) && is_array($keyValuePairs['--override'])) {
-        $content = $this->serializeContent($extension, $keyValuePairs['--override']);
+        $content = self::serializeContent($extension, $keyValuePairs['--override']);
         try {
-          $this->writeFile($content);
+          self::writeFile($content);
           return true;
         } catch (FileSystemException $e) {
           return false;
@@ -318,9 +318,9 @@ final class File {
         }
       }
 
-      $content = $this->serializeContent($extension, $data);
+      $content = self::serializeContent($extension, $data);
       try {
-        $this->writeFile($content);
+        self::writeFile($content);
         return true;
       } catch (FileSystemException $e) {
         return false;
