@@ -34,21 +34,9 @@ final class ItemFactory {
   * @throws ItemException If an error occurs during initialization.
   */
   public static function init(AsyncPool $asyncPool): void {
-    try {
-      $asyncPool->addWorkerStartHook(function(int $worker) use ($asyncPool): void {
-        $asyncPool->submitTaskToWorker(new class extends AsyncTask {
-          public function onRun() : void {
-            foreach (ItemFactory::getRegisteredItems() as $name => $item) {
-              GlobalItemDataHandlers::getDeserializer()->map($item->getTypeId(), fn() => clone $item);
-              GlobalItemDataHandlers::getSerializer()->map($item, fn() => new SavedItemData($item->getTypeId()));
-              StringToItemParser::getInstance()->register($name, fn() => clone $item);
-            }
-          }
-        }, $worker);
-      });
-    } catch (ItemException $e) {
-      new \crashdump($e);
-    }
+    /**
+     * TODO: empty
+     */
   }
 
   /**
@@ -60,6 +48,9 @@ final class ItemFactory {
     try {
       $name = strtolower(str_replace(' ', '_', $item->getVanillaName()));
       self::$registeredItems[$name] = $item;
+      GlobalItemDataHandlers::getDeserializer()->map($item->getTypeId(), fn() => clone $item);
+      GlobalItemDataHandlers::getSerializer()->map($item, fn() => new SavedItemData($item->getTypeId()));
+      StringToItemParser::getInstance()->register($name, fn() => clone $item);
       return $name;
     } catch (ItemException $e) {
       new \crashdump($e);
