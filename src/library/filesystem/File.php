@@ -117,7 +117,7 @@ final class File {
   * @return string
   */
   private function getFileExtension(?string $defaultValue = ''): string {
-    return self::getExtensionByType($this->fileType) ?? $defaultValue;
+    return self::getExtensionByType($this->fileType, true) ?? $defaultValue;
   }
 
   /**
