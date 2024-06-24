@@ -152,6 +152,17 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
       $this->setErrorFormat($errorCode, $format);
     }
   }
+  
+  /**
+  * Register multiple subcommands at once.
+  * @param array $subcommands An array of BaseSubCommand instances. If no position is specified, the index will be used.
+  * @throws ArgumentOrderException
+  */
+  public function registerSubcommands(array $subcommands): void {
+    foreach ($subcommands as $subCommand) {
+      $this->registerSubCommand($subCommand);
+    }
+  }
 
   public function registerSubCommand(BaseSubCommand $subCommand): void {
     $keys = $subCommand->getAliases();

@@ -143,12 +143,12 @@ abstract class PluginToolkit extends PluginBase {
       $path = $this->server->getDataPath();
       if ($join !== null) {
         if (strtolower($join[0]) === 'join:data') {
-          $path .= $join[0] . DIRECTORY_SEPARATOR . $this->getName();
+          $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->getName() . DIRECTORY_SEPARATOR;
         } else {
-          $path .= rtrim(implode(DIRECTORY_SEPARATOR, $join));
+          $path .= implode(DIRECTORY_SEPARATOR, $join) . DIRECTORY_SEPARATOR;
         }
       }
-      return trim($path . DIRECTORY_SEPARATOR);
+      return $path . DIRECTORY_SEPARATOR;
     } catch (PluginException $e) {
       new \crashdump($e);
     }
