@@ -2,8 +2,6 @@
 
 declare(strict_types = 1);
 
-use Throwable;
-
 /**
 * Class crashdump
 */
@@ -12,7 +10,7 @@ final class crashdump {
   * crashdump constructor.
   * @param Throwable $error The object representing the error.
   */
-  public function __construct(private Throwable $error) {
+  public function __construct(private \Throwable $error) {
     $this->logError();
   }
 
