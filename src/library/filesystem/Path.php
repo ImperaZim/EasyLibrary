@@ -36,6 +36,7 @@ final class Path {
           throw new FileSystemException('Source path is not a directory.');
         }
       }
+      var_dump($this->getFolder());
     } catch (FileSystemException $e) {
       new \crashdump($e);
     }
