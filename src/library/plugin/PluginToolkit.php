@@ -211,10 +211,10 @@ abstract class PluginToolkit extends PluginBase {
       if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
         return null;
       }
-
-      $fileExtension = str_replace('file:', '', $fileType);
+      
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
-      $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
+      $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory) . '/';
+     // $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
 
       return new File(
         directoryOrConfig: $relativeDirectory,
