@@ -48,7 +48,7 @@ final class Library extends PluginToolkit {
   * Initialize components such as ItemFactory and WorldManager.
   */
   private function initComponents(): void {
-    ItemFactory::init($this->getServer()->getAsyncPool());
+    ItemFactory::init();
     WorldManager::init($this, $this->getServer()->getWorldManager());
   }
 

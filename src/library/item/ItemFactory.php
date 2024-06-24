@@ -39,41 +39,36 @@ use function strtolower;
 * @package library\item
 */
 final class ItemFactory {
-  
-  /** @var Item[] */
-	private static array $registeredItems = [];
-	/** @var Block[] */
-	private static array $registeredBlocks = [];
 
-	private int $nextBlockId = BlockTypeIds::FIRST_UNUSED_BLOCK_ID + 1;
-  
+  /** @var Item[] */
+  private static array $registeredItems = [];
+  /** @var Block[] */
+  private static array $registeredBlocks = [];
+
+  private int $nextBlockId = BlockTypeIds::FIRST_UNUSED_BLOCK_ID + 1;
+
   /**
   * Initializes the ItemFactory by registering item handlers in an asynchronous pool.
-  * @param AsyncPool $asyncPool The asynchronous pool to use for registering item handlers.
   * @throws ItemException If an error occurs during initialization.
   */
-  public static function init(AsyncPool $asyncPool): void {
+  public static function init(): void {
     /**
     * TODO: empty
     */
   }
 
   /**
-  * @param Item          $item the Item to register
-  * @param int           $runtimeId the runtime id that will be used by the server to send the item to the player.
-  * This usually can be found using BDS, or included in {@link \pocketmine\BEDROCK_DATA_PATH/required_item_list.json}. for custom items, you should generate this manually.
-  * @param bool          $force
-  * @param string        $namespace the item's namespace. This usually can be found in {@link ItemTypeNames}.
-  * @param \Closure|null $serializeCallback the callback that will be used to serialize the item.
-  * @param \Closure|null $deserializeCallback the callback that will be used to deserialize the item.
-  *
+  * Register a new item.
+  * @param Item $item
+  * @param int $runtimeId
+  * @param bool $force
+  * @param string $namespace
+  * @param \Closure|null $serializeCallback
+  * @param \Closure|null $deserializeCallback
   * @return void
-  * @see ItemTypeDictionaryFromDataHelper
-  * @see libItemRegistrar::getRuntimeIdByName()
   */
   public static function registerItem(Item $item, int $runtimeId, bool $force = false, string $namespace = "", ?\Closure $serializeCallback = null, ?\Closure $deserializeCallback = null) : void {
     if ($serializeCallback !== null) {
-      /** @phpstan-ignore-next-line */
       Utils::validateCallableSignature(static function(Item $item) : SavedItemData {}, $serializeCallback);
     }
     if ($deserializeCallback !== null) {
@@ -109,41 +104,21 @@ final class ItemFactory {
   }
 
   /**
-  * Returns a next item id and increases it.
-  *
-  * @return int
-  * @deprecated Use {@link ItemTypeIds::newId()} instead.
-  */
-  public function getNextItemId() : int {
-    return ItemTypeIds::newId();
-  }
-
-  public function getItemByTypeId(int $typeId) : ?Item {
-    return self::$registeredItems[$typeId] ?? null;
-  }
-
-  /**
   * Returns the runtime id of given item name. (only for vanilla items)
-  *
   * @param string $name
-  *
-  * @return int|null null if runtime id does not exist.
+  * @return int|null
   */
   public static function getRuntimeIdByName(string $name) : ?int {
     static $mappedJson = [];
     if ($mappedJson === []) {
-      $mappedJson = self::reprocessKeys(json_decode(file_get_contents(Path::join(BedrockDataFiles::REQUIRED_ITEM_LIST_JSON)), true));
+      $mappedJson = [];
+      $data = json_decode(file_get_contents(Path::join(BedrockDataFiles::REQUIRED_ITEM_LIST_JSON)), true);
+      foreach ($data as $key => $value) {
+        $mappedJson[str_replace("minecraft:", "", $key)] = $value;
+      }
     }
     $name = str_replace(" ", "_", strtolower($name));
     return $mappedJson[$name]["runtime_id"] ?? null;
-  }
-
-  private static function reprocessKeys(array $data) : array {
-    $new = [];
-    foreach ($data as $key => $value) {
-      $new[str_replace("minecraft:", "", $key)] = $value;
-    }
-    return $new;
   }
 
   /**
@@ -192,16 +167,18 @@ final class ItemFactory {
       }
 
       $vanillaName = $data->vanillaName ?? null;
+      /*
       if (isset(self::$registeredItems[$vanillaName])) {
         $item = clone self::$registeredItems[$vanillaName];
       }
+      */
 
-      if ($item === null) {
-        if ($vanillaName === null) {
-          throw new ItemException("No vanillaName found in data.");
-        }
-        $item = StringToItemParser::getInstance()->parse($vanillaName);
+      // if ($item === null) {
+      if ($vanillaName === null) {
+        throw new ItemException("No vanillaName found in data.");
       }
+      $item = StringToItemParser::getInstance()->parse($vanillaName);
+      // }
 
       if ($item === null) {
         throw new ItemException("Failed to create item from vanillaName: $vanillaName.");
