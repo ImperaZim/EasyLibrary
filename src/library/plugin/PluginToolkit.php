@@ -212,9 +212,15 @@ abstract class PluginToolkit extends PluginBase {
         return null;
       }
       
+      
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
-      $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory) . '/';
-     // $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
+      $relativeDirectory = str_replace([$this->file . '/resources/', '//'], [$this->dataFolder, '/'], $fileDirectory . '/');
+     
+      var_dump([
+        $baseFileName,
+        $fileDirectory,
+        $relativeDirectory
+      ]);
 
       return new File(
         directoryOrConfig: $relativeDirectory,
