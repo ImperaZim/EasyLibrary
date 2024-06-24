@@ -132,7 +132,7 @@ final class ItemFactory {
   public static function getRuntimeIdByName(string $name) : ?int {
     static $mappedJson = [];
     if ($mappedJson === []) {
-      $mappedJson = self::$reprocessKeys(json_decode(file_get_contents(Path::join(BedrockDataFiles::REQUIRED_ITEM_LIST_JSON)), true));
+      $mappedJson = self::reprocessKeys(json_decode(file_get_contents(Path::join(BedrockDataFiles::REQUIRED_ITEM_LIST_JSON)), true));
     }
     $name = str_replace(" ", "_", strtolower($name));
     return $mappedJson[$name]["runtime_id"] ?? null;
