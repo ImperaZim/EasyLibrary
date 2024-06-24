@@ -38,7 +38,7 @@ final class File {
         $config = $directoryOrConfig;
         $filePath = $config->getPath();
         $directory = dirname($filePath);
-        $fileName = basename($filePath, str_replace('file:', '.', TYPE_YML));
+        $fileName = basename($filePath, str_replace('file:', '.', self::TYPE_YML));
         $fileType = self::TYPE_YML;
       } else {
         $directory = str_replace('//', '/', $directoryOrConfig . '/');
