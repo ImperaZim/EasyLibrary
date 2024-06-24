@@ -220,7 +220,7 @@ final class Path {
             'directory' => $file->getPath(),
             'fileName' => $file->getBasename(),
             'fileType' => File::getTypeByExtension($file->getExtension()),
-            'content' => File::jsonDeserialize($file->getExtension(), file_get_contents($file->getRealPath()))
+            'content' => File::deserializeContent($file->getExtension(), file_get_contents($file->getRealPath()))
           ];
         }
       }
