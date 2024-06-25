@@ -24,14 +24,12 @@ class LocationSerializable implements JsonSerializable {
       $data = json_decode($jsonString, true);
       if (isset($data['x'], $data['y'], $data['z'], $data['yaw'], $data['pitch'], $data['world'])) {
         $world = Server::getInstance()->getWorldManager()->getWorldByName($data['world']);
-        if ($world !== null) {
-          return new Location((float)$data['x'], (float)$data['y'], (float)$data['z'], $world, (float)$data['yaw'], (float)$data['pitch']);
-        }
+        return new Location((float)$data['x'], (float)$data['y'], (float)$data['z'], $world, (float)$data['yaw'], (float)$data['pitch']);
       }
     } catch (Exception $e) {
       new \crashdump($e);
+      return null;
     }
-    return null;
   }
 
   /**
