@@ -24,9 +24,7 @@ class PositionSerializable implements JsonSerializable {
       $data = json_decode($jsonString, true);
       if (isset($data['x'], $data['y'], $data['z'], $data['world'])) {
         $world = Server::getInstance()->getWorldManager()->getWorldByName($data['world']);
-        if ($world !== null) {
-          return new Position((float)$data['x'], (float)$data['y'], (float)$data['z'], $world);
-        }
+        return new Position((float)$data['x'], (float)$data['y'], (float)$data['z'], $world);
       }
     } catch (Exception $e) {
       new \crashdump($e);
