@@ -7,10 +7,10 @@ namespace library\interface;
 use internal\invmenu\InvMenu as IMenu;
 
 /**
-* Class Dialogue
+* Class Menu
 * @package library\interface
 */
-abstract class Dialogue extends BaseInterface {
+abstract class Menu extends BaseInterface {
   
   /**
   * Construct and set up the interface.

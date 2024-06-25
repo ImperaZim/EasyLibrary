@@ -7,10 +7,10 @@ namespace library\interface;
 use internal\libform\Form as IForm;
 
 /**
-* Class Dialogue
+* Class Form
 * @package library\interface
 */
-abstract class Dialogue extends BaseInterface {
+abstract class Form extends BaseInterface {
   
   /**
   * Construct and set up the interface.
