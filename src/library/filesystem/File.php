@@ -249,24 +249,24 @@ final class File {
   }
 
   /**
-  * Get a value from the file based on the given key path.
-  * @param string|null $keyPath The key path to the value.
+  * Retrieve the content of the file or a nested value within the deserialized content.
+  * @param ?string $keyPath The dot-separated key path to access a nested value. If null, the whole deserialized content is returned.
   * @param mixed $defaultValue The default value to return if the key path is not found.
-  * @return mixed The value found at the key path, or the default value if not found.
+  * @return mixed The content or nested value.
   */
   public function get(?string $keyPath = null, mixed $defaultValue = null): mixed {
     try {
-      if ($keyPath === null) {
-        $fileContent = $this->readFile();
-        $extension = self::getExtensionByType($this->getFileType());
-        return self::deserializeContent($extension, $fileContent);
-      }
       $fileContent = $this->readFile();
       $extension = self::getExtensionByType($this->getFileType());
       $data = self::deserializeContent($extension, $fileContent);
+
+      if ($keyPath === null) {
+        return $data;
+      }
+
       $keys = explode('.', $keyPath);
       foreach ($keys as $key) {
-        if (!isset($data[$key])) {
+        if (!is_array($data) || !array_key_exists($key, $data)) {
           return $defaultValue;
         }
         $data = $data[$key];
@@ -277,6 +277,7 @@ final class File {
       return $defaultValue;
     }
   }
+
 
   /**
   * Set a value in the file based on the given key path.
