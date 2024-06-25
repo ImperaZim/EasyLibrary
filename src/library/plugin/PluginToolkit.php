@@ -148,7 +148,7 @@ abstract class PluginToolkit extends PluginBase {
           $path .= implode(DIRECTORY_SEPARATOR, $join) . DIRECTORY_SEPARATOR;
         }
       }
-      return $path . DIRECTORY_SEPARATOR;
+      return $path;
     } catch (PluginException $e) {
       new \crashdump($e);
     }
