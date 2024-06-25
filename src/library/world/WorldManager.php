@@ -91,11 +91,10 @@ final class WorldManager {
   */
   public static function getWorlds(): array {
     try {
-      self::load($name);
       return self::$worldManager->getWorlds();
     } catch (WorldException $e) {
       new \crashdump($e);
-      return null;
+      return [];
     }
   }
 
