@@ -86,6 +86,20 @@ final class WorldManager {
   }
 
   /**
+  * Get all worlds.
+  * @return World[]
+  */
+  public static function getWorlds(): array {
+    try {
+      self::load($name);
+      return self::$worldManager->getWorlds();
+    } catch (WorldException $e) {
+      new \crashdump($e);
+      return null;
+    }
+  }
+
+  /**
   * Get the default world.
   * @return World|null
   */
