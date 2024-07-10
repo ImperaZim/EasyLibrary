@@ -130,7 +130,6 @@ final class WorldManager {
         $worldData = $newWorld->getProvider()->getWorldData();
         if ($worldData instanceof BaseNbtWorldData) {
           $worldData->getCompoundTag()->setString("LevelName", $new);
-          $worldData->getCompoundTag()->setString("LevelType", "island");
           self::unload($new);
           self::load($new);
         }

@@ -53,7 +53,7 @@ trait ItemRegistry {
   * @param string $namespace
   * @param \Closure|null $serializeCallback
   * @param \Closure|null $deserializeCallback
-  * @return void
+  * @return mixed
   */
   public static function registerItem(
     Item $item,
@@ -62,7 +62,7 @@ trait ItemRegistry {
     string $namespace = "",
     ?\Closure $serializeCallback = null,
     ?\Closure $deserializeCallback = null
-  ): void {
+  ): mixed {
     self::validateCallbacks($serializeCallback, $deserializeCallback);
 
     if (self::isItemRegistered($item) && !$force) {
@@ -74,6 +74,7 @@ trait ItemRegistry {
     self::registerSerializer($item, $namespace, $serializeCallback);
     self::registerDeserializer($item, $namespace, $deserializeCallback);
     self::updateTypeDictionary($item, $runtimeId, $namespace);
+    return self::$registeredItems[$item->getTypeId()];
   }
 
   /**
