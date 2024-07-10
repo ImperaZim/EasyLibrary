@@ -13,25 +13,27 @@ use pocketmine\entity\Skin;
 final class SkinSerializable {
 
   /**
-  * Serializes the Skin object into an associative array.
-  * @return array The array containing the serialized data of the Skin.
+  * Serializes the Skin object into an associative skin.
+  * @param Skin $skin The skin containing the data to deserialize.
+  * @return string The string containing the serialized data of the Skin.
   */
-  public function serialize(): array {
-    return [
+  public static function jsonSerialize(Skin $skin): string {
+    return json_encode([
       'skinId' => $this->skinId,
       'skinData' => $this->skinData,
       'capeData' => $this->capeData,
       'geometryName' => $this->geometryName,
       'geometryData' => $this->geometryData,
-    ];
+    ]);
   }
 
   /**
   * Deserializes data from an associative array to create a new instance of Skin.
-  * @param array $data The array containing the data to deserialize.
+  * @param string $data The array containing the data to deserialize.
   * @return Skin The new instance of Skin created based on the provided data.
   */
-  public static function deserialize(array $data): Skin {
+  public static function jsonDeserialize(string $data): Skin {
+    $data = json_decode($data);
     return new Skin(
       $data['skinId'],
       $data['skinData'],
