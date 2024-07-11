@@ -28,11 +28,11 @@ final class SkinSerializable {
   */
   public static function jsonSerialize(Skin $skin): string {
     return json_encode([
-      'skinId' => self::ensureUtf8($skin->getSkinId()),
+      'skinId' => ($skin->getSkinId()),
       'skinData' => self::ensureUtf8($skin->getSkinData()),
-      'capeData' => self::ensureUtf8($skin->getCapeData()),
-      'geometryName' => self::ensureUtf8($skin->getGeometryName()),
-      'geometryData' => self::ensureUtf8($skin->getGeometryData()),
+      'capeData' => ($skin->getCapeData()),
+      'geometryName' => ($skin->getGeometryName()),
+      'geometryData' => ($skin->getGeometryData()),
     ], JSON_THROW_ON_ERROR);
   }
 
