@@ -18,6 +18,13 @@ final class SkinSerializable {
   * @return string The JSON string containing the serialized data of the Skin.
   */
   public static function jsonSerialize(Skin $skin): string {
+    var_dump([
+      'skinId' => $skin->getSkinId(),
+      'skinData' => $skin->getSkinData(),
+      'capeData' => $skin->getCapeData(),
+      'geometryName' => $skin->getGeometryName(),
+      'geometryData' => $skin->getGeometryData(),
+    ]);
     return json_encode([
       'skinId' => $skin->getSkinId(),
       'skinData' => $skin->getSkinData(),
