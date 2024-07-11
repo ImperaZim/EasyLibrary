@@ -28,11 +28,11 @@ final class SkinSerializable {
   */
   public static function jsonSerialize(Skin $skin): string {
     return json_encode([
-      'skinId' => ($skin->getSkinId()),
-      'skinData' => self::ensureUtf8($skin->getSkinData()),
-      'capeData' => ($skin->getCapeData()),
-      'geometryName' => ($skin->getGeometryName()),
-      'geometryData' => ($skin->getGeometryData()),
+      'skinId' => self::ensureUtf8($skin->getSkinId()),
+      'skinData' => base64_encode(self::ensureUtf8($skin->getSkinData())),
+      'capeData' => self::ensureUtf8($skin->getCapeData()),
+      'geometryName' => self::ensureUtf8($skin->getGeometryName()),
+      'geometryData' => self::ensureUtf8($skin->getGeometryData()),
     ], JSON_THROW_ON_ERROR);
   }
 
@@ -45,7 +45,7 @@ final class SkinSerializable {
     $decodedData = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
     return new Skin(
       $decodedData['skinId'],
-      $decodedData['skinData'],
+      base64_decode($decodedData['skinData']),
       $decodedData['capeData'] ?? "",
       $decodedData['geometryName'] ?? "",
       $decodedData['geometryData'] ?? ""
