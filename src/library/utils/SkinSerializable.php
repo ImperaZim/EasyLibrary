@@ -19,11 +19,11 @@ final class SkinSerializable {
   */
   public static function jsonSerialize(Skin $skin): string {
     return json_encode([
-      'skinId' => $this->skinId,
-      'skinData' => $this->skinData,
-      'capeData' => $this->capeData,
-      'geometryName' => $this->geometryName,
-      'geometryData' => $this->geometryData,
+      'skinId' => $skin->getSkinId(),
+      'skinData' => $skin->getSkinData(),
+      'capeData' => $skin->getCapeData(),
+      'geometryName' => $skin->getGeometryName(),
+      'geometryData' => $skin->getGeometryData(),
     ]);
   }
 
