@@ -13,42 +13,32 @@ use pocketmine\entity\Skin;
 final class SkinSerializable {
 
   /**
-  * Ensure data is UTF-8 encoded.
-  * @param string $data The data to ensure encoding.
-  * @return string The UTF-8 encoded data.
+  * Serializes the Skin object into an associative skin.
+  * @param Skin $skin The skin containing the data to deserialize.
+  * @return array The array containing the serialized data of the Skin.
   */
-  private static function ensureUtf8(string $data): string {
-    return mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+  public static function jsonSerialize(Skin $skin): array {
+    return [
+      'skinId' => $skin->getSkinId(),
+      'skinData' => $skin->getSkinData(),
+      'capeData' => $skin->getCapeData(),
+      'geometryName' => $skin->getGeometryName(),
+      'geometryData' => $skin->getGeometryData(),
+    ];
   }
 
   /**
-  * Serializes the Skin object into a JSON string.
-  * @param Skin $skin The skin containing the data to serialize.
-  * @return string The JSON string containing the serialized data of the Skin.
-  */
-  public static function jsonSerialize(Skin $skin): string {
-    return json_encode([
-      'skinId' => self::ensureUtf8($skin->getSkinId()),
-      'skinData' => base64_encode(self::ensureUtf8($skin->getSkinData())),
-      'capeData' => self::ensureUtf8($skin->getCapeData()),
-      'geometryName' => self::ensureUtf8($skin->getGeometryName()),
-      'geometryData' => self::ensureUtf8($skin->getGeometryData()),
-    ], JSON_THROW_ON_ERROR);
-  }
-
-  /**
-  * Deserializes data from a JSON string to create a new instance of Skin.
-  * @param string $data The JSON string containing the data to deserialize.
+  * Deserializes data from an associative array to create a new instance of Skin.
+  * @param array $data The array containing the data to deserialize.
   * @return Skin The new instance of Skin created based on the provided data.
   */
-  public static function jsonDeserialize(string $data): Skin {
-    $decodedData = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+  public static function jsonDeserialize(array $data): Skin {
     return new Skin(
-      $decodedData['skinId'],
-      base64_decode($decodedData['skinData']),
-      $decodedData['capeData'] ?? "",
-      $decodedData['geometryName'] ?? "",
-      $decodedData['geometryData'] ?? ""
+      $data['skinId'],
+      $data['skinData'],
+      $data['capeData'] ?? "",
+      $data['geometryName'] ?? "",
+      $data['geometryData'] ?? ""
     );
   }
 }
