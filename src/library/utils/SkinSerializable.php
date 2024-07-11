@@ -20,7 +20,7 @@ final class SkinSerializable {
   public static function jsonSerialize(Skin $skin): array {
     return [
       'skinId' => $skin->getSkinId(),
-      'skinData' => $skin->getSkinData(),
+      'skinData' => base64_encode($skin->getSkinData()),
       'capeData' => $skin->getCapeData(),
       'geometryName' => $skin->getGeometryName(),
       'geometryData' => $skin->getGeometryData(),
@@ -35,7 +35,7 @@ final class SkinSerializable {
   public static function jsonDeserialize(array $data): Skin {
     return new Skin(
       $data['skinId'],
-      $data['skinData'],
+      base64_decode($data['skinData']),
       $data['capeData'] ?? "",
       $data['geometryName'] ?? "",
       $data['geometryData'] ?? ""
