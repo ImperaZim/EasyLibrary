@@ -48,7 +48,7 @@ final class CustomItemHooker implements Listener {
       return;
     }
 
-    $registrant->getServer()->getPluginManager()->registerEvents($registrant, $registrant);
+    $registrant->getServer()->getPluginManager()->registerEvents($this, $registrant);
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event) : void {
