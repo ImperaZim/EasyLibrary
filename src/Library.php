@@ -11,6 +11,7 @@ use internal\bossbar\BossBarHooker;
 use internal\invmenu\InvMenuHooker;
 use internal\commando\CommandoHooker;
 use internal\dialogue\DialogueHooker;
+use internal\customitem\CustomItemHooker;
 
 /**
 * Class Library
@@ -24,6 +25,7 @@ final class Library extends PluginToolkit {
   */
   protected function onLoad(): void {
     self::setInstance($this);
+    $this->saveRecursiveResources();
   }
 
   /**
@@ -42,6 +44,7 @@ final class Library extends PluginToolkit {
     new InvMenuHooker($this);
     new DialogueHooker($this);
     new CommandoHooker($this);
+    new CustomItemHooker($this);
   }
 
   /**
