@@ -6,6 +6,7 @@ use library\item\ItemFactory;
 use library\world\WorldManager;
 use library\plugin\PluginToolkit;
 use pocketmine\utils\SingletonTrait;
+use Symfony\Component\Filesystem\Path;
 
 use internal\bossbar\BossBarHooker;
 use internal\invmenu\InvMenuHooker;
@@ -53,6 +54,10 @@ final class Library extends PluginToolkit {
   private function initComponents(): void {
     ItemFactory::init();
     WorldManager::init($this, $this->getServer()->getWorldManager());
+  }
+  
+  public function getResourcePackFolder() : string {
+    return Path::join($this->getDataFolder(), "resource_packs");
   }
 
 }

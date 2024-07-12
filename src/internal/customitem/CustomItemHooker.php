@@ -8,7 +8,6 @@ use RuntimeException;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\TaskHandler;
-use Symfony\Component\Filesystem\Path;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
@@ -50,10 +49,6 @@ final class CustomItemHooker implements Listener {
     }
 
     $registrant->getServer()->getPluginManager()->registerEvents($registrant, $registrant);
-  }
-
-  public function getResourcePackFolder() : string {
-    return Path::join($this->registrant->getDataFolder(), "resource_packs");
   }
 
   public function onDataPacketSend(DataPacketSendEvent $event) : void {
