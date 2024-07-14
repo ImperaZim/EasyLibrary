@@ -35,7 +35,7 @@ final class CustomiesHooker implements Listener {
   * @param PluginBase|null $plugin Plugin registrant.
   */
   public function __construct(private ?PluginBase $plugin = null) {
-    $this->getServer()->getPluginManager()->registerEvents($thid, $plugin);
+    $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
 
     $cachePath = $plugin->getDataFolder() . "idcache";
     $plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(static function () use ($cachePath): void {
