@@ -12,7 +12,7 @@ use internal\bossbar\BossBarHooker;
 use internal\invmenu\InvMenuHooker;
 use internal\commando\CommandoHooker;
 use internal\dialogue\DialogueHooker;
-use internal\customitem\CustomItemHooker;
+use internal\customies\CustomiesHooker;
 
 /**
 * Class Library
@@ -45,7 +45,7 @@ final class Library extends PluginToolkit {
     new InvMenuHooker($this);
     new DialogueHooker($this);
     new CommandoHooker($this);
-    new CustomItemHooker($this);
+    new CustomiesHooker($this);
   }
 
   /**
