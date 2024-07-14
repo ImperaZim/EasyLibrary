@@ -89,7 +89,6 @@ final class CustomItemManager {
 
   public function registerDefaultItems(array $data) : void {
     foreach ($data as $name => $itemData) {
-      var_dump(self::getItem($name, $itemData)->getVanillaName());
       $this->registerItem(self::getItem($name, $itemData));
     }
     $this->refresh();
