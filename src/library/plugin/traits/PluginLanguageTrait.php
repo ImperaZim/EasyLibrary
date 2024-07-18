@@ -13,23 +13,26 @@ use library\plugin\PluginToolkit;
 */
 trait PluginLanguageTrait {
 
-  /** @var string|null */
-  protected ?string $file = null;
+  /** @var File|null */
+  protected ?File $file = null;
 
-  /** @return File */
-  public function getLanguage(): File {
+  /** @return File|null */
+  public function getLanguage(): ?File {
     return $this->file;
   }
 
-  /** @param string $file */
+  /**
+  * @param PluginToolkit $plugin
+  * @param string|null $file
+  */
   public function setLanguage(PluginToolkit $plugin, ?string $file = 'language'): void {
-    $file = new File(
+    $fileInstance = new File(
       directoryOrConfig: $plugin->getServerPath(['join:data']),
       fileName: $file,
       fileType: File::TYPE_INI
     );
-    if ($file->fileExists()) {
-      $this->file = $file;
+    if ($fileInstance->fileExists()) {
+      $this->file = $fileInstance;
     }
   }
 
