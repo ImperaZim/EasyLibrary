@@ -17,12 +17,14 @@ use library\filesystem\Path;
 use library\filesystem\File;
 use library\database\DatabaseManager;
 use library\plugin\exception\PluginException;
+use library\plugin\traits\PluginLanguageTrait;
 
 /**
 * Class PluginToolkit
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
+  use PluginLanguageTrait;
 
   /** @var array */
   private ?array $database = null;
@@ -55,6 +57,12 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function setMotd(string $motd): self {
     try {
+      $motdSplit = explode(':', $motd);
+      if (strtolower($motdSplit[0]) === 'language') {
+        $motd = str_replace('language:', '', $motd);
+        if ($)
+          return;
+      }
       $this->server->getNetwork()->setName($motd);
     } catch (PluginException $e) {
       new \crashdump($e);
@@ -143,8 +151,7 @@ abstract class PluginToolkit extends PluginBase {
           throw new PluginException("Tried to register an invalid listener.");
         }
       }
-    } catch (PluginException $e) {
-    }
+    } catch (PluginException $e) {}
   }
 
   /**
@@ -226,10 +233,10 @@ abstract class PluginToolkit extends PluginBase {
       if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
         return null;
       }
-      
+
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
       $relativeDirectory = str_replace($this->file . '/resources', $this->dataFolder, $fileDirectory);
-      
+
       return new File(
         directoryOrConfig: $relativeDirectory,
         fileName: $baseFileName,
