@@ -9,7 +9,6 @@ use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLoader;
-use pocketmine\utils\SingletonTrait;
 use pocketmine\plugin\ResourceProvider;
 use pocketmine\plugin\PluginDescription;
 
@@ -24,7 +23,6 @@ use library\plugin\exception\PluginException;
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
-  use SingletonTrait;
   
   /** @var array */
   private ?array $database = null;
