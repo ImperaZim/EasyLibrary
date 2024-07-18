@@ -201,7 +201,7 @@ abstract class PluginToolkit extends PluginBase {
         if ($processedFile !== null) {
           $loadedFiles[] = $processedFile;
         }
-        var_dump($file);
+        var_dump($processedFile);
       }
     } catch (PluginException $e) {
       new \crashdump($e);
