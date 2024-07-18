@@ -229,7 +229,7 @@ abstract class PluginToolkit extends PluginBase {
       }
       
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
-      $relativeDirectory = str_replace("plugins/{$this->getName()}/resources", "plugin_data/{$this->getName()}", $fileDirectory);
+      $relativeDirectory = str_replace(["plugins"], ["plugin_data"], $fileDirectory);
       
       return new File(
         directoryOrConfig: $relativeDirectory,
