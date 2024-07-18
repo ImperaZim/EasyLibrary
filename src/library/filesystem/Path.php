@@ -223,7 +223,6 @@ final class Path {
             'content' => File::deserializeContent($file->getExtension(), file_get_contents($file->getRealPath()))
           ];
         }
-        var_dump($file);
       }
     } catch (FileSystemException $e) {
       new \crashdump($e);
