@@ -53,11 +53,11 @@ abstract class PluginToolkit extends PluginBase {
   ) {
     $this->thisLoader = $loader;
     $this->thisServer = $server;
-    $this->thisDescription = $description; 
+    $this->thisDescription = $description;
     $this->thisDataFolder = $dataFolder;
-    $this->thisFile = $file; 
+    $this->thisFile = $file;
     $this->thisResourceProvider = $resourceProvider;
-    
+
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
@@ -190,9 +190,10 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
     if (!is_dir($dir = $this->thisFile . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR)) {
+      var_dump($dir);
       return null;
     }
-    
+
     var_dump($dir);
 
     $loadedFiles = [];
