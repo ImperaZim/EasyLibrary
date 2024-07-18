@@ -190,6 +190,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
     if (!is_dir($dir = $this->getResourcesDirectory())) {
+      var_dump($dir);
       return null;
     }
 
