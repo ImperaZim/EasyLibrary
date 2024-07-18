@@ -17,12 +17,14 @@ use library\filesystem\Path;
 use library\filesystem\File;
 use library\database\DatabaseManager;
 use library\plugin\exception\PluginException;
+use library\plugin\traits\PluginLanguageTrait;
 
 /**
 * Class PluginToolkit
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
+  use PluginLanguageTrait;
 
   /** @var array */
   private ?array $database = null;
