@@ -130,11 +130,11 @@ final class File {
   public static function serializeContent(string $extension, array $data): string {
     if (in_array($extension, self::getExtensions())) {
       return match ($extension) {
-        'file:yml' => yaml_emit($data, YAML_UTF8_ENCODING),
-        'file:yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
-        'file:json' => json_encode($data, JSON_PRETTY_PRINT),
-        'file:ini' => self::serializeIniContent($data),
-        'file:txt' => self::writeList(array_keys($data)),
+        'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
+        'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
+        'json' => json_encode($data, JSON_PRETTY_PRINT),
+        'ini' => self::serializeIniContent($data),
+        'txt' => self::writeList(array_keys($data)),
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -150,11 +150,11 @@ final class File {
   public static function deserializeContent(string $extension, string $fileContent): array {
     if (in_array($extension, self::getExtensions())) {
       return match ($extension) {
-        'file:yml' => yaml_parse($fileContent) ?: [],
-        'file:yaml' => yaml_parse($fileContent) ?: [],
-        'file:json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
-        'file:ini' => self::parseIniContent($fileContent),
-        'file:txt' => array_fill_keys(self::parseList($fileContent), true),
+        'yml' => yaml_parse($fileContent) ?: [],
+        'yaml' => yaml_parse($fileContent) ?: [],
+        'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
+        'ini' => self::parseIniContent($fileContent),
+        'txt' => array_fill_keys(self::parseList($fileContent), true),
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
