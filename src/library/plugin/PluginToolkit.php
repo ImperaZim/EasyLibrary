@@ -59,7 +59,7 @@ abstract class PluginToolkit extends PluginBase {
       if (strtolower($motdSplit[0]) === 'language') {
         $motd = str_replace('language:', '', $motd);
         
-        return;
+        return $this;
       }
       $this->server->getNetwork()->setName($motd);
     } catch (PluginException $e) {
