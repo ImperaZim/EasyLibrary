@@ -201,8 +201,7 @@ abstract class PluginToolkit extends PluginBase {
         if ($processedFile !== null) {
           $loadedFiles[] = $processedFile;
         }
-        var_dump($this->file);
-        var_dump($this->dataFolder);
+        var_dump($processedFile);
       }
     } catch (PluginException $e) {
       new \crashdump($e);
@@ -230,7 +229,7 @@ abstract class PluginToolkit extends PluginBase {
       }
       
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
-      $relativeDirectory = str_replace(["plugins"], ["plugin_data"], $fileDirectory);
+      $relativeDirectory = str_replace($this->file . '/resources', $this->dataFolder, $fileDirectory);
       
       return new File(
         directoryOrConfig: $relativeDirectory,
