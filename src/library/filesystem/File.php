@@ -133,7 +133,8 @@ final class File {
         'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'json' => json_encode($data, JSON_PRETTY_PRINT),
-        'txt' => self::writeList(array_keys($data))
+        'txt' => self::writeList(array_keys($data)),
+        'ini' => self::writeIniFile($data) // Adicionando o suporte ao tipo INI
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -152,10 +153,31 @@ final class File {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
         'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
-        'txt' => array_fill_keys(self::parseList($fileContent), true)
+        'txt' => array_fill_keys(self::parseList($fileContent), true),
+        'ini' => parse_ini_string($fileContent, true) // Adicionando o suporte ao tipo INI
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
+  }
+
+  /**
+  * Write content to an INI file format.
+  * @param array $data The data to be written.
+  * @return string The INI file content as a string.
+  */
+  private static function writeIniFile(array $data): string {
+    $content = '';
+    foreach ($data as $section => $values) {
+      if (is_array($values)) {
+        $content .= "[$section]\n";
+        foreach ($values as $key => $value) {
+          $content .= "$key = " . (is_numeric($value) ? $value : "\"$value\"") . "\n";
+        }
+      } else {
+        $content .= "$section = " . (is_numeric($values) ? $values : "\"$values\"") . "\n";
+      }
+    }
+    return $content;
   }
 
   /**
@@ -277,7 +299,6 @@ final class File {
       return $defaultValue;
     }
   }
-
 
   /**
   * Set a value in the file based on the given key path.
