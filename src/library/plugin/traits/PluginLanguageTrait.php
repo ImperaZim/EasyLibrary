@@ -13,28 +13,69 @@ use library\plugin\PluginToolkit;
 */
 trait PluginLanguageTrait {
 
-  /** @var File|null */
-  protected ?File $file = null;
+  /** @var File[] */
+  protected array $files = [];
 
-  /** @return File|null */
-  public function getLanguage(): ?File {
-    return $this->file;
+  /** @var string */
+  protected string $baseDirectory = 'languages';
+
+  /** @var string */
+  protected string $languageDirectory = '';
+
+  /**
+  * Sets the base directory for language files.
+  * @param string $directory
+  */
+  public function setBaseDirectory(string $directory): void {
+    $this->baseDirectory = $directory;
   }
 
   /**
-  * @param PluginToolkit $plugin
-  * @param string|null $file
+  * Adds language files to the registry from a specified directory.
+  * If no files are provided, adds all files in the specified directory.
+  * @param string $directory
+  * @param array|null $files
   */
-  public function setLanguage(PluginToolkit $plugin, ?string $file = 'language'): void {
-    $fileInstance = new File(
-      directoryOrConfig: $plugin->getServerPath(['join:data']),
-      fileName: $file,
-      fileType: File::TYPE_INI,
-      autoGenerate: true
-    );
-    if ($fileInstance->fileExists()) {
-      $this->file = $fileInstance;
+  public function addLanguages(string $directory, ?array $files = null): void {
+    $basePath = $this->baseDirectory . '/' . $directory;
+
+    if ($files === null || empty($files)) {
+      $fileNames = array_diff(scandir($basePath), ['.', '..']);
+      $files = array_map(function($file) {
+        return pathinfo($file, PATHINFO_FILENAME);
+      }, $fileNames);
+    } else {
+      $files = array_map(function($file) {
+        return pathinfo($file, PATHINFO_FILENAME);
+      }, $files);
     }
+
+    foreach ($files as $file) {
+      $filePath = $basePath . '/' . $file . '.ini';
+      if (file_exists($filePath)) {
+        $fileInstance = new File(
+          directoryOrConfig: $basePath,
+          fileName: $file,
+          fileType: File::TYPE_INI,
+          autoGenerate: true
+        );
+        if ($fileInstance->fileExists()) {
+          $this->files[$file] = $fileInstance;
+        }
+      }
+    }
+  }
+
+  /**
+  * Retrieves a specific language file or the first registered one if it does not exist.
+  * @param string|null $file
+  * @return File|null
+  */
+  public function getLanguage(?string $file = null): ?File {
+    if ($file !== null && isset($this->files[$file])) {
+      return $this->files[$file];
+    }
+    return reset($this->files) ?: null;
   }
 
 }
