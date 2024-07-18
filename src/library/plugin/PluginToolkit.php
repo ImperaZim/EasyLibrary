@@ -51,14 +51,14 @@ abstract class PluginToolkit extends PluginBase {
     string $file,
     ResourceProvider $resourceProvider
   ) {
-    parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
-    
     $this->thisLoader = $loader;
     $this->thisServer = $server;
     $this->thisDescription = $description; 
     $this->thisDataFolder = $dataFolder;
     $this->thisFile = $file; 
     $this->thisResourceProvider = $resourceProvider;
+    
+    parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
   /**
