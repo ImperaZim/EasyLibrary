@@ -22,12 +22,16 @@ trait FileExtensionTypes {
   /** TXT file type constant. */
   public const TYPE_TXT = 'file:txt';
 
+  /** INI file type constant. */
+  public const TYPE_INI = 'file:ini';
+
   /** File type to extension mapping */
   private static array $typeToExtension = [
     self::TYPE_YML => 'yml',
     self::TYPE_YAML => 'yaml',
     self::TYPE_JSON => 'json',
-    self::TYPE_TXT => 'txt'
+    self::TYPE_TXT => 'txt',
+    self::TYPE_INI => 'ini'
   ];
 
   /**
