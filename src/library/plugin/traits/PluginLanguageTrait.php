@@ -29,7 +29,8 @@ trait PluginLanguageTrait {
     $fileInstance = new File(
       directoryOrConfig: $plugin->getServerPath(['join:data']),
       fileName: $file,
-      fileType: File::TYPE_INI
+      fileType: File::TYPE_INI,
+      autoGenerate: true
     );
     if ($fileInstance->fileExists()) {
       $this->file = $fileInstance;
