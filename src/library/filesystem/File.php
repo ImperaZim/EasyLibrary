@@ -134,7 +134,7 @@ final class File {
         'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'json' => json_encode($data, JSON_PRETTY_PRINT),
         'txt' => self::writeList(array_keys($data)),
-        'ini' => self::writeIniFile($data) // Adicionando o suporte ao tipo INI
+        'ini' => self::writeIniFile($data)
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -154,7 +154,7 @@ final class File {
         'yaml' => yaml_parse($fileContent) ?: [],
         'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
         'txt' => array_fill_keys(self::parseList($fileContent), true),
-        'ini' => parse_ini_string($fileContent, true) // Adicionando o suporte ao tipo INI
+        'ini' => parse_ini_string($fileContent, true)
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
