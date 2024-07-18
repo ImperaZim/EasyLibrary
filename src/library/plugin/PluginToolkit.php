@@ -27,12 +27,12 @@ abstract class PluginToolkit extends PluginBase {
   /** @var array */
   private ?array $database = null;
 
-  private PluginLoader $loader;
-  private Server $server;
-  private PluginDescription $description;
-  private string $dataFolder;
-  private string $file;
-  private ResourceProvider $resourceProvider;
+  private PluginLoader $thisLoader;
+  private Server $thisServer;
+  private PluginDescription $thisDescription;
+  private string $thisDataFolder;
+  private string $thisFile;
+  private ResourceProvider $thisResourceProvider;
 
   /**
   * PluginToolkit construct
@@ -51,14 +51,14 @@ abstract class PluginToolkit extends PluginBase {
     string $file,
     ResourceProvider $resourceProvider
   ) {
-    parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
-    $this->loader = $loader;
-    $this->server = $server;
-    $this->description = $description; 
-    $this->dataFolder = $dataFolder;
-    $this->file = $file; 
-    $this->resourceProvider = $resourceProvider;
+    $this->thisLoader = $loader;
+    $this->thisServer = $server;
+    $this->thisDescription = $description; 
+    $this->thisDataFolder = $dataFolder;
+    $this->thisFile = $file; 
+    $this->thisResourceProvider = $resourceProvider;
     
+    parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
   /**
@@ -69,7 +69,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function setMotd(string $motd): self {
     try {
-      $this->server->getNetwork()->setName($motd);
+      $this->thisServer->getNetwork()->setName($motd);
     } catch (PluginException $e) {
       new \crashdump($e);
     }
@@ -129,7 +129,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function registerCommands(array $commands): void {
     try {
-      $commandMap = $this->getServer()->getCommandMap();
+      $commandMap = $this->thisServer->getCommandMap();
       foreach ($commands as $command) {
         if ($command instanceof Command) {
           $commandMap->register($this->getName(), $command);
@@ -152,7 +152,7 @@ abstract class PluginToolkit extends PluginBase {
     try {
       foreach ($listeners as $listener) {
         if ($listener instanceof Listener) {
-          $this->server->getPluginManager()->registerEvents($listener, $this);
+          $this->thisServer->getPluginManager()->registerEvents($listener, $this);
         } else {
           throw new PluginException("Tried to register an invalid listener.");
         }
@@ -168,7 +168,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function getServerPath(?array $join = null): string {
     try {
-      $path = $this->server->getDataPath();
+      $path = $this->thisServer->getDataPath();
       if ($join !== null) {
         if (strtolower($join[0]) === 'join:data') {
           $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->getName() . DIRECTORY_SEPARATOR;
@@ -189,7 +189,7 @@ abstract class PluginToolkit extends PluginBase {
   * @throws PluginException If there's an error loading resources.
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
-    if (!is_dir($dir = $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR)) {
+    if (!is_dir($dir = $this->thisFile . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR)) {
       return null;
     }
     
