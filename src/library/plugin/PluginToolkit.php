@@ -27,6 +27,13 @@ abstract class PluginToolkit extends PluginBase {
   /** @var array */
   private ?array $database = null;
 
+  private PluginLoader $loader;
+  private Server $server;
+  private PluginDescription $description;
+  private string $dataFolder;
+  private string $file;
+  private ResourceProvider $resourceProvider;
+
   /**
   * PluginToolkit construct
   * @param PluginLoader $loader The plugin loader.
@@ -37,13 +44,20 @@ abstract class PluginToolkit extends PluginBase {
   * @param ResourceProvider $resourceProvider The resource provider.
   */
   public function __construct(
-    private PluginLoader $loader,
-    private Server $server,
-    private PluginDescription $description,
-    private string $dataFolder,
-    private string $file,
-    private ResourceProvider $resourceProvider
+    PluginLoader $loader,
+    Server $server,
+    PluginDescription $description,
+    string $dataFolder,
+    string $file,
+    ResourceProvider $resourceProvider
   ) {
+    $this->loader = $loader;
+    $this->server = $server;
+    $this->description = $description; 
+    $this->dataFolder = $dataFolder;
+    $this->file = $file; 
+    $this->resourceProvider = $resourceProvider;
+    
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
@@ -143,8 +157,7 @@ abstract class PluginToolkit extends PluginBase {
           throw new PluginException("Tried to register an invalid listener.");
         }
       }
-    } catch (PluginException $e) {
-    }
+    } catch (PluginException $e) {}
   }
 
   /**
@@ -192,7 +205,7 @@ abstract class PluginToolkit extends PluginBase {
     if (!is_dir($dir = $this->getResourcesDirectory())) {
       return null;
     }
-    
+
     var_dump($dir);
 
     $loadedFiles = [];
@@ -229,10 +242,10 @@ abstract class PluginToolkit extends PluginBase {
       if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
         return null;
       }
-      
+
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
       $relativeDirectory = str_replace("plugins/{$this->getName()}/resources", "plugin_data/{$this->getName()}", $fileDirectory);
-      
+
       return new File(
         directoryOrConfig: $relativeDirectory,
         fileName: $baseFileName,
