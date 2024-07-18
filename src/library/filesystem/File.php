@@ -90,7 +90,7 @@ final class File {
   * @param string $content The content to parse.
   * @return string[]
   */
-  public static function parseList(string $content): array {
+  public static function parseList(string $content) : array {
     $result = [];
     foreach (explode("\n", trim(str_replace("\r\n", "\n", $content))) as $v) {
       $v = trim($v);
@@ -107,7 +107,7 @@ final class File {
   * @param string[] $entries The list of entries.
   * @return string
   */
-  public static function writeList(array $entries): string {
+  public static function writeList(array $entries) : string {
     return implode("\n", $entries);
   }
 
@@ -133,8 +133,7 @@ final class File {
         'yml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'yaml' => yaml_emit($data, YAML_UTF8_ENCODING),
         'json' => json_encode($data, JSON_PRETTY_PRINT),
-        'ini' => self::serializeIniContent($data),
-        'txt' => self::writeList(array_keys($data)),
+        'txt' => self::writeList(array_keys($data))
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -153,8 +152,7 @@ final class File {
         'yml' => yaml_parse($fileContent) ?: [],
         'yaml' => yaml_parse($fileContent) ?: [],
         'json' => json_decode(empty($fileContent) ? "{}" : $fileContent, true, 512, JSON_PRETTY_PRINT),
-        'ini' => self::parseIniContent($fileContent),
-        'txt' => array_fill_keys(self::parseList($fileContent), true),
+        'txt' => array_fill_keys(self::parseList($fileContent), true)
       };
     }
     throw new FileSystemException("Unsupported file type: {$extension}");
@@ -254,45 +252,102 @@ final class File {
   * Retrieve the content of the file or a nested value within the deserialized content.
   * @param ?string $keyPath The dot-separated key path to access a nested value. If null, the whole deserialized content is returned.
   * @param mixed $defaultValue The default value to return if the key path is not found.
-  * @return mixed The value found at the key path or the default value.
+  * @return mixed The content or nested value.
   */
   public function get(?string $keyPath = null, mixed $defaultValue = null): mixed {
-    $content = $this->readFile();
-    $data = self::deserializeContent($this->fileType, $content);
-    if ($keyPath === null) {
-      return $data;
-    }
-    $keys = explode('.', $keyPath);
-    foreach ($keys as $key) {
-      if (!isset($data[$key])) {
-        return $defaultValue;
+    try {
+      $fileContent = $this->readFile();
+      $extension = self::getExtensionByType($this->getFileType());
+      $data = self::deserializeContent($extension, $fileContent);
+
+      if ($keyPath === null) {
+        return $data;
       }
-      $data = $data[$key];
+
+      $keys = explode('.', $keyPath);
+      foreach ($keys as $key) {
+        if (!is_array($data) || !array_key_exists($key, $data)) {
+          return $defaultValue;
+        }
+        $data = $data[$key];
+      }
+      return $data;
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
+      return $defaultValue;
     }
-    return $data;
+  }
+
+
+  /**
+  * Set a value in the file based on the given key path.
+  * @param array $keyValuePairs The key-value pairs to set.
+  * @return bool True if the operation is successful, false if it fails.
+  */
+  public function set(array $keyValuePairs): bool {
+    try {
+      $fileContent = $this->readFile();
+      $extension = self::getExtensionByType($this->getFileType());
+      $data = self::deserializeContent($extension, $fileContent);
+
+      if (isset($keyValuePairs['--override']) && is_array($keyValuePairs['--override'])) {
+        $content = self::serializeContent($extension, $keyValuePairs['--override']);
+        try {
+          self::writeFile($content);
+          return true;
+        } catch (FileSystemException $e) {
+          return false;
+        }
+      }
+
+      if (isset($keyValuePairs['--merge']) && is_array($keyValuePairs['--merge'])) {
+        $this->mergeArrays($data, $keyValuePairs['--merge']);
+      } else {
+        foreach ($keyValuePairs as $keyPath => $value) {
+          $keys = explode('.', $keyPath);
+          $nestedArray = &$data;
+          foreach ($keys as $key) {
+            if (!is_array($nestedArray)) {
+              $nestedArray = [];
+            }
+            if (!isset($nestedArray[$key])) {
+              $nestedArray[$key] = [];
+            }
+            $nestedArray = &$nestedArray[$key];
+          }
+          $nestedArray = $value;
+        }
+      }
+
+      $content = self::serializeContent($extension, $data);
+      try {
+        self::writeFile($content);
+        return true;
+      } catch (FileSystemException $e) {
+        return false;
+      }
+    } catch (FileSystemException $e) {
+      new \crashdump($e);
+      return false;
+    }
   }
 
   /**
-  * Set a value at a nested key path within the deserialized content and save it back to the file.
-  * @param array $keyValuePairs The key-value pairs to set in the deserialized content.
+  * Merge two arrays.
+  * @param array $original The original array.
+  * @param array $newData The new data to merge.
   * @return void
-  * @throws FileSystemException If the file cannot be written.
   */
-  public function set(array $keyValuePairs): void {
-    $content = $this->readFile();
-    $data = self::deserializeContent($this->fileType, $content);
-    foreach ($keyValuePairs as $keyPath => $value) {
-      $keys = explode('.', $keyPath);
-      $temp = &$data;
-      foreach ($keys as $key) {
-        if (!isset($temp[$key])) {
-          $temp[$key] = [];
+  private function mergeArrays(array &$original, array $newData): void {
+    foreach ($newData as $key => $value) {
+      if (is_array($value) && isset($original[$key]) && is_array($original[$key])) {
+        $this->mergeArrays($original[$key], $value);
+      } else {
+        if (!isset($original[$key])) {
+          $original[$key] = $value;
         }
-        $temp = &$temp[$key];
       }
-      $temp = $value;
     }
-    $this->writeFile(self::serializeContent($this->fileType, $data));
   }
 
   /**
@@ -301,120 +356,16 @@ final class File {
   */
   public function __toString(): string {
     try {
+      $type = $this->getFileExtension('Unknown');
       return sprintf(
-        'File: %s: %s',
-        $this->fileName . $this->getFileExtension(),
+        'File (Type: %s) %s: %s',
+        strtoupper($type),
+        $this->fileName . '.' . pathinfo($this->fileName, PATHINFO_EXTENSION),
         $this->readFile()
       );
     } catch (FileSystemException $e) {
       new \crashdump($e);
       return '';
-    }
-  }
-
-  /**
-  * Parse the content of the .ini file.
-  * @param string $content The content of the file.
-  * @return array
-  */
-  private static function parseIniContent(string $content): array {
-    return parse_ini_string($content, true, INI_SCANNER_TYPED);
-  }
-
-  /**
-  * Serialize data into .ini format.
-  * @param array $data The data to serialize.
-  * @return string
-  */
-  private static function serializeIniContent(array $data): string {
-    $result = '';
-    foreach ($data as $section => $values) {
-      if (is_array($values)) {
-        $result .= "[$section]\n";
-        foreach ($values as $key => $value) {
-          if (is_array($value)) {
-            foreach ($value as $v) {
-              $result .= "{$key}[] = \"$v\"\n";
-            }
-          } else {
-            $result .= "$key = \"$value\"\n";
-          }
-        }
-      } else {
-        $result .= "$section = \"$values\"\n";
-      }
-    }
-    return $result;
-  }
-
-  /**
-  * Read the .ini file content and return it as an array.
-  * @return array
-  * @throws FileSystemException If the file cannot be read.
-  */
-  public function readIniFile(): array {
-    $content = $this->readFile();
-    return self::parseIniContent($content);
-  }
-
-  /**
-  * Write data to the .ini file.
-  * @param array $data The data to write.
-  * @return void
-  * @throws FileSystemException If the file cannot be written.
-  */
-  public function writeIniFile(array $data): void {
-    $content = self::serializeIniContent($data);
-    $this->writeFile($content);
-  }
-
-  /**
-  * Get a value from the .ini file.
-  * @param string $section The section in the .ini file.
-  * @param string $key The key in the section.
-  * @param mixed $default The default value to return if the key is not found.
-  * @return mixed
-  */
-  public function getIniValue(?string $section, ?string $key, mixed $default = null): mixed {
-    $data = $this->readIniFile();
-    if ($section === null && $key === null) {
-      return $data ?? $default;
-    }
-    if ($key === null) {
-      return $data[$section] ?? $default;
-    }
-    return $data[$section][$key] ?? $default;
-  }
-
-  /**
-  * Set a value in the .ini file.
-  * @param string $section The section in the .ini file.
-  * @param string $key The key in the section.
-  * @param mixed $value The value to set.
-  * @return void
-  * @throws FileSystemException If the file cannot be written.
-  */
-  public function setIniValue(string $section, string $key, mixed $value): void {
-    $data = $this->readIniFile();
-    if (!isset($data[$section])) {
-      $data[$section] = [];
-    }
-    $data[$section][$key] = $value;
-    $this->writeIniFile($data);
-  }
-
-  /**
-  * Delete a value in the .ini file.
-  * @param string $section The section in the .ini file.
-  * @param string $key The key in the section.
-  * @return void
-  * @throws FileSystemException If the file cannot be written.
-  */
-  public function deleteIniValue(string $section, string $key): void {
-    $data = $this->readIniFile();
-    if (isset($data[$section][$key])) {
-      unset($data[$section][$key]);
-      $this->writeIniFile($data);
     }
   }
 }
