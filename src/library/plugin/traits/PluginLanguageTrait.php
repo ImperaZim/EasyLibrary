@@ -26,7 +26,7 @@ trait PluginLanguageTrait {
   * Sets the base directory for language files.
   * @param string $directory
   */
-  public function setBaseDirectory(string $directory): void {
+  public function setLanguageDirectory(string $directory): void {
     $this->baseDirectory = $directory;
   }
 
