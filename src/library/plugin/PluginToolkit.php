@@ -45,6 +45,9 @@ abstract class PluginToolkit extends PluginBase {
     private ResourceProvider $resourceProvider
   ) {
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
+    
+    
+    var_dump(new ReflectionClass(get_class($this)));
   }
 
   /**
