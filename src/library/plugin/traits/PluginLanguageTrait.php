@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace library\plugin\traits;
 
 use library\filesystem\File;
+use library\plugin\PluginToolkit;
 
 /**
 * Trait PluginLanguageTrait
@@ -12,17 +13,24 @@ use library\filesystem\File;
 */
 trait PluginLanguageTrait {
 
-  /** @var File|null */
-  protected ?File $file = null;
+  /** @var string|null */
+  protected ?string $file = null;
 
   /** @return File */
   public function getLanguage(): File {
     return $this->file;
   }
 
-  /** @param File $file */
-  public function setLanguage(File $file): void {
-    $this->file = $file;
+  /** @param string $file */
+  public function setLanguage(PluginToolkit $plugin, ?string $file = 'language'): void {
+    $file = new File(
+      directoryOrConfig: $plugin->getServerPath(['join:data']),
+      fileName: $file,
+      fileType: File::TYPE_INI
+    );
+    if ($file->fileExists()) {
+      $this->file = $file;
+    }
   }
 
 }
