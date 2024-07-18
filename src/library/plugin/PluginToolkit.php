@@ -192,6 +192,8 @@ abstract class PluginToolkit extends PluginBase {
     if (!is_dir($dir = $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR)) {
       return null;
     }
+    
+    var_dump($dir);
 
     $loadedFiles = [];
     try {
@@ -201,7 +203,6 @@ abstract class PluginToolkit extends PluginBase {
         if ($processedFile !== null) {
           $loadedFiles[] = $processedFile;
         }
-        var_dump($file);
       }
     } catch (PluginException $e) {
       new \crashdump($e);
