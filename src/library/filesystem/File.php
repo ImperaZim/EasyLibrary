@@ -375,8 +375,14 @@ final class File {
   * @param mixed $default The default value to return if the key is not found.
   * @return mixed
   */
-  public function getIniValue(string $section, string $key, mixed $default = null): mixed {
+  public function getIniValue(?string $section, ?string $key, mixed $default = null): mixed {
     $data = $this->readIniFile();
+    if ($section === null && $key === null) {
+      return $data ?? $default;
+    }
+    if ($key === null) {
+      return $data[$section] ?? $default;
+    }
     return $data[$section][$key] ?? $default;
   }
 
