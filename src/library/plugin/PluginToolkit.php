@@ -45,9 +45,6 @@ abstract class PluginToolkit extends PluginBase {
     private ResourceProvider $resourceProvider
   ) {
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
-    
-    var_dump($this->file);
-    //var_dump(new ReflectionClass(get_class($this)));
   }
 
   /**
@@ -195,6 +192,8 @@ abstract class PluginToolkit extends PluginBase {
     if (!is_dir($dir = $this->getResourcesDirectory())) {
       return null;
     }
+    
+    var_dump($dir);
 
     $loadedFiles = [];
     try {
