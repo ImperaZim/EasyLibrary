@@ -27,13 +27,6 @@ abstract class PluginToolkit extends PluginBase {
   /** @var array */
   private ?array $database = null;
 
-  private PluginLoader $thisLoader;
-  private Server $thisServer;
-  private PluginDescription $thisDescription;
-  private string $thisDataFolder;
-  private string $thisFile;
-  private ResourceProvider $thisResourceProvider;
-
   /**
   * PluginToolkit construct
   * @param PluginLoader $loader The plugin loader.
@@ -44,20 +37,13 @@ abstract class PluginToolkit extends PluginBase {
   * @param ResourceProvider $resourceProvider The resource provider.
   */
   public function __construct(
-    PluginLoader $loader,
-    Server $server,
-    PluginDescription $description,
-    string $dataFolder,
-    string $file,
-    ResourceProvider $resourceProvider
+    private PluginLoader $loader,
+    private Server $server,
+    private PluginDescription $description,
+    private string $dataFolder,
+    private string $file,
+    private ResourceProvider $resourceProvider
   ) {
-    $this->thisLoader = $loader;
-    $this->thisServer = $server;
-    $this->thisDescription = $description;
-    $this->thisDataFolder = $dataFolder;
-    $this->thisFile = $file;
-    $this->thisResourceProvider = $resourceProvider;
-
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
@@ -69,7 +55,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function setMotd(string $motd): self {
     try {
-      $this->thisServer->getNetwork()->setName($motd);
+      $this->server->getNetwork()->setName($motd);
     } catch (PluginException $e) {
       new \crashdump($e);
     }
@@ -129,7 +115,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function registerCommands(array $commands): void {
     try {
-      $commandMap = $this->thisServer->getCommandMap();
+      $commandMap = $this->getServer()->getCommandMap();
       foreach ($commands as $command) {
         if ($command instanceof Command) {
           $commandMap->register($this->getName(), $command);
@@ -152,12 +138,13 @@ abstract class PluginToolkit extends PluginBase {
     try {
       foreach ($listeners as $listener) {
         if ($listener instanceof Listener) {
-          $this->thisServer->getPluginManager()->registerEvents($listener, $this);
+          $this->server->getPluginManager()->registerEvents($listener, $this);
         } else {
           throw new PluginException("Tried to register an invalid listener.");
         }
       }
-    } catch (PluginException $e) {}
+    } catch (PluginException $e) {
+    }
   }
 
   /**
@@ -168,7 +155,7 @@ abstract class PluginToolkit extends PluginBase {
   */
   public function getServerPath(?array $join = null): string {
     try {
-      $path = $this->thisServer->getDataPath();
+      $path = $this->server->getDataPath();
       if ($join !== null) {
         if (strtolower($join[0]) === 'join:data') {
           $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->getName() . DIRECTORY_SEPARATOR;
@@ -183,18 +170,28 @@ abstract class PluginToolkit extends PluginBase {
   }
 
   /**
+  * Gets the plugin resources path.
+  * @return string The plugin resource path.
+  * @throws PluginException If there's an error getting the resources directory.
+  */
+  public function getResourcesDirectory(): string {
+    try {
+      return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
+    } catch (PluginException $e) {
+      new \crashdump($e);
+    }
+  }
+
+  /**
   * Load all files in /resources plugin.
   * @param string|null $loadType
   * @return array|null
   * @throws PluginException If there's an error loading resources.
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
-    if (!is_dir($dir = $this->thisFile . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR)) {
-      var_dump($dir);
+    if (!is_dir($dir = $this->getResourcesDirectory())) {
       return null;
     }
-
-    var_dump($dir);
 
     $loadedFiles = [];
     try {
@@ -229,10 +226,10 @@ abstract class PluginToolkit extends PluginBase {
       if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
         return null;
       }
-
+      
       $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
       $relativeDirectory = str_replace("plugins/{$this->getName()}/resources", "plugin_data/{$this->getName()}", $fileDirectory);
-
+      
       return new File(
         directoryOrConfig: $relativeDirectory,
         fileName: $baseFileName,
