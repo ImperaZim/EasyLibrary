@@ -83,7 +83,7 @@ class ExampleCustomForm extends Form {
       default: false, 
       identifier: 'toggle_identifier'
     );
-    $elements[] = new StepSlider(
+    $elements[] = new Dropdown(
       text: 'Dropdown: Option Box Element.', 
       options: ['text 1', 'text 2'],
       default: 0, 

@@ -48,6 +48,21 @@ abstract class PluginToolkit extends PluginBase {
   }
 
   /**
+  * Sets the server motd.
+  * @param string $motd.
+  * @return self.
+  * @throws PluginException If the database configuration is invalid.
+  */
+  public function setMotd(string $motd): self {
+    try {
+      $this->server->getNetwork()->setName($motd);
+    } catch (PluginException $e) {
+      new \crashdump($e);
+    }
+    return $this;
+  }
+
+  /**
   * Retrieves the database configuration.
   * @return mixed The database instance.
   * @throws PluginException If the database configuration is invalid.
