@@ -183,30 +183,15 @@ abstract class PluginToolkit extends PluginBase {
   }
 
   /**
-  * Gets the plugin resources path.
-  * @return string The plugin resource path.
-  * @throws PluginException If there's an error getting the resources directory.
-  */
-  public function getResourcesDirectory(): string {
-    try {
-      return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
-    } catch (PluginException $e) {
-      new \crashdump($e);
-    }
-  }
-
-  /**
   * Load all files in /resources plugin.
   * @param string|null $loadType
   * @return array|null
   * @throws PluginException If there's an error loading resources.
   */
   public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
-    if (!is_dir($dir = $this->getResourcesDirectory())) {
+    if (!is_dir($dir = $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR)) {
       return null;
     }
-
-    var_dump($dir);
 
     $loadedFiles = [];
     try {
@@ -216,7 +201,6 @@ abstract class PluginToolkit extends PluginBase {
         if ($processedFile !== null) {
           $loadedFiles[] = $processedFile;
         }
-        var_dump($file);
       }
     } catch (PluginException $e) {
       new \crashdump($e);
