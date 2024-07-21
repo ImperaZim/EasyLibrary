@@ -53,12 +53,14 @@ abstract class PluginToolkit extends PluginBase {
   /**
   * Load plugin components
   * @return self.
-  * @throws PluginException If the database configuration is invalid.
+  * @throws PluginException If the components configuration is invalid.
   */
   public function loadComponents(): self {
     try {
-      if (method_exists($this, 'components')) {
-        if (($components = $this->components()) !== null) {
+      $childClass = get_class($this);
+      if (property_exists($childClass, 'components')) {
+        $components = (new ReflectionClass($childClass))->getProperty('components')->getValue($this);
+        if ($components !== null) {
           if (is_array($components) && (!empty($components))) {
             foreach ($components as $type => $component) {
               $this->initComponents($type, $component);
