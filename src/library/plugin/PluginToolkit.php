@@ -16,6 +16,7 @@ use ReflectionClass;
 use library\filesystem\Path;
 use library\filesystem\File;
 use library\database\DatabaseManager;
+use library\plugin\traits\PluginComponents;
 use library\plugin\exception\PluginException;
 
 /**
@@ -23,6 +24,7 @@ use library\plugin\exception\PluginException;
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
+  use PluginComponents;
 
   /** @var array */
   private ?array $database = null;
@@ -44,7 +46,31 @@ abstract class PluginToolkit extends PluginBase {
     private string $file,
     private ResourceProvider $resourceProvider
   ) {
+    $this->loadComponents();
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
+  }
+
+  /**
+  * Load plugin components
+  * @return self.
+  * @throws PluginException If the database configuration is invalid.
+  */
+  public function loadComponents(): self {
+    try {
+      if (method_exists($this, 'components')) {
+        if (($components = $this->components()) !== null) {
+          if (is_array($components) && (!empty($components))) {
+            foreach ($components as $type => $component) {
+              $this->initComponents($type, $component);
+            }
+          }
+          return $this;
+        }
+      }
+    } catch (PluginException $e) {
+      new \crashdump($e);
+    }
+    return $this;
   }
 
   /**
@@ -119,136 +145,183 @@ abstract class PluginToolkit extends PluginBase {
   }
 
   /**
-  * Register multiple commands.
-  * @param Command[] $commands An array of Command instances to register.
+  * Initializes and registers a component based on its type.
+  * @param string $type The type of component ('listener' or 'command').
+  * @param mixed $components The component instance to initialize.
   * @return void
-  * @throws PluginException If any command is invalid.
   */
-  public function registerCommands(array $commands): void {
-    try {
-      $commandMap = $this->getServer()->getCommandMap();
-      foreach ($commands as $command) {
-        if ($command instanceof Command) {
-          $commandMap->register($this->getName(), $command);
-        } else {
-          throw new PluginException("Tried to register an invalid command.");
+  public function initComponents(string $type, mixed $components): void {
+    switch (strtolower($type)) {
+      case self::NETWORK_COMPONENT:
+        if (isset($components['server_name'])) {
+          $this->setMotd($components['server_name']);
         }
-      }
-    } catch (PluginException $e) {
-      new \crashdump($e);
-    }
-  }
-
-  /**
-  * Register multiple event listeners.
-  * @param Listener[] $listeners An array of Listener instances to register.
-  * @return void
-  * @throws PluginException If any listener is invalid.
-  */
-  public function registerListeners(array $listeners): void {
-    try {
-      foreach ($listeners as $listener) {
-        if ($listener instanceof Listener) {
-          $this->server->getPluginManager()->registerEvents($listener, $this);
-        } else {
-          throw new PluginException("Tried to register an invalid listener.");
+        break;
+      case self::LISTENER_COMPONENT:
+        if (!is_array($components)) {
+          $components = [$components];
         }
-      }
-    } catch (PluginException $e) {}
-  }
-
-  /**
-  * Gets the data path of the server.
-  * @param array|null $join Continue paths.
-  * @return string The server data path.
-  * @throws PluginException If there's an error generating the path.
-  */
-  public function getServerPath(?array $join = null): string {
-    try {
-      $path = $this->server->getDataPath();
-      if ($join !== null) {
-        if (strtolower($join[0]) === 'join:data') {
-          $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->getName() . DIRECTORY_SEPARATOR;
-        } else {
-          $path .= implode(DIRECTORY_SEPARATOR, $join) . DIRECTORY_SEPARATOR;
+        foreach ($components as $component) {
+          if ($component instanceof Listener) {
+            $this->registerListener($component);
+          } else {
+            throw new PluginException("The component must be an instance of Listener.");
+          }
         }
-      }
-      return $path;
-    } catch (PluginException $e) {
-      new \crashdump($e);
-    }
-  }
-
-  /**
-  * Gets the plugin resources path.
-  * @return string The plugin resource path.
-  * @throws PluginException If there's an error getting the resources directory.
-  */
-  public function getResourcesDirectory(): string {
-    try {
-      return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
-    } catch (PluginException $e) {
-      new \crashdump($e);
-    }
-  }
-
-  /**
-  * Load all files in /resources plugin.
-  * @param string|null $loadType
-  * @return array|null
-  * @throws PluginException If there's an error loading resources.
-  */
-  public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
-    if (!is_dir($dir = $this->getResourcesDirectory())) {
-      return null;
-    }
-
-    $loadedFiles = [];
-    try {
-      $files = Path::getRecursiveFiles($dir);
-      foreach ($files as $file) {
-        $processedFile = $this->processFile($file, $loadType);
-        if ($processedFile !== null) {
-          $loadedFiles[] = $processedFile;
+        break;
+      case self::COMMAND_COMPONENT:
+        if (!is_array($components)) {
+          $components = [$components];
         }
+        foreach ($components as $component) {
+          if ($component instanceof Command) {
+            $this->registerCommand($component);
+          } else {
+            throw new PluginException("The component must be an instance of Command.");
+          }
+        }
+        break;
+      default:
+        throw new PluginException("Invalid component type: $type. Expected 'listeners' or 'commands'.");
       }
-    } catch (PluginException $e) {
-      new \crashdump($e);
     }
 
-    return $loadedFiles;
-  }
+    /**
+    * Register a command or multiple commands.
+    * @param Command|array $commands Command instance or array of Command instances to register.
+    * @return void
+    * @throws PluginException If any command is invalid.
+    */
+    public function registerCommands(Command|array $commands): void {
+      try {
+        $commandMap = $this->getServer()->getCommandMap();
+        $commands = is_array($commands) ? $commands : [$commands];
+        foreach ($commands as $command) {
+          if ($command instanceof Command) {
+            $commandMap->register($this->getName(), $command);
+          } else {
+            throw new PluginException("Tried to register an invalid command.");
+          }
+        }
+      } catch (\Exception $e) {
+        new \crashdump($e);
+      }
+    }
 
-  /**
-  * Process a single file entry from the recursive file listing.
-  * @param array $file
-  * @param string|null $loadType
-  * @return File|null
-  * @throws PluginException If there's an error processing the file.
-  */
-  private function processFile(array $file, ?string $loadType): ?File {
-    try {
-      $fileName = $file['fileName'] ?? null;
-      $fileType = $file['fileType'] ?? null;
-      $fileContent = $file['content'] ?? null;
-      $fileDirectory = $file['directory'] ?? null;
+    /**
+    * Register a listener or multiple listeners.
+    * @param Listener|array $listeners Listener instance or array of Listener instances to register.
+    * @return void
+    * @throws PluginException If any listener is invalid.
+    */
+    public function registerListeners(Listener|array $listeners): void {
+      try {
+        $listeners = is_array($listeners) ? $listeners : [$listeners];
+        foreach ($listeners as $listener) {
+          if ($listener instanceof Listener) {
+            $this->server->getPluginManager()->registerEvents($listener, $this);
+          } else {
+            throw new PluginException("Tried to register an invalid listener.");
+          }
+        }
+      } catch (\Exception $e) {
+        new \crashdump($e);
+      }
+    }
 
-      if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
+
+    /**
+    * Gets the data path of the server.
+    * @param array|null $join Continue paths.
+    * @return string The server data path.
+    * @throws PluginException If there's an error generating the path.
+    */
+    public function getServerPath(?array $join = null): string {
+      try {
+        $path = $this->server->getDataPath();
+        if ($join !== null) {
+          if (strtolower($join[0]) === 'join:data') {
+            $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->getName() . DIRECTORY_SEPARATOR;
+          } else {
+            $path .= implode(DIRECTORY_SEPARATOR, $join) . DIRECTORY_SEPARATOR;
+          }
+        }
+        return $path;
+      } catch (PluginException $e) {
+        new \crashdump($e);
+      }
+    }
+
+    /**
+    * Gets the plugin resources path.
+    * @return string The plugin resource path.
+    * @throws PluginException If there's an error getting the resources directory.
+    */
+    public function getResourcesDirectory(): string {
+      try {
+        return $this->file . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR;
+      } catch (PluginException $e) {
+        new \crashdump($e);
+      }
+    }
+
+    /**
+    * Load all files in /resources plugin.
+    * @param string|null $loadType
+    * @return array|null
+    * @throws PluginException If there's an error loading resources.
+    */
+    public function saveRecursiveResources(?string $loadType = '--merge'): ?array {
+      if (!is_dir($dir = $this->getResourcesDirectory())) {
         return null;
       }
 
-      $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
-      $relativeDirectory = str_replace($this->file . '/resources', $this->dataFolder, $fileDirectory);
+      $loadedFiles = [];
+      try {
+        $files = Path::getRecursiveFiles($dir);
+        foreach ($files as $file) {
+          $processedFile = $this->processFile($file, $loadType);
+          if ($processedFile !== null) {
+            $loadedFiles[] = $processedFile;
+          }
+        }
+      } catch (PluginException $e) {
+        new \crashdump($e);
+      }
 
-      return new File(
-        directoryOrConfig: $relativeDirectory,
-        fileName: $baseFileName,
-        fileType: $fileType,
-        autoGenerate: true,
-        readCommand: [$loadType => $fileContent]
-      );
-    } catch (PluginException $e) {
-      new \crashdump($e);
+      return $loadedFiles;
+    }
+
+    /**
+    * Process a single file entry from the recursive file listing.
+    * @param array $file
+    * @param string|null $loadType
+    * @return File|null
+    * @throws PluginException If there's an error processing the file.
+    */
+    private function processFile(array $file, ?string $loadType): ?File {
+      try {
+        $fileName = $file['fileName'] ?? null;
+        $fileType = $file['fileType'] ?? null;
+        $fileContent = $file['content'] ?? null;
+        $fileDirectory = $file['directory'] ?? null;
+
+        if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
+          return null;
+        }
+
+        $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
+        $relativeDirectory = str_replace($this->file . '/resources', $this->dataFolder, $fileDirectory);
+
+        return new File(
+          directoryOrConfig: $relativeDirectory,
+          fileName: $baseFileName,
+          fileType: $fileType,
+          autoGenerate: true,
+          readCommand: [$loadType => $fileContent]
+        );
+      } catch (PluginException $e) {
+        new \crashdump($e);
+      }
     }
   }
-}
