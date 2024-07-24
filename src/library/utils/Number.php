@@ -40,4 +40,13 @@ final class Number {
       return (string) $number;
     }
   }
+  
+  /**
+  * Formats the given ID as a string with leading zeros if it's numeric.
+  * @param string|int $number
+  * @return string
+  */
+  public static function format(int $length, string|int $number): string {
+    return is_numeric($number) ? sprintf('%0' . $length . 'd', $number) : $number;
+  }
 }

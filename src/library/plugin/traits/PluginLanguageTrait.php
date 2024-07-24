@@ -35,9 +35,10 @@ trait PluginLanguageTrait {
   * If no files are provided, adds all files in the specified directory.
   * @param string $directory
   * @param array|null $files
+  * @param string|null $path
   */
-  public function addLanguages(string $directory, ?array $files = null): void {
-    $basePath = $this->baseDirectory . '/' . $directory;
+  public function addLanguages(string $directory, ?array $files = null, ?string $path = null): void {
+    $basePath = ($path !== null ? $path : $this->baseDirectory) . '/' . $directory;
 
     if ($files === null || empty($files)) {
       $fileNames = array_diff(scandir($basePath), ['.', '..']);
@@ -71,11 +72,23 @@ trait PluginLanguageTrait {
   * @param string|null $file
   * @return File|null
   */
-  public function getLanguage(?string $file = null): ?File {
+  public function getLanguage(?string $file = null, ?string $nested = null): ?File {
     if ($file !== null && isset($this->files[$file])) {
-      return $this->files[$file];
+      $result = $this->files[$file];
+      if ($result !== null && $nested !== null) {
+        $result = $result->get($nested);
+      }
+      return $result;
     }
     return reset($this->files) ?: null;
+  }
+
+  /**
+  * Retrieves all language file.
+  * @return array|null
+  */
+  public function getLanguages(): ?array {
+    return $this->files;
   }
 
 }

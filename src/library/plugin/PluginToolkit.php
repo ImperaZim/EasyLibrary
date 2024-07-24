@@ -26,6 +26,8 @@ use library\plugin\exception\PluginException;
 abstract class PluginToolkit extends PluginBase {
   use PluginComponents;
 
+  /** @var string */
+  public ?string $data = null;
   /** @var array */
   private ?array $database = null;
 
@@ -46,33 +48,8 @@ abstract class PluginToolkit extends PluginBase {
     private string $file,
     private ResourceProvider $resourceProvider
   ) {
-    $this->loadComponents();
+    $this->data = $this->getServerPath(['join:data']);
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
-  }
-
-  /**
-  * Load plugin components
-  * @return self.
-  * @throws PluginException If the components configuration is invalid.
-  */
-  public function loadComponents(): self {
-    try {
-      $childClass = get_class($this);
-      if (property_exists($childClass, 'components')) {
-        $components = (new ReflectionClass($childClass))->getProperty('components')->getValue($this);
-        if ($components !== null) {
-          if (is_array($components) && (!empty($components))) {
-            foreach ($components as $type => $component) {
-              $this->initComponents($type, $component);
-            }
-          }
-          return $this;
-        }
-      }
-    } catch (PluginException $e) {
-      new \crashdump($e);
-    }
-    return $this;
   }
 
   /**
