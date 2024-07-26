@@ -37,3 +37,4 @@ Public libraries integrated into the source code to facilitate the use of EasyLi
 - [CortexPE/Commando](https://github.com/CortexPE/Commando)
 - [Muqsit/InvMenu](https://github.com/Muqsit/InvMenu)
 - [Muqsit/SimplePacketHandler](https://github.com/Muqsit/SimplePacketHandler)
+- [CustomiesDevs/Customies](https://github.com/CustomiesDevs/Customies)
