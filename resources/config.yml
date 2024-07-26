@@ -1,0 +1,6 @@
+vendor:
+  BossBarManager: true
+  InvMenuManager: true
+  CommandoManager: true
+  DialogueManager: true
+  CustomiesManager: true

@@ -43,7 +43,7 @@ final class CommandoManager extends PluginComponent implements Listener {
   * @param PluginToolkit $plugin The Plugin.
   */
   public static function init(PluginToolkit $plugin): array {
-    $interceptor = SimplePacketHandler::createInterceptor($registrant, EventPriority::HIGHEST, false);
+    $interceptor = SimplePacketHandler::createInterceptor($plugin, EventPriority::HIGHEST, false);
     $interceptor->interceptOutgoing(function(AvailableCommandsPacket $pk, NetworkSession $target) : bool {
       if (!self::$isIntercepting) {
         $p = $target->getPlayer();
@@ -68,7 +68,7 @@ final class CommandoManager extends PluginComponent implements Listener {
     self::setPlugin(plugin: $plugin);
     return [
       self::LISTENER_COMPONENT => [
-        $this
+        new self()
       ]
     ];
   }

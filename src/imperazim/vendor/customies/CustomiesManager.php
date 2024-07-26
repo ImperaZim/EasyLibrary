@@ -33,7 +33,7 @@ final class CustomiesManager extends PluginComponent implements Listener {
   use PluginComponentsTrait;
 
   /** @var Experiments */
-  private Experiments $experiments;
+  private static Experiments $experiments;
   /** @var ItemTypeEntry[] */
   private array $cachedItemTable = [];
   /** @var BlockPaletteEntry[] */
@@ -47,14 +47,14 @@ final class CustomiesManager extends PluginComponent implements Listener {
   */
   public static function init(PluginToolkit $plugin): array {
     $cachePath = $plugin->getDataFolder() . "idcache";
-    $this->experiments = new Experiments([
+    self::$experiments = new Experiments([
       "data_driven_items" => true,
     ], true);
 
     self::setPlugin(plugin: $plugin);
     return [
       self::LISTENER_COMPONENT => [
-        $this
+        new self()
       ],
       self::SCHEDULER_COMPONENT => [
         'type' => 'delayed',
@@ -85,11 +85,11 @@ final class CustomiesManager extends PluginComponent implements Listener {
           $this->cachedItemTable = CustomiesItemFactory::getInstance()->getItemTableEntries();
           $this->cachedBlockPalette = CustomiesBlockFactory::getInstance()->getBlockPaletteEntries();
         }
-        $packet->levelSettings->experiments = $this->experiments;
+        $packet->levelSettings->experiments = self::$experiments;
         $packet->itemTable = array_merge($packet->itemTable, $this->cachedItemTable);
         $packet->blockPalette = $this->cachedBlockPalette;
       } elseif ($packet instanceof ResourcePackStackPacket) {
-        $packet->experiments = $this->experiments;
+        $packet->experiments = self::$experiments;
       }
     }
   }

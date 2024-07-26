@@ -30,7 +30,7 @@ final class BossBarManager extends PluginComponent implements Listener {
     self::setPlugin(plugin: $plugin);
     return [
       self::LISTENER_COMPONENT => [
-        $this
+        new self()
       ]
     ];
   }

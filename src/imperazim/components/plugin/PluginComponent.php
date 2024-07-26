@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace imperazim\components\plugin;
 
-use library\plugin\PluginToolkit;
-
 /**
 * Class PluginComponent
 * @package imperazim\components\plugin

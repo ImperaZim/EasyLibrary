@@ -43,7 +43,7 @@ final class WorldManager extends PluginComponent {
       }
     }
 
-    self::$worldManager = $worldManager;
+    self::$worldManager = $plugin->getServer()->getWorldManager();
     self::setPlugin(plugin: $plugin);
     return [];
   }
