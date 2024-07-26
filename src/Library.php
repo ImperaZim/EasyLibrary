@@ -2,62 +2,32 @@
 
 declare(strict_types = 1);
 
-use library\item\ItemFactory;
-use library\world\WorldManager;
-use library\plugin\PluginToolkit;
-use pocketmine\utils\SingletonTrait;
-use Symfony\Component\Filesystem\Path;
+use imperazim\components\world\WorldManager;
+use imperazim\components\plugin\PluginToolkit;
+use imperazim\components\plugin\traits\PluginToolkit;
 
-use internal\bossbar\BossBarHooker;
-use internal\invmenu\InvMenuHooker;
-use internal\commando\CommandoHooker;
-use internal\dialogue\DialogueHooker;
-use internal\customies\CustomiesHooker;
+use imperazim\vendor\bossbar\BossBarManager;
+use imperazim\vendor\invmenu\InvMenuManager;
+use imperazim\vendor\commando\CommandoManager;
+use imperazim\vendor\dialogue\DialogueManager;
+use imperazim\vendor\customies\CustomiesManager;
 
 /**
 * Class Library
 * TODO: This class should not be called in other plugins!
 */
 final class Library extends PluginToolkit {
-  use SingletonTrait;
+  use PluginToolkitTrait;
 
   /**
-  * Called when the plugin is loaded.
-  */
-  protected function onLoad(): void {
-    self::setInstance($this);
-    $this->saveRecursiveResources();
-  }
-
-  /**
-  * Called when the plugin is enabled.
+  * This method is called when the plugin is enabled.
   */
   protected function onEnable(): void {
-    $this->initHooks();
-    $this->initFactories();
+    $this->addComponent($this, WorldManager::class);
+    $this->addComponent($this, BossBarManager::class);
+    $this->addComponent($this, InvMenuManager::class);
+    $this->addComponent($this, CommandoManager::class);
+    $this->addComponent($this, DialogueManager::class);
+    $this->addComponent($this, CustomiesManager::class);
   }
-
-  /**
-  * Initialize hook handlers for various functionalities.
-  */
-  private function initHooks(): void {
-    new BossBarHooker($this);
-    new InvMenuHooker($this);
-    new DialogueHooker($this);
-    new CommandoHooker($this);
-    new CustomiesHooker($this);
-  }
-
-  /**
-  * Initialize components such as ItemFactory and WorldManager.
-  */
-  private function initFactories(): void {
-    ItemFactory::init();
-    WorldManager::init($this, $this->getServer()->getWorldManager());
-  }
-  
-  public function getResourcePackFolder() : string {
-    return Path::join($this->getDataFolder(), "resource_packs");
-  }
-
 }
