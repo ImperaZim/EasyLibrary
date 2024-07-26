@@ -1,0 +1,49 @@
+name: Release Notification to Discord
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord embed notification
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "embeds": [
+              {
+                "author": {
+                  "name": "ImperaZim / EasyLibrary ${{ github.event.release.tag_name }}  `ㅤPM5ㅤ`",
+                  "icon_url": "https://raw.githubusercontent.com/ImperaZim/EasyLibrary/${{ github.event.release.tag_name }}/icon.gif",
+                  "url": "https://github.com/ImperaZim"
+                },
+                "description": [
+                  "The EasyLibrary is a powerful plugin for PocketMine-MP that serves as a collection of various public libraries, providing a wide range of functionalities and utilities for plugin developers. This plugin simplifies the integration and use of popular libraries, allowing developers to save time and effort when creating their own plugins.",
+                  "",
+                  "> ⓘ  **IMPORTANT**",
+                  "> Version ${{ github.event.release.tag_name }} is not stable, if you find any bug send it to [https://github.com/ImperaZim/EasyLibrary/issues](issues).",
+                  "",
+                  "[changelogs](https://github.com/ImperaZim/EasyLibrary/compare/${{ github.event.release.tag_name }}...${{ github.event.release.tag_name }})"
+                ],
+                "color": 3066993
+              }
+            ],
+            "components": [
+              {
+                "type": 1,
+                "components": [
+                  {
+                    "type": 2,
+                    "style": 5,
+                    "label": "Github",
+                    "url": "https://github.com/ImperaZim/EasyLibrary",
+                    "emoji": {
+                      "name": "⚙️"
+                    }
+                  }
+                ]
+              }
+            ]
+          }' https://discord.com/api/webhooks/1266283924343226388/xXPMd_VHWacGqdEdcnirJNeesxuQbvNg8PvCIAciA8v7h3fBtBf0_KOdiqM28-XWXyaj
