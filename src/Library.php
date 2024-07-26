@@ -34,7 +34,7 @@ final class Library extends PluginToolkit {
   */
   protected function onEnable(): void {
     $this->initHooks();
-    $this->initComponents();
+    $this->initFactories();
   }
 
   /**
@@ -51,7 +51,7 @@ final class Library extends PluginToolkit {
   /**
   * Initialize components such as ItemFactory and WorldManager.
   */
-  private function initComponents(): void {
+  private function initFactories(): void {
     ItemFactory::init();
     WorldManager::init($this, $this->getServer()->getWorldManager());
   }

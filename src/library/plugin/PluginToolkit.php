@@ -24,12 +24,16 @@ use library\plugin\exception\PluginException;
 * @package library\plugin
 */
 abstract class PluginToolkit extends PluginBase {
-  use PluginComponents;
 
   /** @var string */
   public ?string $data = null;
   /** @var array */
   private ?array $database = null;
+
+  public const NETWORK_COMPONENT = 'network';
+  public const COMMAND_COMPONENT = 'command';
+  public const LISTENER_COMPONENT = 'listener';
+  public const SCHEDULER_COMPONENT = 'scheduler';
 
   /**
   * PluginToolkit construct
@@ -140,25 +144,25 @@ abstract class PluginToolkit extends PluginBase {
         if (!is_array($components)) {
           $components = [$components];
         }
+        $listeners = [];
         foreach ($components as $component) {
           if ($component instanceof Listener) {
-            $this->registerListener($component);
-          } else {
-            throw new PluginException("The component must be an instance of Listener.");
+            $listeners[] = $component;
           }
         }
+        $this->registerListeners($listeners);
         break;
       case self::COMMAND_COMPONENT:
         if (!is_array($components)) {
           $components = [$components];
         }
+        $commands = [];
         foreach ($components as $component) {
           if ($component instanceof Command) {
-            $this->registerCommand($component);
-          } else {
-            throw new PluginException("The component must be an instance of Command.");
+            $commands[] = $component;
           }
         }
+        $this->registerCommands($commands);
         break;
       default:
         throw new PluginException("Invalid component type: $type. Expected 'listeners' or 'commands'.");
@@ -177,7 +181,7 @@ abstract class PluginToolkit extends PluginBase {
         $commands = is_array($commands) ? $commands : [$commands];
         foreach ($commands as $command) {
           if ($command instanceof Command) {
-            $commandMap->register($this->getName(), $command);
+            $commandMap->register($this->description->getName(), $command);
           } else {
             throw new PluginException("Tried to register an invalid command.");
           }
@@ -220,7 +224,7 @@ abstract class PluginToolkit extends PluginBase {
         $path = $this->server->getDataPath();
         if ($join !== null) {
           if (strtolower($join[0]) === 'join:data') {
-            $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->getName() . DIRECTORY_SEPARATOR;
+            $path .= 'plugin_data' . DIRECTORY_SEPARATOR . $this->description->getName() . DIRECTORY_SEPARATOR;
           } else {
             $path .= implode(DIRECTORY_SEPARATOR, $join) . DIRECTORY_SEPARATOR;
           }

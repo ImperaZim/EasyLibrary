@@ -171,7 +171,13 @@ final class File {
       if (is_array($values)) {
         $content .= "[$section]\n";
         foreach ($values as $key => $value) {
-          $content .= "$key = " . (is_numeric($value) ? $value : "\"$value\"") . "\n";
+          if (is_array($value)) {
+            foreach ($value as $arrayValue) {
+              $content .= "{$key}[] = " . (is_numeric($arrayValue) ? $arrayValue : "\"$arrayValue\"") . "\n";
+            }
+          } else {
+            $content .= "$key = " . (is_numeric($value) ? $value : "\"$value\"") . "\n";
+          }
         }
       } else {
         $content .= "$section = " . (is_numeric($values) ? $values : "\"$values\"") . "\n";
@@ -179,6 +185,7 @@ final class File {
     }
     return $content;
   }
+
 
   /**
   * Load a configuration file.

@@ -6,13 +6,13 @@ namespace library\plugin\traits;
 
 use library\filesystem\File;
 use library\plugin\PluginToolkit;
+use pocketmine\plugin\PluginBase;
 
 /**
 * Trait PluginComponents
 * @package library\plugin\traits
 */
 trait PluginComponents {
-
   /**
   * Constant for the component type 'network|command|listener'.
   * @var string
@@ -24,8 +24,8 @@ trait PluginComponents {
 
   /** @var array */
   private static array $files = [];
-  /** @var PluginToolkit */
-  private static PluginToolkit $plugin;
+  /** @var PluginToolkit|PluginBase */
+  private static $plugin;
 
   /**
   * Set the File instance with a token.
@@ -60,8 +60,8 @@ trait PluginComponents {
   }
 
   /**
-  * Set the PluginToolkit instance.
-  * @param PluginToolkit $plugin
+  * Set the PluginToolkit or PluginBase instance.
+  * @param PluginToolkit|PluginBase $plugin
   */
   public static function setPlugin(PluginToolkit $plugin): void {
     self::$plugin = $plugin;
@@ -73,5 +73,20 @@ trait PluginComponents {
   */
   public static function getPlugin(): PluginToolkit {
     return self::$plugin;
+  }
+
+  /**
+  * Call a method on the plugin instance.
+  * @param string $method
+  * @param array $args
+  * @return mixed
+  * @throws \BadMethodCallException If the method does not exist on the plugin instance.
+  */
+  public static function callPluginMethod(string $method, array $args = []) {
+    if (method_exists(self::$plugin, $method)) {
+      return self::$plugin->$method(...$args);
+    }
+
+    throw new \BadMethodCallException("Method $method does not exist on the plugin instance.");
   }
 }
