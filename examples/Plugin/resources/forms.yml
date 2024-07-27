@@ -1,0 +1,24 @@
+
+long_form: 
+  title: ''
+  content: ''
+  buttons:
+    # The names of the buttons here can be anything, as the script will read them as an array [button_name => [text, icon]].
+    button_1:
+      text: ''
+      icon: 'path:textures/items/iron_sword.png'
+    button_2:
+      text: ''
+      icon: 'path:textures/items/diamond_sword.png'
+
+modal_form: 
+  title: ''
+  content: ''
+  buttons: 
+  # The names of the buttons must be kept the same in this plugin, but this may be relative according to the use that you will determine
+    button_yes:
+      text: ''
+    button_no:
+      text: ''
+
+custom_form: []

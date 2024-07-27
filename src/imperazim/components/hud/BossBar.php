@@ -92,7 +92,7 @@ class BossBar {
         $this->sendBossPacket([$player]);
         $this->players[$player->getId()] = $player;
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -108,7 +108,7 @@ class BossBar {
       foreach ($players as $player) {
         $this->addPlayer($player);
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -127,7 +127,7 @@ class BossBar {
       } else {
         GlobalLogger::get()->debug("Removed player that was not added to the boss bar (" . $this . ")");
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -143,7 +143,7 @@ class BossBar {
       foreach ($players as $player) {
         $this->removePlayer($player);
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -158,7 +158,7 @@ class BossBar {
       foreach ($this->getPlayers() as $player) {
         $this->removePlayer($player);
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -181,7 +181,7 @@ class BossBar {
     try {
       $this->title = $title;
       $this->sendBossTextPacket($this->getPlayers());
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -204,7 +204,7 @@ class BossBar {
     try {
       $this->subTitle = $subTitle;
       $this->sendBossTextPacket($this->getPlayers());
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -232,7 +232,7 @@ class BossBar {
       $percentage = min(1.0, max(0.0, $percentage));
       $this->getAttributeMap()->get(Attribute::HEALTH)->setValue($percentage * $this->getAttributeMap()->get(Attribute::HEALTH)->getMaxValue(), true, true);
       $this->sendBossHealthPacket($this->getPlayers());
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -263,7 +263,7 @@ class BossBar {
     try {
       $this->color = $color;
       $this->sendBossPacket($this->getPlayers());
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -280,7 +280,7 @@ class BossBar {
           $player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($this->actorId ?? $player->getId()));
         }
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -320,12 +320,12 @@ class BossBar {
   * Set the entity associated with the boss bar.
   * @param Entity|null $entity
   * @return static
-  * @throws VisualsException
+  * @throws HudException
   */
   public function setEntity(?Entity $entity = null): static {
     try {
       if ($entity instanceof Entity && ($entity->isClosed() || $entity->isFlaggedForDespawn())) {
-        throw new VisualsException("Entity $entity cannot be used since it is not valid anymore (closed or flagged for despawn)");
+        throw new HudException("Entity $entity cannot be used since it is not valid anymore (closed or flagged for despawn)");
       }
 
       if ($this->getEntity() instanceof Entity && !$entity instanceof Player) {
@@ -347,7 +347,7 @@ class BossBar {
       }
 
       $this->sendBossPacket($this->getPlayers());
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -364,7 +364,7 @@ class BossBar {
         $this->getEntity()->close();
       }
       $this->setEntity();
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
     return $this;
@@ -387,7 +387,7 @@ class BossBar {
           ));
         }
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -403,7 +403,7 @@ class BossBar {
           $player->getNetworkSession()->sendDataPacket(BossEventPacket::hide($this->actorId ?? $player->getId()));
         }
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -422,7 +422,7 @@ class BossBar {
           ));
         }
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -441,7 +441,7 @@ class BossBar {
           ));
         }
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }

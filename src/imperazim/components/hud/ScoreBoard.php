@@ -18,16 +18,18 @@ use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 * @package imperazim\components\hud
 */
 final class ScoreBoard {
-
-  private static array $scoreboards = [];
+  
+  /** @var Array<string, string> */
+  public static array $scoreboards = [];
 
   /**
   * Creates a scoreboard for a player.
   * @param Player $player
   * @param string $objectiveName
   * @param string $displayName
+  * @param array|null $lines
   */
-  public static function create(Player $player, string $objectiveName, string $displayName): void {
+  public static function create(Player $player, string $objectiveName, string $displayName, ?array $lines = []): void {
     try {
       if (isset(self::$scoreboards[$player->getName()])) {
         self::remove($player);
@@ -40,7 +42,11 @@ final class ScoreBoard {
       $pk->sortOrder = 0;
       $player->getNetworkSession()->sendDataPacket($pk);
       self::$scoreboards[$player->getName()] = $objectiveName;
-    } catch (VisualsException $e) {
+      
+      if (!empty($lines)) {
+        self::setLines($player, $lines);
+      }
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -58,8 +64,19 @@ final class ScoreBoard {
         $player->getNetworkSession()->sendDataPacket($pk);
         unset(self::$scoreboards[$player->getName()]);
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
+    }
+  }
+
+  /**
+  * Sets a lines on the scoreboard for a player.
+  * @param Player $player
+  * @param array|null $lines
+  */
+  public static function setLines(Player $player, ?array $lines = []): void {
+    foreach ($lines as $score => $message) {
+      self::setLine($score, $message);
     }
   }
 
@@ -89,7 +106,7 @@ final class ScoreBoard {
       $pk->type = SetScorePacket::TYPE_CHANGE;
       $pk->entries[] = $entry;
       $player->getNetworkSession()->sendDataPacket($pk);
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -111,7 +128,7 @@ final class ScoreBoard {
   public static function clearLine(Player $player, int $score): void {
     try {
       self::setLine($player, $score, "");
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -128,7 +145,7 @@ final class ScoreBoard {
           self::clearLine($player, $i);
         }
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -144,7 +161,7 @@ final class ScoreBoard {
         self::remove($player);
         self::create($player, $objectiveName, $player->getName());
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }
@@ -166,7 +183,7 @@ final class ScoreBoard {
         $pk->sortOrder = 0;
         $player->getNetworkSession()->sendDataPacket($pk);
       }
-    } catch (VisualsException $e) {
+    } catch (HudException $e) {
       new \crashdump($e);
     }
   }

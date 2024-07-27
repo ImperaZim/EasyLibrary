@@ -2,6 +2,8 @@
 
 declare(strict_types = 1);
 
+use pocketmine\utils\TextFormat;
+
 use imperazim\components\world\WorldManager;
 use imperazim\components\plugin\PluginToolkit;
 use imperazim\components\plugin\traits\PluginToolkitTrait;
@@ -20,12 +22,12 @@ final class Library extends PluginToolkit {
   use PluginToolkitTrait;
 
   private array $componentClasses = [
-    'WorldManager' => WorldManager::class,
-    'BossBarManager' => BossBarManager::class,
-    'InvMenuManager' => InvMenuManager::class,
-    'CommandoManager' => CommandoManager::class,
-    'DialogueManager' => DialogueManager::class,
-    'CustomiesManager' => CustomiesManager::class,
+    'World' => WorldManager::class,
+    'BossBar' => BossBarManager::class,
+    'InvMenu' => InvMenuManager::class,
+    'Commando' => CommandoManager::class,
+    'Dialogue' => DialogueManager::class,
+    'Customies' => CustomiesManager::class,
   ];
 
   /**
@@ -33,11 +35,18 @@ final class Library extends PluginToolkit {
   */
   protected function onEnable(): void {
     $this->saveRecursiveResources();
+    $logger = $this->getConfig()->get('logger', true);
     $vendorComponents = $this->getConfig()->get('vendor', []);
     foreach ($vendorComponents as $componentName => $enable) {
       $this->validateComponentConfig($componentName, $enable);
       if ($enable) {
-        $this->initializeComponent($componentName);
+        $className = $this->componentClasses[$componentName];
+        $this->addComponent($this, $className);
+      }
+      if (is_bool($logger) && $logger) {
+        $this->getServer()->getLogger()->notice(
+          "§7$componentName component " . ($enable ? "§aON" : "§cOFF")
+        );
       }
     }
   }
@@ -55,14 +64,5 @@ final class Library extends PluginToolkit {
     if (!isset($this->componentClasses[$componentName]) && $enable) {
       throw new \RuntimeException("Unknown component configured: '$componentName'. Check the configuration and class mapping.");
     }
-  }
-
-  /**
-  * Initializes a component if it is enabled and exists in the class mapping.
-  * @param string $componentName
-  */
-  private function initializeComponent(string $componentName): void {
-    $className = $this->componentClasses[$componentName];
-    $this->addComponent($this, $className);
   }
 }

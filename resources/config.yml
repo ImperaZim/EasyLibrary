@@ -1,6 +1,8 @@
+logger: true
+
 vendor:
-  BossBarManager: true
-  InvMenuManager: true
-  CommandoManager: true
-  DialogueManager: true
-  CustomiesManager: true
+  BossBar: true
+  InvMenu: true
+  Commando: true
+  Dialogue: true
+  Customies: true
