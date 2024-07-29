@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace imperazim\components\ui\compoments;
+namespace imperazim\components\ui;
 
 use imperazim\vendor\invmenu\InvMenu as IMenu;
 
 /**
 * Class Menu
-* @package imperazim\components\ui\compoments
+* @package imperazim\components\ui
 */
 abstract class Menu extends Base {
   

@@ -13,6 +13,7 @@ use imperazim\vendor\invmenu\InvMenuManager;
 use imperazim\vendor\commando\CommandoManager;
 use imperazim\vendor\dialogue\DialogueManager;
 use imperazim\vendor\customies\CustomiesManager;
+use imperazim\vendor\customies\enchantment\CustomiesEchantmentManager;
 
 /**
 * Class Library
@@ -28,6 +29,7 @@ final class Library extends PluginToolkit {
     'Commando' => CommandoManager::class,
     'Dialogue' => DialogueManager::class,
     'Customies' => CustomiesManager::class,
+    'CustomiesEnchantment' => CustomiesEchantmentManager::class,
   ];
 
   /**
@@ -49,6 +51,13 @@ final class Library extends PluginToolkit {
         );
       }
     }
+  }
+
+  /**
+  * This method is called when the plugin is disabled.
+  */
+  protected function onDisable(): void {
+    CustomiesEchantmentManager::close();
   }
 
   /**

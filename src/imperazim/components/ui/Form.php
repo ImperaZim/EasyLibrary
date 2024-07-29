@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace imperazim\components\ui\compoments;
+namespace imperazim\components\ui;
 
 use imperazim\vendor\libform\Form as IForm;
 
 /**
 * Class Form
-* @package imperazim\components\ui\compoments
+* @package imperazim\components\ui
 */
 abstract class Form extends Base {
   
@@ -24,7 +24,7 @@ abstract class Form extends Base {
   * @return bool
   */
   protected function isValid(mixed $ui): bool {
-    return $ceof IForm;
+    return $ui instanceof IForm;
   }
 
 }

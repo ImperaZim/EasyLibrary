@@ -30,6 +30,7 @@ final class HudManager extends PluginComponent {
 
     /**
     * Registers the subcomponents of the current component.
+    * View on ComponentTypes [COMMAND, LISTENER, SCHEDULER, NETWORK]
     */
     return [
       self::SCHEDULER_COMPONENT => [

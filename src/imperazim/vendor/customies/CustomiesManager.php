@@ -21,7 +21,7 @@ use imperazim\components\plugin\traits\PluginComponentsTrait;
 
 use imperazim\vendor\customies\item\CustomiesItemFactory;
 use imperazim\vendor\customies\block\CustomiesBlockFactory;
-
+use imperazim\vendor\customies\enchantment\CustomiesEchantmentManager;
 use function count;
 use function array_merge;
 

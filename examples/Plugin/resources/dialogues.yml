@@ -1,0 +1,17 @@
+dialogue_command: 
+  names: ["dialogue"]
+  description: "open a sample dialogue."
+
+simple_dialogue:
+  name: 'Simple Dialogue Name'
+  text: 'Simple Dialogue Text'
+  textures: 
+    type: 'dialogue:default'
+    data: 0
+    buttons:
+      - 'Button 1'
+      - 'Button 2' 
+
+simple_dialogue_subcommand:
+  names: ["simple"]
+  description: "open a simple dialogue."

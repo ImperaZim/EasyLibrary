@@ -44,10 +44,30 @@ final class UiManager extends PluginComponent {
         "custom_form" => [],
       ]] // Defines a value in the file, the --merge key is used in case you add a value to the array passed in the command and it does not exist in the file, it is added automatically.
     ));
+    self::setFile(token: 'menus', file: new File(
+      directoryOrConfig: $plugin->data, // Directory
+      fileName: "menus", // File Name
+      fileType: File::TYPE_YML, // File Type (view on FileTypes)
+      autoGenerate: true, // Creates the file if it does not exist.
+      readCommand: ["--merge" => [
+        "chest_menu" => [],
+        "double_chest_menu" => [],
+        "hopper_menu" => [],
+      ]] // Defines a value in the file, the --merge key is used in case you add a value to the array passed in the command and it does not exist in the file, it is added automatically.
+    ));
+    self::setFile(token: 'dialogues', file: new File(
+      directoryOrConfig: $plugin->data, // Directory
+      fileName: "dialogues", // File Name
+      fileType: File::TYPE_YML, // File Type (view on FileTypes)
+      autoGenerate: true, // Creates the file if it does not exist.
+      readCommand: ["--merge" => [
+        "simple_dialogue" => []
+      ]] // Defines a value in the file, the --merge key is used in case you add a value to the array passed in the command and it does not exist in the file, it is added automatically.
+    ));
 
     /**
     * Registers the subcomponents of the current component.
-    * View on ComponentTypes
+    * View on ComponentTypes [COMMAND, LISTENER, SCHEDULER, NETWORK]
     */
     return [
       self::COMMAND_COMPONENT => [

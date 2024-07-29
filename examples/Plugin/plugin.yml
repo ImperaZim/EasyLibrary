@@ -10,3 +10,8 @@ depend:
   - EasyLibrary
 extensions:
   Core: ">=8.2"
+  
+permissions:
+  default.permission:
+    default: true
+    description: Default Permission

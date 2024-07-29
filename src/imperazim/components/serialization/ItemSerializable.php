@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace imperazim\components\serialization;
 
-use imperazim\components\item\exception\ItemException;
+use imperazim\components\exception\Exception;
 
 use pocketmine\item\Item;
 use pocketmine\nbt\TreeRoot;
@@ -32,17 +32,17 @@ final class ItemSerializable {
       $item = null;
       $data = json_decode($data);
       if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new ItemException("Error decoding JSON: " . json_last_error_msg());
+        throw new Exception("Error decoding JSON: " . json_last_error_msg());
       }
 
       $vanillaName = $data->vanillaName ?? null;
       if ($vanillaName === null) {
-        throw new ItemException("No vanillaName found in data.");
+        throw new Exception("No vanillaName found in data.");
       }
       $item = StringToItemParser::getInstance()->parse($vanillaName);
 
       if ($item === null) {
-        throw new ItemException("Failed to create item from vanillaName: $vanillaName.");
+        throw new Exception("Failed to create item from vanillaName: $vanillaName.");
       }
 
       $item->setCount($data->count ?? 1);
@@ -50,17 +50,17 @@ final class ItemSerializable {
       if ($nbt !== null) {
         $nbtData = base64_decode($nbt, true);
         if ($nbtData === false) {
-          throw new ItemException("Invalid base64 NBT data");
+          throw new Exception("Invalid base64 NBT data");
         }
         $nbtSerializer = new LittleEndianNbtSerializer();
         $nbt = $nbtSerializer->read($nbtData)->getTag();
         if (!$nbt instanceof CompoundTag) {
-          throw new ItemException("Invalid NBT data");
+          throw new Exception("Invalid NBT data");
         }
         $item->setNamedTag($nbt);
       }
       return $item;
-    } catch (ItemException $e) {
+    } catch (Exception $e) {
       new \crashdump($e);
       return null;
     }
@@ -84,7 +84,7 @@ final class ItemSerializable {
         $data["nbt"] = base64_encode($nbtSerializer->write(new TreeRoot($item->getNamedTag())));
       }
       return json_encode($data);
-    } catch (ItemException $e) {
+    } catch (Exception $e) {
       new \crashdump($e);
       return null;
     }

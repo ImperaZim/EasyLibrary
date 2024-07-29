@@ -204,7 +204,7 @@ final class Path {
   /**
   * Gets information about files in the resources directory and creates Path objects.
   * @param string $folder
-  * @return string[]
+  * @return array
   */
   public static function getRecursiveFiles(string $folder): array {
     $filesInfo = [];
@@ -219,8 +219,9 @@ final class Path {
           $filesInfo[] = [
             'directory' => $file->getPath(),
             'fileName' => $file->getBasename(),
+            'extension' => $file->getExtension(),
             'fileType' => File::getTypeByExtension($file->getExtension()),
-            'content' => File::deserializeContent($file->getExtension(), file_get_contents($file->getRealPath()))
+            'content' => file_get_contents($file->getRealPath())
           ];
         }
       }

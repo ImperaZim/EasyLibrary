@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace imperazim\components\ui\compoments;
+namespace imperazim\components\ui;
 
 use pocketmine\player\Player;
 use imperazim\components\ui\exception\UiException;
 
 /**
 * Class Base
-* @package imperazim\components\ui\compoments
+* @package imperazim\components\ui
 */
 abstract class Base {
 

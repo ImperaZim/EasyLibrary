@@ -185,6 +185,12 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     return $this->subCommands;
   }
 
+  public function addConstraints(array $constraints) : void {
+    foreach ($constraints as $constraint) {
+      $this->constraints[] = $constraint;
+    }
+  }
+
   public function addConstraint(BaseConstraint $constraint) : void {
     $this->constraints[] = $constraint;
   }

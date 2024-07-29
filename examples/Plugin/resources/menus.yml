@@ -1,0 +1,32 @@
+chest_menu:
+  title: "Chest Menu Example"
+  contents:
+    1:
+      name: diamond_sword
+    2:
+      name: diamond_pickaxe
+
+chest_menu_subcommand:
+  names: ["chest"]
+  description: "open a chest menu."
+
+double_chest_menu:
+  title: "Double Chest Menu Example"
+  contents:
+    1:
+      name: diamond_sword
+    2:
+      name: diamond_pickaxe 
+
+
+hopper_menu:
+  title: "Hopper Menu Example"
+  contents:
+    1:
+      name: diamond_sword
+    2:
+      name: diamond_pickaxe
+
+hopper_menu_subcommand:
+  names: ["hopper"]
+  description: "open a hopper menu."
