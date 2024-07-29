@@ -8,35 +8,57 @@ use pocketmine\item\Item;
 use pocketmine\entity\projectile\Projectile;
 use pocketmine\item\enchantment\EnchantmentInstance;
 
+/**
+* Class ProjectileTracker
+* @package imperazim\vendor\customies\enchantment\utils
+*/
 class ProjectileTracker {
-  
+
   /** @var Item[] */
-  public static array $projectile = [];
+  private static array $projectiles = [];
 
+  /**
+  * Adds a projectile to the tracker.
+  * @param Projectile $projectile
+  * @param Item $item
+  */
   public static function addProjectile(Projectile $projectile, Item $item): void {
-    self::$projectile[$projectile->getId()] = $item;
-  }
-
-  public static function isTrackedProjectile(Projectile $projectile): bool {
-    return isset(self::$projectile[$projectile->getId()]);
-  }
-
-  public static function getItem(Projectile $projectile): ?Item {
-    if (!isset(self::$projectile[$projectile->getId()])) return null;
-    return self::$projectile[$projectile->getId()];
+    self::$projectiles[$projectile->getId()] = $item;
   }
 
   /**
+  * Checks if a projectile is being tracked.
+  * @param Projectile $projectile
+  * @return bool
+  */
+  public static function isTrackedProjectile(Projectile $projectile): bool {
+    return isset(self::$projectiles[$projectile->getId()]);
+  }
+
+  /**
+  * Retrieves the item associated with a projectile.
+  * @param Projectile $projectile
+  * @return Item|null
+  */
+  public static function getItem(Projectile $projectile): ?Item {
+    return self::$projectiles[$projectile->getId()] ?? null;
+  }
+
+  /**
+  * Retrieves the enchantments of the item associated with a projectile.
+  * @param Projectile $projectile
   * @return EnchantmentInstance[]
   */
   public static function getEnchantments(Projectile $projectile): array {
-    if (!isset(self::$projectile[$projectile->getId()])) return [];
-    $item = self::$projectile[$projectile->getId()];
-    return $item->getEnchantments();
+    $item = self::getItem($projectile);
+    return $item ? $item->getEnchantments() : [];
   }
 
+  /**
+  * Removes a projectile from the tracker.
+  * @param Projectile $projectile
+  */
   public static function removeProjectile(Projectile $projectile): void {
-    if (!isset(self::$projectile[$projectile->getId()])) return;
-    unset(self::$projectile[$projectile->getId()]);
+    unset(self::$projectiles[$projectile->getId()]);
   }
 }

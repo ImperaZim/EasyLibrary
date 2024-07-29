@@ -4,49 +4,44 @@ declare(strict_types = 1);
 
 namespace imperazim\vendor\customies\enchantment;
 
-use pocketmine\item\Item;
-use pocketmine\player\Player;
-use pocketmine\event\Listener;
-use pocketmine\item\VanillaItems;
 use pocketmine\block\BlockTypeIds;
-use pocketmine\inventory\Inventory;
-use pocketmine\inventory\ArmorInventory;
-use pocketmine\inventory\PlayerInventory;
+use pocketmine\event\Listener;
 use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\player\PlayerItemHeldEvent;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\entity\EntityShootBowEvent;
-use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\entity\EntityEffectAddEvent;
+use pocketmine\event\entity\EntityShootBowEvent;
+use pocketmine\event\entity\ProjectileHitBlockEvent;
 use pocketmine\event\entity\ProjectileLaunchEvent;
+use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemHeldEvent;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\inventory\ArmorInventory;
 use pocketmine\inventory\CallbackInventoryListener;
-use pocketmine\event\entity\ProjectileHitBlockEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
-use pocketmine\network\mcpe\protocol\PlayerActionPacket;
-use pocketmine\network\mcpe\protocol\types\PlayerAction;
-use pocketmine\network\mcpe\protocol\InventorySlotPacket;
-use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\PlayerInventory;
+use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\InventoryContentPacket;
+use pocketmine\network\mcpe\protocol\InventorySlotPacket;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
+use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper;
-use pocketmine\network\mcpe\protocol\types\PlayerBlockActionWithBlockInfo;
 
 use imperazim\components\plugin\PluginToolkit;
 use imperazim\components\plugin\PluginComponent;
 use imperazim\components\plugin\traits\PluginComponentsTrait;
 
-use imperazim\vendor\customies\enchantment\utils\Utils;
-use imperazim\vendor\customies\enchantment\tasks\TickEnchantmentsTask;
 use imperazim\vendor\customies\enchantment\enchants\ReactiveEnchantment;
 use imperazim\vendor\customies\enchantment\enchants\ToggleableEnchantment;
+use imperazim\vendor\customies\enchantment\tasks\TickEnchantmentsTask;
+use imperazim\vendor\customies\enchantment\utils\Utils;
 
 /**
 * Class CustomiesEchantmentManager
@@ -62,9 +57,7 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   public static function init(PluginToolkit $plugin): array {
     self::setPlugin($plugin);
     return [
-      self::LISTENER_COMPONENT => [
-        $this
-      ],
+      self::LISTENER_COMPONENT => [$this],
       self::SCHEDULER_COMPONENT => [
         'type' => 'repeating',
         'class' => new TickEnchantmentsTask(),
@@ -79,18 +72,15 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   public static function close(): void {
     $plugin = self::getPlugin();
     foreach ($plugin->getServer()->getOnlinePlayers() as $player) {
-      $inventory = $player->getInventory();
-      $enchantments = $content->getEnchantments();
-      $armorInventory = $player->getArmorInventory();
-      foreach ($inventory->getContents() as $slot => $content) {
-        foreach ($enchantments as $enchantmentInstance) {
-          ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $inventory, $slot, false);
-        }
-      }
-      foreach ($armorInventory->getContents() as $slot => $content) {
-        foreach ($enchantments as $enchantmentInstance) {
-          ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $armorInventory, $slot, false);
-        }
+      self::toggleEnchantmentsForInventory($player, $player->getInventory(), false);
+      self::toggleEnchantmentsForInventory($player, $player->getArmorInventory(), false);
+    }
+  }
+
+  private static function toggleEnchantmentsForInventory(Player $player, Inventory $inventory, bool $enabled): void {
+    foreach ($inventory->getContents() as $slot => $content) {
+      foreach ($content->getEnchantments() as $enchantmentInstance) {
+        ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $inventory, $slot, $enabled);
       }
     }
   }
@@ -109,8 +99,7 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   public function onDataPacketReceive(DataPacketReceiveEvent $event): void {
     $packet = $event->getPacket();
     if ($packet instanceof InventoryTransactionPacket) {
-      $transaction = $packet->trData;
-      foreach ($transaction->getActions() as $action) {
+      foreach ($packet->trData->getActions() as $action) {
         $action->oldItem = new ItemStackWrapper($action->oldItem->getStackId(), Utils::filterDisplayedEnchants($action->oldItem->getItemStack()));
         $action->newItem = new ItemStackWrapper($action->newItem->getStackId(), Utils::filterDisplayedEnchants($action->newItem->getItemStack()));
       }
@@ -124,8 +113,7 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   * DataPacketSendEvent handler
   */
   public function onDataPacketSend(DataPacketSendEvent $event): void {
-    $packets = $event->getPackets();
-    foreach ($packets as $packet) {
+    foreach ($event->getPackets() as $packet) {
       if ($packet instanceof InventorySlotPacket) {
         $packet->item = new ItemStackWrapper($packet->item->getStackId(), Utils::displayEnchants($packet->item->getItemStack()));
       }
@@ -170,7 +158,7 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   }
 
   /**
-  * EntityEffectAddEvent handler
+  * EntityShootBowEvent handler
   * @priority HIGHEST
   */
   public function onShootBow(EntityShootBowEvent $event): void {
@@ -181,14 +169,14 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   }
 
   /**
-  * EntityEffectAddEvent handler
+  * PlayerDeathEvent handler
   */
   public function onDeath(PlayerDeathEvent $event): void {
     ReactiveEnchantment::attemptReaction($event->getPlayer(), $event);
   }
 
   /**
-  * EntityEffectAddEvent handler
+  * PlayerInteractEvent handler
   * @priority HIGHEST
   */
   public function onInteract(PlayerInteractEvent $event): void {
@@ -204,11 +192,14 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
     $inventory = $player->getInventory();
     $oldItem = $inventory->getItemInHand();
     $newItem = $event->getItem();
-    foreach ($oldItem->getEnchantments() as $enchantmentInstance) {
-      ToggleableEnchantment::attemptToggle($player, $oldItem, $enchantmentInstance, $inventory, $inventory->getHeldItemIndex(), false);
-    }
-    foreach ($newItem->getEnchantments() as $enchantmentInstance) {
-      ToggleableEnchantment::attemptToggle($player, $newItem, $enchantmentInstance, $inventory, $inventory->getHeldItemIndex());
+
+    $this->toggleEnchantments($player, $inventory, $oldItem, false);
+    $this->toggleEnchantments($player, $inventory, $newItem, true);
+  }
+
+  private function toggleEnchantments(Player $player, Inventory $inventory, Item $item, bool $enabled): void {
+    foreach ($item->getEnchantments() as $enchantmentInstance) {
+      ToggleableEnchantment::attemptToggle($player, $item, $enchantmentInstance, $inventory, $inventory->getHeldItemIndex(), $enabled);
     }
   }
 
@@ -217,31 +208,30 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   */
   public function onJoin(PlayerJoinEvent $event): void {
     $player = $event->getPlayer();
-    foreach ($player->getInventory()->getContents() as $slot => $content) {
-      foreach ($content->getEnchantments() as $enchantmentInstance) {
-        ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $player->getInventory(), $slot);
-      }
-    }
-    foreach ($player->getArmorInventory()->getContents() as $slot => $content) {
-      foreach ($content->getEnchantments() as $enchantmentInstance) {
-        ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $player->getArmorInventory(), $slot);
-      }
-    }
 
+    self::toggleEnchantmentsForInventory($player, $player->getInventory(), true);
+    self::toggleEnchantmentsForInventory($player, $player->getArmorInventory(), true);
+
+    $this->addInventoryListeners($player);
+  }
+
+  private function addInventoryListeners(Player $player): void {
     $onSlot = function (Inventory $inventory, int $slot, Item $oldItem): void {
       if ($inventory instanceof PlayerInventory || $inventory instanceof ArmorInventory) {
         $holder = $inventory->getHolder();
         if ($holder instanceof Player) {
           if (!$oldItem->equals(($newItem = $inventory->getItem($slot)), false)) {
-            foreach ($oldItem->getEnchantments() as $oldEnchantment) ToggleableEnchantment::attemptToggle($holder, $oldItem, $oldEnchantment, $inventory, $slot, false);
-            foreach ($newItem->getEnchantments() as $newEnchantment) ToggleableEnchantment::attemptToggle($holder, $newItem, $newEnchantment, $inventory, $slot);
+            foreach ($oldItem->getEnchantments() as $oldEnchantment) {
+              ToggleableEnchantment::attemptToggle($holder, $oldItem, $oldEnchantment, $inventory, $slot, false);
+            }
+            foreach ($newItem->getEnchantments() as $newEnchantment) {
+              ToggleableEnchantment::attemptToggle($holder, $newItem, $newEnchantment, $inventory, $slot);
+            }
           }
         }
       }
     };
-    /**
-    * @param Item[] $oldContents
-    */
+
     $onContent = function (Inventory $inventory, array $oldContents) use ($onSlot): void {
       foreach ($oldContents as $slot => $oldItem) {
         if (!($oldItem ?? VanillaItems::AIR())->equals($inventory->getItem($slot), !$inventory instanceof ArmorInventory)) {
@@ -249,6 +239,7 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
         }
       }
     };
+
     $player->getInventory()->getListeners()->add(new CallbackInventoryListener($onSlot, $onContent));
     $player->getArmorInventory()->getListeners()->add(new CallbackInventoryListener($onSlot, $onContent));
   }
@@ -277,16 +268,8 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   public function onQuit(PlayerQuitEvent $event): void {
     $player = $event->getPlayer();
     if (!$player->isClosed()) {
-      foreach ($player->getInventory()->getContents() as $slot => $content) {
-        foreach ($content->getEnchantments() as $enchantmentInstance) {
-          ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $player->getInventory(), $slot, false);
-        }
-      }
-      foreach ($player->getArmorInventory()->getContents() as $slot => $content) {
-        foreach ($content->getEnchantments() as $enchantmentInstance) {
-          ToggleableEnchantment::attemptToggle($player, $content, $enchantmentInstance, $player->getArmorInventory(), $slot, false);
-        }
-      }
+      self::toggleEnchantmentsForInventory($player, $player->getInventory(), false);
+      self::toggleEnchantmentsForInventory($player, $player->getArmorInventory(), false);
     }
   }
 
@@ -316,9 +299,8 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   public function onProjectileLaunch(ProjectileLaunchEvent $event): void {
     $projectile = $event->getEntity();
     $shooter = $projectile->getOwningEntity();
-    if ($shooter instanceof Player) {
+    if (($shooter) instanceof Player) {
       ProjectileTracker::addProjectile($projectile, $shooter->getInventory()->getItemInHand());
     }
   }
-
 }

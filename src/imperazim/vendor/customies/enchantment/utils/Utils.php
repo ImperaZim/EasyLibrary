@@ -5,8 +5,7 @@ declare(strict_types = 1);
 namespace imperazim\vendor\customies\enchantment\utils;
 
 use imperazim\vendor\customies\enchantment\enchants\CustomEnchant;
-use imperazim\vendor\customies\enchantment\CustomiesEchantmentManager;
-
+use imperazim\vendor\customies\enchantment\CustomiesEnchantmentManager;
 use pocketmine\item\Axe;
 use pocketmine\item\Bow;
 use pocketmine\item\Hoe;
@@ -26,7 +25,12 @@ use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStack;
 
+/**
+* Class Utils
+* @package imperazim\vendor\customies\enchantment\utils
+*/
 class Utils {
+
   const TYPE_NAMES = [
     CustomEnchant::ITEM_TYPE_ARMOR => "Armor",
     CustomEnchant::ITEM_TYPE_HELMET => "Helmet",
@@ -54,8 +58,13 @@ class Utils {
   ];
 
   /** @var int[] */
-  public static array $shouldTakeFallDamage;
+  public static array $shouldTakeFallDamage = [];
 
+  /**
+  * Convert an integer to a Roman numeral.
+  * @param int $integer
+  * @return string
+  */
   public static function getRomanNumeral(int $integer): string {
     $romanNumeralConversionTable = [
       'M' => 1000,
@@ -85,22 +94,48 @@ class Utils {
     return $romanString;
   }
 
+  /**
+  * Check if an item is a helmet.
+  * @param Item $item
+  * @return bool
+  */
   public static function isHelmet(Item $item): bool {
     return $item instanceof Armor && $item->getArmorSlot() === ArmorInventory::SLOT_HEAD;
   }
 
+  /**
+  * Check if an item is a chestplate.
+  * @param Item $item
+  * @return bool
+  */
   public static function isChestplate(Item $item): bool {
     return $item instanceof Armor && $item->getArmorSlot() === ArmorInventory::SLOT_CHEST;
   }
 
+  /**
+  * Check if an item is leggings.
+  * @param Item $item
+  * @return bool
+  */
   public static function isLeggings(Item $item): bool {
     return $item instanceof Armor && $item->getArmorSlot() === ArmorInventory::SLOT_LEGS;
   }
 
+  /**
+  * Check if an item is boots.
+  * @param Item $item
+  * @return bool
+  */
   public static function isBoots(Item $item): bool {
     return $item instanceof Armor && $item->getArmorSlot() === ArmorInventory::SLOT_FEET;
   }
 
+  /**
+  * Check if an item matches a given item type.
+  * @param Item $item
+  * @param int $itemType
+  * @return bool
+  */
   public static function itemMatchesItemType(Item $item, int $itemType): bool {
     return match ($itemType) {
       CustomEnchant::ITEM_TYPE_GLOBAL => true,
@@ -123,14 +158,11 @@ class Utils {
       };
     }
 
-    public static function checkEnchantIncompatibilities(Item $item, CustomEnchant $enchant): bool {
-      foreach ($item->getEnchantments() as $enchantment) {
-        $otherEnchant = $enchantment->getType();
-        if (!$otherEnchant instanceof CustomEnchant) continue;
-      }
-      return true;
-    }
-
+    /**
+    * Display enchantments on an item stack.
+    * @param ItemStack $itemStack
+    * @return ItemStack
+    */
     public static function displayEnchants(ItemStack $itemStack): ItemStack {
       $item = TypeConverter::getInstance()->netItemStackToCore($itemStack);
       if (count($item->getEnchantments()) > 0) {
@@ -141,16 +173,25 @@ class Utils {
             $additionalInformation .= "\n" . TextFormat::RESET . Utils::getColorFromRarity($enchantment->getRarity()) . $enchantment->getDisplayName() . " " . Utils::getRomanNumeral($enchantmentInstance->getLevel());
           }
         }
-        if ($item->getNamedTag()->getTag(Item::TAG_DISPLAY)) $item->getNamedTag()->setTag("OriginalDisplayTag", $item->getNamedTag()->getTag(Item::TAG_DISPLAY)->safeClone());
+        if ($item->getNamedTag()->getTag(Item::TAG_DISPLAY)) {
+          $item->getNamedTag()->setTag("OriginalDisplayTag", $item->getNamedTag()->getTag(Item::TAG_DISPLAY)->safeClone());
+        }
         $item = $item->setCustomName($additionalInformation);
       }
       return TypeConverter::getInstance()->coreItemStackToNet($item);
     }
 
+    /**
+    * Filter displayed enchantments on an item stack.
+    * @param ItemStack $itemStack
+    * @return ItemStack
+    */
     public static function filterDisplayedEnchants(ItemStack $itemStack): ItemStack {
       $item = TypeConverter::getInstance()->netItemStackToCore($itemStack);
       $tag = $item->getNamedTag();
-      if (count($item->getEnchantments()) > 0) $tag->removeTag(Item::TAG_DISPLAY);
+      if (count($item->getEnchantments()) > 0) {
+        $tag->removeTag(Item::TAG_DISPLAY);
+      }
       if ($tag->getTag("OriginalDisplayTag") instanceof CompoundTag) {
         $tag->setTag(Item::TAG_DISPLAY, $tag->getTag("OriginalDisplayTag"));
         $tag->removeTag("OriginalDisplayTag");
@@ -160,6 +201,7 @@ class Utils {
     }
 
     /**
+    * Sort enchantments by priority.
     * @param EnchantmentInstance[] $enchantments
     * @return EnchantmentInstance[]
     */
@@ -172,6 +214,11 @@ class Utils {
       return $enchantments;
     }
 
+    /**
+    * Get color from rarity.
+    * @param int $rarity
+    * @return string
+    */
     public static function getColorFromRarity(int $rarity): string {
       return self::getTFConstFromString([
         "common" => "yellow",
@@ -181,6 +228,11 @@ class Utils {
       ][strtolower(self::RARITY_NAMES[$rarity])]);
     }
 
+    /**
+    * Get TextFormat constant from string.
+    * @param string $color
+    * @return string
+    */
     public static function getTFConstFromString(string $color): string {
       $colorConversionTable = [
         "BLACK" => TextFormat::BLACK,
@@ -203,19 +255,42 @@ class Utils {
       return $colorConversionTable[strtoupper($color)] ?? TextFormat::GRAY;
     }
 
+    /**
+    * Check if a player should take fall damage.
+    * @param Player $player
+    * @return bool
+    */
     public static function shouldTakeFallDamage(Player $player): bool {
       return !isset(self::$shouldTakeFallDamage[$player->getName()]);
     }
 
+    /**
+    * Set if a player should take fall damage.
+    * @param Player $player
+    * @param bool $shouldTakeFallDamage
+    * @param int $duration
+    */
     public static function setShouldTakeFallDamage(Player $player, bool $shouldTakeFallDamage, int $duration = 1): void {
       unset(self::$shouldTakeFallDamage[$player->getName()]);
-      if (!$shouldTakeFallDamage) self::$shouldTakeFallDamage[$player->getName()] = time() + $duration;
+      if (!$shouldTakeFallDamage) {
+        self::$shouldTakeFallDamage[$player->getName()] = time() + $duration;
+      }
     }
 
+    /**
+    * Get the duration of no fall damage for a player.
+    * @param Player $player
+    * @return int
+    */
     public static function getNoFallDamageDuration(Player $player): int {
       return (self::$shouldTakeFallDamage[$player->getName()] ?? time()) - time();
     }
 
+    /**
+    * Increase the duration of no fall damage for a player.
+    * @param Player $player
+    * @param int $duration
+    */
     public static function increaseNoFallDamageDuration(Player $player, int $duration = 1): void {
       self::$shouldTakeFallDamage[$player->getName()] += $duration;
     }
