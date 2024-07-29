@@ -57,7 +57,10 @@ final class Library extends PluginToolkit {
   * This method is called when the plugin is disabled.
   */
   protected function onDisable(): void {
-    CustomiesEchantmentManager::close();
+    $customiesEnchantment = $this->getConfig()->get('vendor.CustomiesEnchantment', false);
+    if ($customiesEnchantment) {
+      CustomiesEchantmentManager::close();
+    }
   }
 
   /**
