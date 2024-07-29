@@ -12,22 +12,13 @@ _The `EasyLibrary` is a powerful plugin for PocketMine-MP that serves as a colle
 
 ## How to Use
 
-### Installation
-
-1. Download the `EasyLibrary.phar` and place it in the `plugins` folder of your PocketMine-MP server.
-2. Restart the server to load the plugin.
-
-### Configuration
-
-The plugin comes pre-configured, but you can adjust the settings in the `config.yml` file as needed.
-
-### Usage
-
-Import the libraries you need into your own plugin and start using their functionalities as per the provided documentation.
+To use EasyLibrary's features you can do it in 2 ways, use the one you find most interesting, I recommend using it as a plug for greater ease!
+- **As a plugin:** Being the simplest way where you just need to add EasyLibrary.phar to your server and it will start all the library components, you can modify which components you want to keep active in the plugin's `config.yml` if you want!
+- **As a inyernal library:** You must add it inside the plugin's src, keeping it in the root src folder for everything to work normally. Using this method, you will have to start the components yourself in your main.
 
 ### Examples 
 
-You can get a basic of how to use the systems in general in [PluginExample](/examples/PluginExample/).
+Example PocketMine-MP plugin with EasyLibrary, showing some basic features of the Library: [PluginExample](https://github.com/ImperaZim/EasyLibrary-Plugin-Example).
 
 ## Licensing information
 This project is licensed under MIT. Please see the [LICENSE](/LICENSE) file for details.
