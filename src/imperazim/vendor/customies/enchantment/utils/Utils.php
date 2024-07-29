@@ -20,7 +20,9 @@ use pocketmine\item\Durable;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\entity\projectile\Arrow;
 use pocketmine\inventory\ArmorInventory;
+use pocketmine\entity\projectile\Projectile;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStack;
@@ -155,6 +157,13 @@ class Utils {
       CustomEnchant::ITEM_TYPE_BOOTS => self::isBoots($item),
       CustomEnchant::ITEM_TYPE_COMPASS => $item instanceof Compass,
       default => false,
+      };
+    }
+
+    public static function createNewProjectile(string $className, Location $location, Player $shooter, Projectile $previousProjectile, int $level = 1): Projectile {
+      return match ($className) {
+        Arrow::class => new Arrow($location, $shooter, $previousProjectile instanceof Arrow ? $previousProjectile->isCritical() : false, null),
+      default => throw new InvalidArgumentException("Entity $className not found"),
       };
     }
 

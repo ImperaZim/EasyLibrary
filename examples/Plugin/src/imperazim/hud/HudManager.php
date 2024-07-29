@@ -9,7 +9,7 @@ use imperazim\hud\scoreboard\ScoreBoardTask;
 
 use imperazim\components\plugin\PluginToolkit;
 use imperazim\components\plugin\PluginComponent;
-use imperazim\components\plugin\traits\PluginComponentsTrait;;
+use imperazim\components\plugin\traits\PluginComponentsTrait;
 
 /**
 * Class HudManager

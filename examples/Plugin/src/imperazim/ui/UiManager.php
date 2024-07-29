@@ -11,7 +11,7 @@ use imperazim\ui\command\dialogue\DialogueCommand;
 use imperazim\components\filesystem\File;
 use imperazim\components\plugin\PluginToolkit;
 use imperazim\components\plugin\PluginComponent;
-use imperazim\components\plugin\traits\PluginComponentsTrait;;
+use imperazim\components\plugin\traits\PluginComponentsTrait;
 
 /**
 * Class UiManager

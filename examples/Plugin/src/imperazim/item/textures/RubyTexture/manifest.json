@@ -1,0 +1,26 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "",
+    "name": "§cRUBY Resource Pack",
+    "uuid": "7dc6513c-b555-4baf-89e7-be19404ca778",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      0
+    ]
+  },
+  "modules": [{
+    "description": "Made By: §l§fImperaZim",
+    "type": "resources",
+    "uuid": "6db4e4b2-f8f8-455c-87dd-2ca2cc800692",
+    "version": [1,
+      0,
+      0]
+  }]
+}
