@@ -10,9 +10,6 @@ use pocketmine\item\enchantment\Rarity;
 use pocketmine\item\enchantment\ItemFlags;
 use pocketmine\item\enchantment\Enchantment;
 
-use imperazim\vendor\customies\enchantment\utils\Utils;
-use imperazim\vendor\customies\enchantment\CustomiesEchantmentManager;
-
 class CustomEnchant extends Enchantment {
   public string $name = "";
   public int $rarity = Rarity::RARE;
@@ -56,19 +53,12 @@ class CustomEnchant extends Enchantment {
   const ITEM_TYPE_COMPASS = 15;
 
   public function __construct(public int $id) {
-    $plugin = CustomiesEchantmentManager::getPlugin();
-    
-    $this->rarity = array_flip(Utils::RARITY_NAMES)[ucfirst(strtolower($plugin->getEnchantmentData($this->name, "rarities", Utils::RARITY_NAMES[$this->rarity])))];
-    $this->maxLevel = (int)$plugin->getEnchantmentData($this->name, "max_levels", $this->maxLevel);
-    $this->displayName = (string)$plugin->getEnchantmentData($this->name, "display_names", $this->displayName ?? $this->name);
-    $this->description = (string)$plugin->getEnchantmentData($this->name, "descriptions", $this->description ?? "");
-    $this->extraData = $plugin->getEnchantmentData($this->name, "extra_data", $this->getDefaultExtraData());
-    $this->cooldownDuration = (int)$plugin->getEnchantmentData($this->name, "cooldowns", $this->cooldownDuration ?? 0);
-    $this->chance = (int)$plugin->getEnchantmentData($this->name, "chances", $this->chance ?? 100);
+    $this->extraData = $this->getDefaultExtraData();
+    $this->cooldownDuration = (int) $this->cooldownDuration ?? 0;
+    $this->chance = (int) $this->chance ?? 100;
     foreach ($this->getDefaultExtraData() as $key => $value) {
       if (!isset($this->extraData[$key])) {
         $this->extraData[$key] = $value;
-        $plugin->setEnchantmentData($this->name, "extra_data", $this->extraData);
       }
     }
     parent::__construct($this->name, $this->rarity, ItemFlags::ALL, ItemFlags::ALL, $this->maxLevel);
