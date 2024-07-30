@@ -14,7 +14,7 @@ class CustomEnchant extends Enchantment {
   public string $name = "";
   public int $rarity = Rarity::RARE;
   public int $maxLevel = 5;
-  private string $displayName;
+  public string $displayName;
   public string $description;
   public array $extraData;
   public int $cooldownDuration;
@@ -53,7 +53,6 @@ class CustomEnchant extends Enchantment {
   const ITEM_TYPE_COMPASS = 15;
 
   public function __construct(public int $id) {
-    parent::__construct($this->name, $this->rarity, ItemFlags::ALL, ItemFlags::ALL, $this->maxLevel);
     $this->chance = 100;
     $this->cooldownDuration = 0;
     $this->extraData = $this->getDefaultExtraData();
@@ -62,6 +61,7 @@ class CustomEnchant extends Enchantment {
         $this->extraData[$key] = $value;
       }
     }
+    parent::__construct($this->name, $this->rarity, ItemFlags::ALL, ItemFlags::ALL, $this->maxLevel);
   }
 
   public function getId(): int {
