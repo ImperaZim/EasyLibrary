@@ -94,7 +94,7 @@ final class VersionCommand extends BaseCommand {
         if ($exactPlugin instanceof Plugin) {
           $this->describeToSender($exactPlugin, $sender);
 
-          return true;
+          return;
         }
 
         $found = false;
