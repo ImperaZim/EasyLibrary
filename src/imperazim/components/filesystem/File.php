@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace imperazim\components\filesystem;
 
-use imperazim\components\config\Config;
-use imperazim\components\filesystem\traits\FileExtensionTypes;
+use imperazim\components\utils\Config;
+use imperazim\components\filesystem\trait\FileExtensionTypes;
 use imperazim\components\filesystem\exception\FileSystemException;
 
 /**
