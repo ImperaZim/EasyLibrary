@@ -25,7 +25,7 @@ use imperazim\components\plugin\traits\ComponentTypesTrait;
 */
 abstract class PluginToolkit extends PluginBase {
   use ComponentTypesTrait;
-  
+
   /** @var string */
   public ?string $data = null;
   /** @var array */
@@ -167,6 +167,15 @@ abstract class PluginToolkit extends PluginBase {
     }
 
     /**
+    * Overwrite commands passed in the argument
+    * @param anull<string>|null $commands
+    */
+    public function overwriteCommands(?array $commands = null): void {
+      $this->unregisterCommands(array_keys($commands));
+      $this->registerCommands(array_values($commands));
+    }
+
+    /**
     * Register a command or multiple commands.
     * @param Command|array $commands Command instance or array of Command instances to register.
     * @return void
@@ -185,6 +194,20 @@ abstract class PluginToolkit extends PluginBase {
         }
       } catch (\Exception $e) {
         new \crashdump($e);
+      }
+    }
+
+    /**
+    * Unregister commands passed in the argument
+    * @param anull<string>|null $commands
+    */
+    public function unregisterCommands(?array $commands = null): void {
+      $commandMap = $this->getServer()->getCommandMap();
+      foreach ($commands as $commandName) {
+        $command = $commandMap->getCommand($commandName);
+        if ($command !== null) {
+          $commandMap->unregister($command);
+        }
       }
     }
 

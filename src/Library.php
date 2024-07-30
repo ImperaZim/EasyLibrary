@@ -6,6 +6,7 @@ use pocketmine\utils\TextFormat;
 
 use imperazim\components\world\WorldManager;
 use imperazim\components\plugin\PluginToolkit;
+use imperazim\components\command\CommandManager;
 use imperazim\components\plugin\traits\PluginToolkitTrait;
 
 use imperazim\vendor\bossbar\BossBarManager;
@@ -26,6 +27,7 @@ final class Library extends PluginToolkit {
     'World' => WorldManager::class,
     'BossBar' => BossBarManager::class,
     'InvMenu' => InvMenuManager::class,
+    'Command' => CommandManager::class,
     'Commando' => CommandoManager::class,
     'Dialogue' => DialogueManager::class,
     'Customies' => CustomiesManager::class,
@@ -40,6 +42,7 @@ final class Library extends PluginToolkit {
     $this->saveRecursiveResources();
     $logger = $this->getConfig()->get('logger', true);
     $vendorComponents = $this->getConfig()->get('vendor', []);
+    $vendorComponents['Command'] = true;
     foreach ($vendorComponents as $componentName => $enable) {
       $this->validateComponentConfig($componentName, $enable);
       if ($enable) {
