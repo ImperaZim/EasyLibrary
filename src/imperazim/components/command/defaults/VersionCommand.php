@@ -35,7 +35,7 @@ final class VersionCommand extends BaseCommand {
     parent::__construct(
       plugin: CommandManager::getPlugin(),
       names: ['version', 'ver', 'about'],
-      description: KnownTranslationFactory::pocketmine_command_version_description()->getText(),
+      description: 'See data about the server.',
     );
   }
 
@@ -56,7 +56,7 @@ final class VersionCommand extends BaseCommand {
     try {
       if (count($args) === 0) {
         
-        $sender->sendMessage('This server is running ' . TextFormat::GREEN . VersionInfo::NAME . TextFormat::RESET . ' with ' . TextFormat::GREEN . ' EasyLibrary');
+        $sender->sendMessage('This server is running ' . TextFormat::GREEN . VersionInfo::NAME . TextFormat::RESET . 'with ' . TextFormat::GREEN . ' EasyLibrary');
         
         $versionColor = VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : TextFormat::GREEN;
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareVersion(
@@ -64,6 +64,7 @@ final class VersionCommand extends BaseCommand {
           TextFormat::GREEN . VersionInfo::GIT_HASH() . TextFormat::RESET
         ));
         $sender->sendMessage('EasyLibrary version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion());
+        $sender->sendMessage('EasyLibrary enabled components: ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents));
         
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_minecraftVersion(
           TextFormat::GREEN . ProtocolInfo::MINECRAFT_VERSION_NETWORK . TextFormat::RESET,

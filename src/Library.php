@@ -22,6 +22,8 @@ use imperazim\vendor\customies\enchantment\CustomiesEchantmentManager;
 */
 final class Library extends PluginToolkit {
   use PluginToolkitTrait;
+  
+  public array $enabledComponents = [];
 
   private array $componentClasses = [
     'World' => WorldManager::class,
@@ -48,6 +50,7 @@ final class Library extends PluginToolkit {
       if ($enable) {
         $className = $this->componentClasses[$componentName];
         $this->addComponent($this, $className);
+        $this->enabledComponents[] = $className;
       }
       if (is_bool($logger) && $logger) {
         $this->getServer()->getLogger()->notice(
