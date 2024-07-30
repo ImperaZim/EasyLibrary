@@ -12,6 +12,7 @@ use pocketmine\item\Hoe;
 use pocketmine\item\Item;
 use pocketmine\item\Sword;
 use pocketmine\item\Armor;
+use pocketmine\item\Rarity;
 use pocketmine\item\Shears;
 use pocketmine\item\Shovel;
 use pocketmine\item\Pickaxe;
