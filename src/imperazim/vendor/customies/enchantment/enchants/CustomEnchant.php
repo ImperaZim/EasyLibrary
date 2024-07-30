@@ -69,7 +69,7 @@ class CustomEnchant extends Enchantment {
   }
 
   public function getDisplayName(): string {
-    return $this->displayName;
+    return $this->name;
   }
 
   public function getDescription(): string {
