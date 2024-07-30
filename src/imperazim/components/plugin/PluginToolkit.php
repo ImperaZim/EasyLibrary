@@ -16,8 +16,6 @@ use ReflectionClass;
 use imperazim\components\filesystem\Path;
 use imperazim\components\filesystem\File;
 use imperazim\components\database\DatabaseManager;
-use imperazim\components\plugin\traits\PluginComponents;
-use imperazim\components\plugin\traits\PluginToolkitTrait;
 use imperazim\components\plugin\exception\PluginException;
 
 /**
@@ -25,7 +23,6 @@ use imperazim\components\plugin\exception\PluginException;
 * @package imperazim\components\plugin
 */
 abstract class PluginToolkit extends PluginBase {
-  use PluginToolkitTrait;
 
   /** @var string */
   public ?string $data = null;
