@@ -35,7 +35,7 @@ final class VersionCommand extends BaseCommand {
     parent::__construct(
       plugin: CommandManager::getPlugin(),
       names: ['version', 'ver', 'about'],
-      description: KnownTranslationFactory::pocketmine_command_version_description(),
+      description: KnownTranslationFactory::pocketmine_command_version_description()->getText(),
     );
   }
 
