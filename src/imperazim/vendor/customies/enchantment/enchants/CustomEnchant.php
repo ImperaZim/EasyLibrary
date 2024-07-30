@@ -53,9 +53,9 @@ class CustomEnchant extends Enchantment {
   const ITEM_TYPE_COMPASS = 15;
 
   public function __construct(public int $id) {
+    $this->chance = 100;
+    $this->cooldownDuration = 0;
     $this->extraData = $this->getDefaultExtraData();
-    $this->cooldownDuration = (int) $this->cooldownDuration ?? 0;
-    $this->chance = (int) $this->chance ?? 100;
     foreach ($this->getDefaultExtraData() as $key => $value) {
       if (!isset($this->extraData[$key])) {
         $this->extraData[$key] = $value;
