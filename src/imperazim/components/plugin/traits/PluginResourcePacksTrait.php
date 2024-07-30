@@ -11,7 +11,7 @@ use ReflectionClass;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
-use pocketmine\server\Server;
+use pocketmine\Server;
 use pocketmine\resourcepacks\ZippedResourcePack;
 
 use imperazim\components\filesystem\Path;
