@@ -57,7 +57,7 @@ final class VersionCommand extends BaseCommand {
       if (count($args) === 0) {
         
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareName(
-          TextFormat::GREEN . VersionInfo::NAME . TextFormat::RESET) . ' with ' . TextFormat::GREEN . ' EasyLibrary');
+          TextFormat::GREEN . VersionInfo::NAME . TextFormat::RESET)->getText() . ' with ' . TextFormat::GREEN . ' EasyLibrary');
         
         $versionColor = VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : TextFormat::GREEN;
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareVersion(
