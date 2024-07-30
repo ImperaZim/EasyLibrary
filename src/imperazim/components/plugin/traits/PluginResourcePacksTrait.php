@@ -4,14 +4,16 @@ declare(strict_types = 1);
 
 namespace imperazim\components\plugin\traits;
 
-use pocketmine\server\Server;
-use imperazim\components\filesystem\Path;
-use ZipArchive;
-use ReflectionClass;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
 use Throwable;
 use Exception;
+use ZipArchive;
+use ReflectionClass;
+use ZippedResourcePack;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
+use pocketmine\server\Server;
+use imperazim\components\filesystem\Path;
 
 /**
 * Trait PluginResourcePacksTrait
