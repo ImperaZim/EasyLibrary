@@ -8,11 +8,12 @@ use Throwable;
 use Exception;
 use ZipArchive;
 use ReflectionClass;
-use ZippedResourcePack;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
 use pocketmine\server\Server;
+use pocketmine\resourcepacks\ZippedResourcePack;
+
 use imperazim\components\filesystem\Path;
 
 /**
