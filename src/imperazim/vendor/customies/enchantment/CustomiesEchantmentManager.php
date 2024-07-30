@@ -57,7 +57,9 @@ final class CustomiesEchantmentManager extends PluginComponent implements Listen
   public static function init(PluginToolkit $plugin): array {
     self::setPlugin($plugin);
     return [
-      self::LISTENER_COMPONENT => [$this],
+      self::LISTENER_COMPONENT => [
+        new self()
+      ],
       self::SCHEDULER_COMPONENT => [
         'type' => 'repeating',
         'class' => new TickEnchantmentsTask(),
