@@ -36,6 +36,7 @@ final class Library extends PluginToolkit {
   * This method is called when the plugin is enabled.
   */
   protected function onEnable(): void {
+    self::setInstance($this);
     $this->saveRecursiveResources();
     $logger = $this->getConfig()->get('logger', true);
     $vendorComponents = $this->getConfig()->get('vendor', []);

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace imperazim\components\plugin\traits;
 
-use pocketmine\utils\SingletonTrait;
 use imperazim\components\plugin\PluginToolkit;
 use imperazim\components\plugin\PluginComponent;
 
@@ -13,11 +12,27 @@ use imperazim\components\plugin\PluginComponent;
 * @package imperazim\components\plugin\traits
 */
 trait PluginToolkitTrait {
-  use SingletonTrait;
   use ComponentTypesTrait;
 
   /** @var self|null */
   private static $instance = null;
+
+  /**
+  * Gets the singleton instance of the class.
+  * @return self The singleton instance.
+  */
+  public static function getInstance() : self {
+    return self::$instance;
+  }
+
+  /**
+  * Sets the singleton instance of the class.
+  * @param self $instance The instance to set.
+  * @return void
+  */
+  public static function setInstance(self $instance) : void {
+    self::$instance = $instance;
+  }
 
   /**
   * Processes the initialization of a PluginComponent.
