@@ -55,16 +55,17 @@ final class VersionCommand extends BaseCommand {
   public function onRun(mixed $sender, string $aliasUsed, array $args): void {
     try {
       if (count($args) === 0) {
+        $library = 'EasyLibrary';
         
-        $sender->sendMessage('This server is running ' . TextFormat::GREEN . VersionInfo::NAME . TextFormat::RESET . 'with ' . TextFormat::GREEN . ' EasyLibrary');
+        $sender->sendMessage("This server is running " . TextFormat::GREEN . VersionInfo::NAME . " §rwith " . TextFormat::GREEN . $library);
+        $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion());
+        $sender->sendMessage($library . ' components: ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents));
         
         $versionColor = VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : TextFormat::GREEN;
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareVersion(
           $versionColor . VersionInfo::VERSION()->getFullVersion() . TextFormat::RESET,
           TextFormat::GREEN . VersionInfo::GIT_HASH() . TextFormat::RESET
         ));
-        $sender->sendMessage('EasyLibrary version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion());
-        $sender->sendMessage('EasyLibrary enabled components: ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents));
         
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_minecraftVersion(
           TextFormat::GREEN . ProtocolInfo::MINECRAFT_VERSION_NETWORK . TextFormat::RESET,
