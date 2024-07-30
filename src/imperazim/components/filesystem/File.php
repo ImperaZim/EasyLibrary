@@ -331,20 +331,7 @@ final class File {
       if (isset($keyValuePairs['--merge']) && is_array($keyValuePairs['--merge'])) {
         $this->mergeArrays($data, $keyValuePairs['--merge']);
       } else {
-        foreach ($keyValuePairs as $keyPath => $value) {
-          $keys = explode('.', $keyPath);
-          $nestedArray = &$data;
-          foreach ($keys as $key) {
-            if (!is_array($nestedArray)) {
-              $nestedArray = [];
-            }
-            if (!isset($nestedArray[$key])) {
-              $nestedArray[$key] = [];
-            }
-            $nestedArray = &$nestedArray[$key];
-          }
-          $nestedArray = $value;
-        }
+        $this->mergeArrays($data, $keyValuePairs);
       }
 
       $content = self::serializeContent($extension, $data);
