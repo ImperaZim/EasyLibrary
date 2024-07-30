@@ -277,13 +277,12 @@ abstract class PluginToolkit extends PluginBase {
     * @return mixed|null
     * @throws PluginException If there's an error processing the file.
     */
-    private function processFile(array $file, ?string $loadType): mixed {
+    private function processFile(array $file, ?string $loadType): ?File {
       try {
         $fileName = $file['fileName'] ?? null;
         $fileType = $file['fileType'] ?? null;
         $fileContent = $file['content'] ?? null;
         $fileDirectory = $file['directory'] ?? null;
-        $extension = $file['extension'] ?? null;
 
         if ($fileName === null || $fileType === null || $fileContent === null || $fileDirectory === null) {
           return null;
@@ -292,36 +291,16 @@ abstract class PluginToolkit extends PluginBase {
         $baseFileName = pathinfo($fileName, PATHINFO_FILENAME);
         $relativeDirectory = str_replace($this->file . '/resources', $this->dataFolder, $fileDirectory);
 
-        if (File::getTypeByExtension($extension) !== null) {
-          return new File(
-            directoryOrConfig: $relativeDirectory,
-            fileName: $baseFileName,
-            fileType: $fileType,
-            autoGenerate: true,
-            readCommand: [$loadType => $fileContent]
-          );
-        } else {
-          $this->handleUnsupportedFileType($relativeDirectory, $fileName, $fileContent);
-          return [
-            'directory' => $relativeDirectory,
-            'fileName' => $fileName,
-            'fileContent' => $fileContent
-          ];
-        }
+        return new File(
+          directoryOrConfig: $relativeDirectory,
+          fileName: $baseFileName,
+          fileType: $fileType,
+          autoGenerate: true,
+          readCommand: [$loadType => $fileContent]
+        );
       } catch (PluginException $e) {
         new \crashdump($e);
       }
-    }
-
-    /**
-    * Handle unsupported file types.
-    * @param string $directory
-    * @param string $fileName
-    * @param string $fileContent
-    */
-    private function handleUnsupportedFileType(string $directory, string $fileName, string $fileContent): void {
-      $filePath = $directory . DIRECTORY_SEPARATOR . $fileName;
-      file_put_contents($filePath, $fileContent);
     }
 
   }
