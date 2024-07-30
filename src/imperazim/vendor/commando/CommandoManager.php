@@ -63,6 +63,7 @@ final class CommandoManager extends PluginComponent implements Listener {
         $target->sendDataPacket($pk);
         self::$isIntercepting = false;
       }
+      return self::$isIntercepting;
     });
 
     self::setPlugin(plugin: $plugin);
