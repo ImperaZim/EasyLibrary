@@ -17,13 +17,15 @@ use imperazim\components\filesystem\Path;
 use imperazim\components\filesystem\File;
 use imperazim\components\database\DatabaseManager;
 use imperazim\components\plugin\exception\PluginException;
+use imperazim\components\plugin\traits\ComponentTypesTrait;
 
 /**
 * Class PluginToolkit
 * @package imperazim\components\plugin
 */
 abstract class PluginToolkit extends PluginBase {
-
+  use ComponentTypesTrait;
+  
   /** @var string */
   public ?string $data = null;
   /** @var array */
