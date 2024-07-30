@@ -59,7 +59,7 @@ final class VersionCommand extends BaseCommand {
         
         $sender->sendMessage("This server is running " . TextFormat::GREEN . VersionInfo::NAME . " §rwith " . TextFormat::GREEN . $library);
         $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion());
-        $sender->sendMessage($library . ' components: ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents));
+        $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion() . ' §r(with ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents) . '§r active components)');
         
         $versionColor = VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : TextFormat::GREEN;
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareVersion(
