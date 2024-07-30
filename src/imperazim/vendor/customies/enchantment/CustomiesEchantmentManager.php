@@ -26,6 +26,7 @@ use pocketmine\inventory\ArmorInventory;
 use pocketmine\inventory\CallbackInventoryListener;
 use pocketmine\inventory\Inventory;
 use pocketmine\inventory\PlayerInventory;
+use pocketmine\player\Player;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\InventoryContentPacket;
