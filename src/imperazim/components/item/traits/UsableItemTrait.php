@@ -73,12 +73,12 @@ trait UsableItemTrait {
     $remainingTime = $this->cooldownPeriod - ($currentTime - $this->lastUsedTime);
     return $remainingTime > 0 ? $remainingTime : 0.0;
   }
-  
+
   public function renderProgressBar(?string $zero = '§7|', ?string $one = '§e|', ?int $length = 20): string {
     $cooldownPeriod = $this->getCooldownPeriod();
     $progress = ($cooldownPeriod - $this->getRemainingCooldownTime()) / $cooldownPeriod;
     $completeLength = (int) round($progress * $length);
     $progressBar = str_repeat($one, $completeLength) . str_repeat($zero, $length - $completeLength);
     return $progressBar;
-}
+  }
 }
