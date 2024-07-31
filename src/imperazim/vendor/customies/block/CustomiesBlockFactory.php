@@ -36,7 +36,7 @@ final class CustomiesBlockFactory {
 
 	/**
 	 * @var Closure[]
-	 * @phpstan-var array<string, array{(Closure(int): Block), (Closure(BlockStateWriter): Block), (Closure(Block): BlockStateReader)}>
+	 * @phpstan-var array<string, array{Block, (Closure(BlockStateWriter): Block), (Closure(Block): BlockStateReader)}>
 	 */
 	private array $blockFuncs = [];
 	/** @var BlockPaletteEntry[] */
@@ -78,12 +78,11 @@ final class CustomiesBlockFactory {
 	/**
 	 * Register a block to the BlockFactory and all the required mappings. A custom stateReader and stateWriter can be
 	 * provided to allow for custom block state serialization.
-	 * @phpstan-param (Closure(): Block) $blockFunc
+	 * @phpstan-param Block $block
 	 * @phpstan-param null|(Closure(BlockStateWriter): Block) $serializer
 	 * @phpstan-param null|(Closure(Block): BlockStateReader) $deserializer
 	 */
-	public function registerBlock(Closure $blockFunc, string $identifier, ?Model $model = null, ?CreativeInventoryInfo $creativeInfo = null, ?Closure $serializer = null, ?Closure $deserializer = null): void {
-		$block = $blockFunc();
+	public function registerBlock(Block $block, string $identifier, ?Model $model = null, ?CreativeInventoryInfo $creativeInfo = null, ?Closure $serializer = null, ?Closure $deserializer = null): void {
 		if(!$block instanceof Block) {
 			throw new InvalidArgumentException("Class returned from closure is not a Block");
 		}
@@ -178,7 +177,7 @@ final class CustomiesBlockFactory {
 		CreativeInventory::getInstance()->add($block->asItem());
 
 		$this->blockPaletteEntries[] = new BlockPaletteEntry($identifier, new CacheableNbt($propertiesTag));
-		$this->blockFuncs[$identifier] = [$blockFunc, $serializer, $deserializer];
+		$this->blockFuncs[$identifier] = [$block, $serializer, $deserializer];
 
 		// 1.20.60 added a new "block_id" field which depends on the order of the block palette entries. Every time we
 		// insert a new block, we need to re-sort the block palette entries to keep in sync with the client.
