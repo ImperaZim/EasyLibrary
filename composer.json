@@ -1,10 +1,9 @@
 {
   "name": "imperazim/easy-library",
-  "description": "EasyLibrary is a powerful plugin for PocketMine",
+  "description": "The EasyLibrary is a powerful plugin for PocketMine-MP that serves as a collection of various public libraries, providing a wide range of functionalities and utilities for plugin developers. This plugin simplifies the integration and use of popular libraries, allowing developers to save time and effort when creating their own plugins.",
   "type": "project",
   "require": {
-    "php": "^8.3",
-    "ImperaZim/EasyLibrary": "dev-main"
+    "php": "^8.3"
   },
   "autoload": {
     "psr-4": {
@@ -13,16 +12,9 @@
   },
   "authors": [{
     "name": "impera",
-    "email": "imperaa@gmail.com"
+    "email": "imperazim@gmail.com"
   }],
   "require-dev": {
-    "phpstan/phpstan": "^1.11",
-    "ImperaZim/EasyLibrary": "dev-development"
-  },
-  "repositories": [{
-    "type": "vcs",
-    "url": "https://github.com/ImperaZim/EasyLibrary"
-  }],
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "phpstan/phpstan": "^1.11"
+  }
 }
