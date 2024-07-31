@@ -12,7 +12,7 @@ use pocketmine\scheduler\AsyncTask;
 
 final class AsyncRegisterBlocksTask extends AsyncTask {
 
-	private ThreadSafeArray $blocks;
+	private ThreadSafeArray $classNames;
 	private ThreadSafeArray $serializer;
 	private ThreadSafeArray $deserializer;
 
@@ -21,22 +21,22 @@ final class AsyncRegisterBlocksTask extends AsyncTask {
 	 * @phpstan-param array<string, array{(Closure(int): Block), (Closure(BlockStateWriter): Block), (Closure(Block): BlockStateReader)}> $blocks
 	 */
 	public function __construct(private string $cachePath, array $blockFuncs) {
-		$this->blocks = new ThreadSafeArray();
+		$this->classNames = new ThreadSafeArray();
 		$this->serializer = new ThreadSafeArray();
 		$this->deserializer = new ThreadSafeArray();
 
-		foreach($blockFuncs as $identifier => [$block, $serializer, $deserializer]){
-			$this->blocks[$identifier] = $block;
+		foreach($blockFuncs as $identifier => [$className, $serializer, $deserializer]){
+			$this->classNames[$identifier] = $className;
 			$this->serializer[$identifier] = $serializer;
 			$this->deserializer[$identifier] = $deserializer;
 		}
 	}
 
 	public function onRun(): void {
-		foreach($this->blocks as $identifier => $block){
+		foreach($this->classNames as $identifier => $className){
 			// We do not care about the model or creative inventory data in other threads since it is unused outside of
 			// the main thread.
-			CustomiesBlockFactory::getInstance()->registerBlock($block, $identifier, serializer: $this->serializer[$identifier], deserializer: $this->deserializer[$identifier]);
+			CustomiesBlockFactory::getInstance()->registerBlock($className, $identifier, serializer: $this->serializer[$identifier], deserializer: $this->deserializer[$identifier]);
 		}
 	}
 }

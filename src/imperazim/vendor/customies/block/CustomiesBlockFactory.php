@@ -78,11 +78,12 @@ final class CustomiesBlockFactory {
 	/**
 	 * Register a block to the BlockFactory and all the required mappings. A custom stateReader and stateWriter can be
 	 * provided to allow for custom block state serialization.
-	 * @phpstan-param Block $block
+	 * @phpstan-param string $className
 	 * @phpstan-param null|(Closure(BlockStateWriter): Block) $serializer
 	 * @phpstan-param null|(Closure(Block): BlockStateReader) $deserializer
 	 */
-	public function registerBlock(Block $block, string $identifier, ?Model $model = null, ?CreativeInventoryInfo $creativeInfo = null, ?Closure $serializer = null, ?Closure $deserializer = null): void {
+	public function registerBlock(string $className, string $identifier, ?Model $model = null, ?CreativeInventoryInfo $creativeInfo = null, ?Closure $serializer = null, ?Closure $deserializer = null): void {
+	  $block = new $className();
 		if(!$block instanceof Block) {
 			throw new InvalidArgumentException("Class returned from closure is not a Block");
 		}
@@ -142,7 +143,7 @@ final class CustomiesBlockFactory {
 				$block->serializeState($b);
 				return $b;
 			};
-			$deserializer ??= static function (BlockStateReader $in) use ($block, $identifier, $blockPropertyNames) : Permutable {
+			$deserializer ??= static function (BlockStateReader $in) use ($className, $identifier, $blockPropertyNames) : Permutable {
 				$b = CustomiesBlockFactory::getInstance()->get($identifier);
 				assert($b instanceof Permutable);
 				$b->deserializeState($in);
