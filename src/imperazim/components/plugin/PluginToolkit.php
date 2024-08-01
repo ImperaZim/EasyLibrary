@@ -50,6 +50,8 @@ abstract class PluginToolkit extends PluginBase {
     private ResourceProvider $resourceProvider
   ) {
     $this->data = $this->getServerPath(['join:data']);
+    
+    parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
 
     $childClass = get_class($this);
     if (property_exists($childClass, 'components')) {
@@ -63,8 +65,6 @@ abstract class PluginToolkit extends PluginBase {
         $this->getServer()->forceShutdown();
       }
     }
-
-    parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
   /**
