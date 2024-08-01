@@ -12,6 +12,7 @@ use pocketmine\plugin\PluginLoader;
 use pocketmine\plugin\ResourceProvider;
 use pocketmine\plugin\PluginDescription;
 
+use Library;
 use ReflectionClass;
 use imperazim\components\filesystem\Path;
 use imperazim\components\filesystem\File;
@@ -49,6 +50,20 @@ abstract class PluginToolkit extends PluginBase {
     private ResourceProvider $resourceProvider
   ) {
     $this->data = $this->getServerPath(['join:data']);
+
+    $childClass = get_class($this);
+    if (property_exists($childClass, 'components')) {
+      $components = (new ReflectionClass($childClass))->getProperty('components')->getValue($this);
+      $enabledComponents = Library::getInstance()->enabledComponents;
+      $missingComponents = array_diff($components, $enabledComponents);
+      if (!empty($missingComponents)) {
+        foreach ($missingComponents as $missingComponent) {
+          $this->getLogger()->error('EasyLibrary - ' . $missingComponent . ' is required!');
+        }
+        $this->getServer()->forceShutdown();
+      }
+    }
+
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
