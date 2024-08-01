@@ -2,62 +2,86 @@
 
 declare(strict_types = 1);
 
-use library\item\ItemFactory;
-use library\world\WorldManager;
-use library\plugin\PluginToolkit;
-use pocketmine\utils\SingletonTrait;
-use Symfony\Component\Filesystem\Path;
+use pocketmine\utils\TextFormat;
 
-use internal\bossbar\BossBarHooker;
-use internal\invmenu\InvMenuHooker;
-use internal\commando\CommandoHooker;
-use internal\dialogue\DialogueHooker;
-use internal\customies\CustomiesHooker;
+use imperazim\components\world\WorldManager;
+use imperazim\components\plugin\PluginToolkit;
+use imperazim\components\command\CommandManager;
+use imperazim\components\plugin\traits\PluginToolkitTrait;
+
+use imperazim\vendor\bossbar\BossBarManager;
+use imperazim\vendor\invmenu\InvMenuManager;
+use imperazim\vendor\commando\CommandoManager;
+use imperazim\vendor\dialogue\DialogueManager;
+use imperazim\vendor\customies\CustomiesManager;
+use imperazim\vendor\customies\enchantment\CustomiesEchantmentManager;
 
 /**
 * Class Library
 * TODO: This class should not be called in other plugins!
 */
 final class Library extends PluginToolkit {
-  use SingletonTrait;
+  use PluginToolkitTrait;
+  
+  public array $enabledComponents = [];
+
+  private array $componentClasses = [
+    'World' => WorldManager::class,
+    'BossBar' => BossBarManager::class,
+    'InvMenu' => InvMenuManager::class,
+    'Command' => CommandManager::class,
+    'Commando' => CommandoManager::class,
+    'Dialogue' => DialogueManager::class,
+    'Customies' => CustomiesManager::class,
+    'CustomiesEnchantment' => CustomiesEchantmentManager::class,
+  ];
 
   /**
-  * Called when the plugin is loaded.
-  */
-  protected function onLoad(): void {
-    self::setInstance($this);
-    $this->saveRecursiveResources();
-  }
-
-  /**
-  * Called when the plugin is enabled.
+  * This method is called when the plugin is enabled.
   */
   protected function onEnable(): void {
-    $this->initHooks();
-    $this->initFactories();
+    self::setInstance($this);
+    $this->saveRecursiveResources();
+    $logger = $this->getConfig()->get('logger', true);
+    $vendorComponents = $this->getConfig()->get('vendor', []);
+    $vendorComponents['Command'] = true;
+    foreach ($vendorComponents as $componentName => $enable) {
+      $this->validateComponentConfig($componentName, $enable);
+      if ($enable) {
+        $className = $this->componentClasses[$componentName];
+        $this->addComponent($this, $className);
+        $this->enabledComponents[] = $className;
+      }
+      if (is_bool($logger) && $logger) {
+        $this->getServer()->getLogger()->notice(
+          "§7$componentName component " . ($enable ? "§aON" : "§cOFF")
+        );
+      }
+    }
   }
 
   /**
-  * Initialize hook handlers for various functionalities.
+  * This method is called when the plugin is disabled.
   */
-  private function initHooks(): void {
-    new BossBarHooker($this);
-    new InvMenuHooker($this);
-    new DialogueHooker($this);
-    new CommandoHooker($this);
-    new CustomiesHooker($this);
+  protected function onDisable(): void {
+    $customiesEnchantment = $this->getConfig()->get('vendor.CustomiesEnchantment', false);
+    if ($customiesEnchantment) {
+      CustomiesEchantmentManager::close();
+    }
   }
 
   /**
-  * Initialize components such as ItemFactory and WorldManager.
+  * Validates the configuration for a component.
+  * @param string $componentName
+  * @param mixed $enable
+  * @throws \InvalidArgumentException
   */
-  private function initFactories(): void {
-    ItemFactory::init();
-    WorldManager::init($this, $this->getServer()->getWorldManager());
+  private function validateComponentConfig(string $componentName, $enable): void {
+    if (!is_bool($enable)) {
+      throw new \InvalidArgumentException("Invalid configuration for component '$componentName'. The value must be a boolean.");
+    }
+    if (!isset($this->componentClasses[$componentName]) && $enable) {
+      throw new \RuntimeException("Unknown component configured: '$componentName'. Check the configuration and class mapping.");
+    }
   }
-  
-  public function getResourcePackFolder() : string {
-    return Path::join($this->getDataFolder(), "resource_packs");
-  }
-
 }

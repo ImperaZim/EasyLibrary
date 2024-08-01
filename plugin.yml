@@ -1,6 +1,12 @@
 name: EasyLibrary
-version: 1.1.5
+version: 1.2.0
 
+authors: 
+ - ImperaZim
+ 
 api: 5.0.0
 main: Library
 load: STARTUP
+
+extensions:
+  Core: ">=8.2"
