@@ -52,19 +52,6 @@ abstract class PluginToolkit extends PluginBase {
     $this->data = $this->getServerPath(['join:data']);
     
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
-
-    $childClass = get_class($this);
-    if (property_exists($childClass, 'components')) {
-      $components = (new ReflectionClass($childClass))->getProperty('components')->getValue($this);
-      $enabledComponents = Library::getInstance()->enabledComponents;
-      $missingComponents = array_diff($components, $enabledComponents);
-      if (!empty($missingComponents)) {
-        foreach ($missingComponents as $missingComponent) {
-          $this->getLogger()->error('EasyLibrary - ' . $missingComponent . ' is required!');
-        }
-        $this->getServer()->forceShutdown();
-      }
-    }
   }
 
   /**
