@@ -39,7 +39,7 @@ abstract class Base {
   public function send(): void {
     try {
       $ui = $this->ui;
-      if ($this->isValidUi($ui)) {
+      if ($this->isValid($ui)) {
         $ui->sendTo($this->player);
       }
     } catch (UiException $e) {
