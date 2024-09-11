@@ -9,6 +9,7 @@ use imperazim\components\plugin\PluginComponent;
 use imperazim\components\plugin\traits\PluginComponentsTrait;
 
 use imperazim\components\command\defaults\VersionCommand;
+use imperazim\components\command\defaults\GeneratePluginCommand;
 
 /**
 * Class CommandManager
@@ -24,7 +25,8 @@ final class CommandManager extends PluginComponent {
   public static function init(PluginToolkit $plugin): array {
     self::setPlugin(plugin: $plugin);
     $plugin->overwriteCommands([
-      'version' => new VersionCommand()
+      'version' => new VersionCommand(),
+      'genplugin' => new GeneratePluginCommand(),
     ]);
     return [];
   }

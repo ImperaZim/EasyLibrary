@@ -10,3 +10,8 @@ load: STARTUP
 
 extensions:
   Core: ">=8.2"
+  
+permissions:
+  easylibrary.command.genplugin:
+    default: op 
+    description: Generate a new plugin base with EasyLibrary
