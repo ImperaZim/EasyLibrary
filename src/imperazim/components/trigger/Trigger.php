@@ -13,14 +13,14 @@ namespace imperazim\components\trigger;
 class Trigger {
 
   /**
-  * @var Closure The condition that needs to be satisfied for the trigger to execute the action.
+  * @var \Closure The condition that needs to be satisfied for the trigger to execute the action.
   */
-  private \Closure $condition;
+  protected \Closure $condition;
 
   /**
-  * @var Closure The action to be executed when the condition is met.
+  * @var \Closure The action to be executed when the condition is met.
   */
-  private \Closure $action;
+  protected \Closure $action;
 
   /**
   * @var int The type of trigger.
@@ -30,8 +30,8 @@ class Trigger {
   /**
   * Trigger constructor.
   *
-  * @param Closure $condition A Closure that returns a boolean value. If true, the action is executed.
-  * @param Closure $action A Closure that defines the action to be executed when the condition is met.
+  * @param \Closure $condition A Closure that returns a boolean value. If true, the action is executed.
+  * @param \Closure $action A Closure that defines the action to be executed when the condition is met.
   * @param int $triggerType An integer representing the type of the trigger, using constants from TriggerTypes.
   */
   public function __construct(\Closure $condition, \Closure $action, int $triggerType) {
