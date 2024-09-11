@@ -35,6 +35,16 @@ trait PluginToolkitTrait {
   }
 
   /**
+  * Default onEnable method, if not implemented in the class.
+  */
+  public function onEnable(): void {
+    $class = new ReflectionClass($this);
+    if (!$class->hasMethod('onEnable') || $class->getMethod('onEnable')->class !== $class->getName()) {
+      self::setInstance($this);
+    }
+  }
+
+  /**
   * Processes the initialization of a PluginComponent.
   *
   * @param PluginToolkit $plugin The Plugin.
