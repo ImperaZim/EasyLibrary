@@ -4,17 +4,14 @@ declare(strict_types = 1);
 
 namespace imperazim\components\plugin\traits;
 
-use Throwable;
 use Exception;
 use ZipArchive;
-use ReflectionClass;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
-use pocketmine\Server;
-use pocketmine\resourcepacks\ZippedResourcePack;
-
 use imperazim\components\filesystem\Path;
+use imperazim\components\utils\ResourcePacks;
+use imperazim\components\plugin\exception\PluginException;
 
 /**
 * Trait PluginResourcePacksTrait
@@ -63,7 +60,7 @@ trait PluginResourcePacksTrait {
       foreach ($textures as $name) {
         $this->processTexture($name, $source, $textureFolder);
       }
-    } catch (Throwable $e) {
+    } catch (PluginException $e) {
       new \crashdump($e);
     }
   }
@@ -100,33 +97,9 @@ trait PluginResourcePacksTrait {
         }
         $zip->close();
 
-        $this->registerPack($zipFile);
+        ResourcePacks::registerPack($zipFile);
       }
     }
   }
-
-  /**
-  * Register a zipped resource pack.
-  * @param string $zipFile
-  * @return void
-  */
-  private function registerPack(string $zipFile): void {
-    $pack = new ZippedResourcePack($zipFile);
-    $manager = Server::getInstance()->getResourcePackManager();
-
-    $reflection = new ReflectionClass($manager);
-
-    $resourcePacksProperty = $reflection->getProperty('resourcePacks');
-    $resourcePacks = $resourcePacksProperty->getValue($manager);
-    $resourcePacks[] = $pack;
-    $resourcePacksProperty->setValue($manager, $resourcePacks);
-
-    $uuidListProperty = $reflection->getProperty('uuidList');
-    $uuidList = $uuidListProperty->getValue($manager);
-    $uuidList[strtolower($pack->getPackId())] = $pack;
-    $uuidListProperty->setValue($manager, $uuidList);
-
-    $serverForceResourcesProperty = $reflection->getProperty('serverForceResources');
-    $serverForceResourcesProperty->setValue($manager, true);
-  }
+  
 }

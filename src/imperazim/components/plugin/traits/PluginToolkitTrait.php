@@ -43,6 +43,7 @@ trait PluginToolkitTrait {
   */
   public function addComponent(PluginToolkit $plugin, string $component): void {
     if (is_subclass_of($component, PluginComponent::class)) {
+      $component::setPlugin($plugin);
       $componentInstance = $component::init($plugin);
 
       $commandC = self::COMMAND_COMPONENT;
