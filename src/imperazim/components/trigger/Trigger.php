@@ -10,7 +10,7 @@ namespace imperazim\components\trigger;
 *
 * @package imperazim\components\trigger
 */
-final class Trigger {
+class Trigger {
 
   /**
   * @var Closure The condition that needs to be satisfied for the trigger to execute the action.
