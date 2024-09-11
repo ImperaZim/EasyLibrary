@@ -58,7 +58,7 @@ final class VersionCommand extends BaseCommand {
         $library = 'EasyLibrary';
         
         $sender->sendMessage("This server is running " . TextFormat::GREEN . VersionInfo::NAME . " §rwith " . TextFormat::GREEN . $library);
-        $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion() . ' §r(with ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents) . '§r active components)');
+        $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion() . ' §r(with ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents) . '§r enabled\'s component\'s)');
         
         $versionColor = VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : TextFormat::GREEN;
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareVersion(
