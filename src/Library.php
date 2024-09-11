@@ -2,10 +2,11 @@
 
 declare(strict_types = 1);
 
-use pocketmine\utils\TextFormat;
+use imperazim\bugfixes\BugFixesManager;
 
 use imperazim\components\world\WorldManager;
 use imperazim\components\plugin\PluginToolkit;
+use imperazim\components\trigger\TriggerManager;
 use imperazim\components\command\CommandManager;
 use imperazim\components\plugin\traits\PluginToolkitTrait;
 
@@ -30,6 +31,8 @@ final class Library extends PluginToolkit {
     'BossBar' => BossBarManager::class,
     'InvMenu' => InvMenuManager::class,
     'Command' => CommandManager::class,
+    'Triggers' => TriggerManager::class,
+    'BugFixes' => BugFixesManager::class,
     'Commando' => CommandoManager::class,
     'Dialogue' => DialogueManager::class,
     'Customies' => CustomiesManager::class,
