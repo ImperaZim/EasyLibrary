@@ -17,10 +17,10 @@ final class PerPlayerTrigger extends Trigger {
   /**
   * PerPlayerTrigger constructor.
   *
-  * @param callable $condition A callable that takes a Player and returns a boolean value. If true, the action is executed.
-  * @param callable $action A callable that takes a Player and defines the action to be executed when the condition is met.
+  * @param Closure $condition A Closure that takes a Player and returns a boolean value. If true, the action is executed.
+  * @param Closure $action A Closure that takes a Player and defines the action to be executed when the condition is met.
   */
-  public function __construct(callable $condition, callable $action) {
+  public function __construct(\Closure $condition, \Closure $action) {
     parent::__construct($condition, $action, TriggerTypes::PER_PLAYER);
   }
 

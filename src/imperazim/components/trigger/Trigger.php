@@ -13,14 +13,14 @@ namespace imperazim\components\trigger;
 final class Trigger {
 
   /**
-  * @var callable The condition that needs to be satisfied for the trigger to execute the action.
+  * @var Closure The condition that needs to be satisfied for the trigger to execute the action.
   */
-  private callable $condition;
+  private \Closure $condition;
 
   /**
-  * @var callable The action to be executed when the condition is met.
+  * @var Closure The action to be executed when the condition is met.
   */
-  private callable $action;
+  private \Closure $action;
 
   /**
   * @var int The type of trigger.
@@ -30,11 +30,11 @@ final class Trigger {
   /**
   * Trigger constructor.
   *
-  * @param callable $condition A callable that returns a boolean value. If true, the action is executed.
-  * @param callable $action A callable that defines the action to be executed when the condition is met.
+  * @param Closure $condition A Closure that returns a boolean value. If true, the action is executed.
+  * @param Closure $action A Closure that defines the action to be executed when the condition is met.
   * @param int $triggerType An integer representing the type of the trigger, using constants from TriggerTypes.
   */
-  public function __construct(callable $condition, callable $action, int $triggerType) {
+  public function __construct(\Closure $condition, \Closure $action, int $triggerType) {
     $this->condition = $condition;
     $this->action = $action;
     $this->triggerType = $triggerType;

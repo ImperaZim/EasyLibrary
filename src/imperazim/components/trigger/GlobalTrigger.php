@@ -15,10 +15,10 @@ final class GlobalTrigger extends Trigger {
     /**
      * GlobalTrigger constructor.
      *
-     * @param callable $condition A callable that returns a boolean value. If true, the action is executed.
-     * @param callable $action A callable that defines the action to be executed when the condition is met.
+     * @param Closure $condition A Closure that returns a boolean value. If true, the action is executed.
+     * @param Closure $action A Closure that defines the action to be executed when the condition is met.
      */
-    public function __construct(callable $condition, callable $action) {
+    public function __construct(\Closure $condition, \Closure $action) {
         parent::__construct($condition, $action, TriggerTypes::GLOBAL);
     }
 }
