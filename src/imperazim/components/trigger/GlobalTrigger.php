@@ -21,4 +21,14 @@ final class GlobalTrigger extends Trigger {
   public function __construct(\Closure $condition, \Closure $action) {
     parent::__construct($condition, $action, TriggerTypes::GLOBAL);
   }
+  
+  /**
+  * Checks if the condition is met, and if so, executes the action.
+  */
+  public function checkCondition(): void {
+    if (($this->condition)()) {
+      ($this->action)();
+    }
+  }
+  
 }

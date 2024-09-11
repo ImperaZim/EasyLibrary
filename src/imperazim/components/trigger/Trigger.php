@@ -41,17 +41,6 @@ class Trigger {
   }
 
   /**
-  * Checks if the condition is met, and if so, executes the action.
-  *
-  * @param mixed ...$args Arguments to be passed to both condition and action.
-  */
-  public function checkCondition(...$args): void {
-    if (($this->condition)(...$args)) {
-      ($this->action)(...$args);
-    }
-  }
-
-  /**
   * Returns the type of the trigger.
   *
   * @return int The type of the trigger.
