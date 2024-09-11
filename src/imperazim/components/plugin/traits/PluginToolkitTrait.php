@@ -57,6 +57,7 @@ trait PluginToolkitTrait {
       $componentInstance = $component::init($plugin);
 
       $commandC = self::COMMAND_COMPONENT;
+      $triggerC = self::TRIGGER_COMPONENT;
       $listenerC = self::LISTENER_COMPONENT;
       $schedulerC = self::SCHEDULER_COMPONENT;
 
@@ -64,6 +65,13 @@ trait PluginToolkitTrait {
         $plugin->initComponents(
           type: $commandC,
           components: $componentInstance[$commandC]
+        );
+      }
+
+      if (isset($componentInstance[$triggerC])) {
+        $plugin->initComponents(
+          type: $triggerC,
+          components: $componentInstance[$triggerC]
         );
       }
 

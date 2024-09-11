@@ -16,6 +16,8 @@ use Library;
 use ReflectionClass;
 use imperazim\components\filesystem\Path;
 use imperazim\components\filesystem\File;
+use imperazim\components\trigger\Trigger;
+use imperazim\components\trigger\TriggerManager;
 use imperazim\components\database\DatabaseManager;
 use imperazim\components\plugin\exception\PluginException;
 use imperazim\components\plugin\traits\ComponentTypesTrait;
@@ -137,6 +139,17 @@ abstract class PluginToolkit extends PluginBase {
       case self::NETWORK_COMPONENT:
         if (isset($components['server_name'])) {
           $this->setMotd($components['server_name']);
+        }
+        break;
+      case self::TRIGGER_COMPONENT:
+        if (!is_array($components)) {
+          $components = [$components];
+        }
+        $listeners = [];
+        foreach ($components as $component) {
+          if ($component instanceof Trigger) {
+            TriggerManager::addTrigger($component);
+          }
         }
         break;
       case self::LISTENER_COMPONENT:
