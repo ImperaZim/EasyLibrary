@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace imperazim\vendor\bossbar;
+namespace imperazim\components\hud\bossbar;
 
 use pocketmine\player\Player;
 use pocketmine\entity\Attribute;
@@ -12,11 +12,9 @@ use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 
-use imperazim\components\hud\BossBar;
-
 /**
 * Class DiverseBossBar
-* @package imperazim\vendor\bossbar
+* @package imperazim\components\hud\bossbar
 */
 final class DiverseBossBar extends BossBar {
 

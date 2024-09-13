@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace imperazim\components\hud;
+namespace imperazim\components\hud\bossbar;
 
 use GlobalLogger;
 use imperazim\components\hud\exception\HudException;
@@ -23,7 +23,7 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 
 /**
 * Class BossBar
-* @package imperazim\components\hud
+* @package imperazim\components\hud\bossbar
 */
 class BossBar {
 

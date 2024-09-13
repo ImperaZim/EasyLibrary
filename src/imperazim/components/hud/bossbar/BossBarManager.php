@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace imperazim\vendor\bossbar;
+namespace imperazim\components\hud\bossbar;
 
 use InvalidArgumentException;
 use pocketmine\plugin\Plugin;
@@ -17,7 +17,7 @@ use imperazim\components\plugin\traits\PluginComponentsTrait;
 
 /**
 * Class BossBarManager
-* @package imperazim\vendor\bossbar
+* @package imperazim\components\hud\bossbar
 */
 final class BossBarManager extends PluginComponent implements Listener {
   use PluginComponentsTrait;

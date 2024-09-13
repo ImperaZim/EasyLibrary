@@ -8,9 +8,9 @@ use imperazim\components\world\WorldManager;
 use imperazim\components\plugin\PluginToolkit;
 use imperazim\components\trigger\TriggerManager;
 use imperazim\components\command\CommandManager;
+use imperazim\components\hud\bossbar\BossBarManager;
 use imperazim\components\plugin\traits\PluginToolkitTrait;
 
-use imperazim\vendor\bossbar\BossBarManager;
 use imperazim\vendor\invmenu\InvMenuManager;
 use imperazim\vendor\commando\CommandoManager;
 use imperazim\vendor\dialogue\DialogueManager;
