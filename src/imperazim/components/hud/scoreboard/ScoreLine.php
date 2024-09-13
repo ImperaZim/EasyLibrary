@@ -7,6 +7,11 @@ namespace imperazim\components\hud\scoreboard;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 
 final class ScoreLine extends ScorePacketEntry {
+  
+	public int $type;
+	public int $score;
+  public int $scoreboardId;
+	public string $objectiveName;
 
   /**
   * ScoreLine constructor.
@@ -17,7 +22,6 @@ final class ScoreLine extends ScorePacketEntry {
     if ($score < 1 || $score > 15) {
       throw new \InvalidArgumentException("Score must be between 1 and 15. Given: $score");
     }
-    parent::__construct();
     $this->score = $score;
     $this->scoreboardId = $score;
     $this->customName = $message;
