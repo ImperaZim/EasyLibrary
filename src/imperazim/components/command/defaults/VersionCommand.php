@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace imperazim\components\command\defaults;
 
-use pocketmine\command\CommandSender;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\permission\DefaultPermissionNames;
@@ -19,58 +18,56 @@ use function stripos;
 use function strtolower;
 use const PHP_VERSION;
 
-use imperazim\vendor\commando\BaseCommand;
-use imperazim\components\command\CommandManager;
+use imperazim\components\command\Command;
+use imperazim\components\command\CommandBuilder;
+use imperazim\components\plugin\PluginToolkit;
+
 
 /**
 * Class VersionCommand
 * @package imperazim\components\command\defaults
 */
-final class VersionCommand extends BaseCommand {
+final class VersionCommand extends Command {
 
   /**
-  * VersionCommand constructor.
+  * Builds the command with the given parameters.
+  * @param PluginToolkit $plugin The plugin toolkit instance used to register the command.
+  * @return CommandBuilder
   */
-  public function __construct() {
-    parent::__construct(
-      plugin: CommandManager::getPlugin(),
+  public function build(PluginToolkit $plugin): CommandBuilder {
+    return new CommandBuilder(
       names: ['version', 'ver', 'about'],
       description: 'See data about the server.',
+      permission: DefaultPermissionNames::COMMAND_VERSION
     );
   }
 
   /**
-  * Prepares the command for execution.
-  */
-  protected function prepare(): void {
-    $this->setPermission(DefaultPermissionNames::COMMAND_VERSION);
-  }
-
-  /**
   * Executes the command.
+  * @param PluginToolkit $plugin
   * @param mixed $sender
   * @param string $aliasUsed
   * @param array $args
   */
-  public function onRun(mixed $sender, string $aliasUsed, array $args): void {
+  public function run(PluginToolkit $plugin, mixed $sender, string $aliasUsed, array $args): void {
     try {
       if (count($args) === 0) {
         $library = 'EasyLibrary';
-        
+
         $sender->sendMessage("This server is running " . TextFormat::GREEN . VersionInfo::NAME . " §rwith " . TextFormat::GREEN . $library);
-        $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . CommandManager::getPlugin()->getDescription()->getVersion() . ' §r(with ' . TextFormat::GREEN . count(CommandManager::getPlugin()->enabledComponents) . '§r enabled\'s component\'s)');
-        
+        $sender->sendMessage($library . ' version: ' . TextFormat::GREEN . $plugin->getDescription()->getVersion() . ' §r(with ' . TextFormat::GREEN . count($plugin->enabledComponents) . '§r enabled\'s component\'s)');
+
         $versionColor = VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : TextFormat::GREEN;
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_serverSoftwareVersion(
           $versionColor . VersionInfo::VERSION()->getFullVersion() . TextFormat::RESET,
           TextFormat::GREEN . VersionInfo::GIT_HASH() . TextFormat::RESET
         ));
-        
+
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_minecraftVersion(
           TextFormat::GREEN . ProtocolInfo::MINECRAFT_VERSION_NETWORK . TextFormat::RESET,
           TextFormat::GREEN . ProtocolInfo::CURRENT_PROTOCOL . TextFormat::RESET
         ));
-        
+
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_phpVersion(TextFormat::GREEN . PHP_VERSION . TextFormat::RESET));
 
         $jitMode = Utils::getOpcacheJitMode();
@@ -83,9 +80,9 @@ final class VersionCommand extends BaseCommand {
         } else {
           $jitStatus = KnownTranslationFactory::pocketmine_command_version_phpJitNotSupported();
         }
-        
+
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_phpJitStatus($jitStatus->format(TextFormat::GREEN, TextFormat::RESET)));
-        
+
         $sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_operatingSystem(TextFormat::GREEN . Utils::getOS() . TextFormat::RESET));
       } else {
         $pluginName = implode(" ", $args);
@@ -115,7 +112,7 @@ final class VersionCommand extends BaseCommand {
     }
   }
 
-  private function describeToSender(Plugin $plugin, CommandSender $sender) : void {
+  private function describeToSender(Plugin $plugin, mixed $sender) : void {
     $desc = $plugin->getDescription();
     $sender->sendMessage(TextFormat::DARK_GREEN . $desc->getName() . TextFormat::RESET . " version " . TextFormat::DARK_GREEN . $desc->getVersion());
 

@@ -4,52 +4,46 @@ declare(strict_types = 1);
 
 namespace imperazim\components\command\defaults;
 
-use pocketmine\command\CommandSender;
-use pocketmine\utils\TextFormat;
+use imperazim\components\command\Command;
+use imperazim\components\command\CommandBuilder;
+use imperazim\components\plugin\PluginToolkit;
 
-use imperazim\vendor\commando\BaseCommand;
-use imperazim\components\command\CommandManager;
 use imperazim\vendor\commando\args\RawStringArgument;
 
 /**
 * Class GeneratePluginCommand
 * @package imperazim\components\command\defaults
 */
-final class GeneratePluginCommand extends BaseCommand {
+final class GeneratePluginCommand extends Command {
 
   /**
-  * GeneratePluginCommand constructor.
+  * Builds the command with the given parameters.
+  * @param PluginToolkit $plugin The plugin toolkit instance used to register the command.
+  * @return CommandBuilder
   */
-  public function __construct() {
-    parent::__construct(
-      plugin: CommandManager::getPlugin(),
+  public function build(PluginToolkit $plugin): CommandBuilder {
+    return new CommandBuilder(
       names: ['genplugin'],
-      description: 'Generate a new plugin base with EasyLibrary.'
+      description: 'Generate a new plugin base with EasyLibrary.',
+      permission: 'easylibrary.command.genplugin',
+      arguments: [
+        0 => new RawStringArgument('PluginName', true),
+        1 => new RawStringArgument('PluginVersion', true),
+        2 => new RawStringArgument('PluginApiVersion', true),
+        3 => new RawStringArgument('PluginAuthor', true),
+        4 => new RawStringArgument('AuthorInDir_Y/N', true)
+      ]
     );
   }
 
   /**
-  * Prepares the command for execution.
-  */
-  protected function prepare(): void {
-    $this->setPermission('easylibrary.command.genplugin');
-    $this->registerArguments([
-      0 => new RawStringArgument('PluginName', true),
-      1 => new RawStringArgument('PluginVersion', true),
-      2 => new RawStringArgument('PluginApiVersion', true),
-      3 => new RawStringArgument('PluginAuthor', true),
-      4 => new RawStringArgument('AuthorInDir_Y/N', true)
-    ]);
-  }
-
-  /**
   * Executes the command.
+  * @param PluginToolkit $plugin
   * @param mixed $sender
   * @param string $aliasUsed
   * @param array $args
   */
-  public function onRun(mixed $sender, string $aliasUsed, array $args): void {
-    $main = CommandManager::getPlugin();
+  public function run(PluginToolkit $plugin, mixed $sender, string $aliasUsed, array $args): void {
     $pluginName = $args['PluginName'] ?? "Plugin";
     $pluginVersion = $args['PluginVersion'] ?? "1.0.0";
     $pluginApiVersion = $args['PluginApiVersion'] ?? "5.0.0";
@@ -57,19 +51,19 @@ final class GeneratePluginCommand extends BaseCommand {
     $authorInDir = strtolower($args['AuthorInDir_Y/N'] ?? "n") === "y" ? "y" : "n";
     $useEasyLibrary = "y";
 
-    $currentDir = $main->getServer()->getDataPath() . "plugins";
+    $currentDir = $plugin->getServer()->getDataPath() . "plugins";
     $dirPath = $currentDir . "/" . $pluginName;
 
     if (is_dir($dirPath)) {
-      $sender->sendMessage(TextFormat::RED . "Error: The directory '$pluginName' already exists.");
+      $sender->sendMessage("§cError: The directory '$pluginName' already exists.");
       return;
     }
 
     mkdir($dirPath, 0777, true);
 
-    $mainNamespace = ($authorInDir === "y") ? "$pluginAuthor\\$pluginName" : $pluginName;
+    $pluginNamespace = ($authorInDir === "y") ? "$pluginAuthor\\$pluginName" : $pluginName;
 
-    $pluginYmlContent = "name: $pluginName\nversion: $pluginVersion\napi: $pluginApiVersion\nmain: $mainNamespace\n";
+    $pluginYmlContent = "name: $pluginName\nversion: $pluginVersion\napi: $pluginApiVersion\nmain: $pluginNamespace\n";
     if ($pluginAuthor !== "Unknown") {
       $pluginYmlContent .= "author: $pluginAuthor\n";
     }
@@ -77,11 +71,9 @@ final class GeneratePluginCommand extends BaseCommand {
 
     file_put_contents($dirPath . "/plugin.yml", $pluginYmlContent);
 
-    // Criar diretório de código fonte
     $srcDir = ($authorInDir === "y") ? "$dirPath/src/$pluginAuthor" : "$dirPath/src";
     mkdir($srcDir, 0777, true);
 
-    // Gerar classe principal do plugin
     $classContent = "<?php\n\ndeclare(strict_types=1);\n\n";
     if ($authorInDir === "y") {
       $classContent .= "namespace $pluginAuthor;\n\n";
@@ -98,7 +90,7 @@ final class GeneratePluginCommand extends BaseCommand {
 
     file_put_contents("$srcDir/$pluginName.php", $classContent);
 
-    $sender->sendMessage(TextFormat::GREEN . "Plugin $pluginName successfully created!");
+    $sender->sendMessage("§aPlugin $pluginName successfully created!");
 
     return;
   }

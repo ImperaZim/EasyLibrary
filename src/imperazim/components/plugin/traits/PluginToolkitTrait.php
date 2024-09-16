@@ -63,6 +63,7 @@ trait PluginToolkitTrait {
 
       if (isset($componentInstance[$commandC])) {
         $plugin->initComponents(
+          plugin: $plugin,
           type: $commandC,
           components: $componentInstance[$commandC]
         );
@@ -70,6 +71,7 @@ trait PluginToolkitTrait {
 
       if (isset($componentInstance[$triggerC])) {
         $plugin->initComponents(
+          plugin: $plugin,
           type: $triggerC,
           components: $componentInstance[$triggerC]
         );
@@ -77,6 +79,7 @@ trait PluginToolkitTrait {
 
       if (isset($componentInstance[$listenerC])) {
         $plugin->initComponents(
+          plugin: $plugin,
           type: $listenerC,
           components: $componentInstance[$listenerC]
         );

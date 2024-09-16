@@ -52,7 +52,7 @@ abstract class PluginToolkit extends PluginBase {
     private ResourceProvider $resourceProvider
   ) {
     $this->data = $this->getServerPath(['join:data']);
-    
+
     parent::__construct($loader, $server, $description, $dataFolder, $file, $resourceProvider);
   }
 
@@ -130,11 +130,12 @@ abstract class PluginToolkit extends PluginBase {
 
   /**
   * Initializes and registers a component based on its type.
+  * @param PluginToolkit $plugin The Plugin.
   * @param string $type The type of component ('listener' or 'command').
   * @param mixed $components The component instance to initialize.
   * @return void
   */
-  public function initComponents(string $type, mixed $components): void {
+  public function initComponents(PluginToolkit $plugin, string $type, mixed $components): void {
     switch (strtolower($type)) {
       case self::NETWORK_COMPONENT:
         if (isset($components['server_name'])) {
@@ -172,6 +173,11 @@ abstract class PluginToolkit extends PluginBase {
         foreach ($components as $component) {
           if ($component instanceof Command) {
             $commands[] = $component;
+          } else {
+            if (class_exists($component)) {
+              $command = new $component($plugin);
+              $commands[] = $command;
+            }
           }
         }
         $this->registerCommands($commands);
@@ -183,11 +189,34 @@ abstract class PluginToolkit extends PluginBase {
 
     /**
     * Overwrite commands passed in the argument
-    * @param anull<string>|null $commands
+    * @param PluginToolkit $plugin The Plugin.
+    * @param array<string>|null $commands
     */
-    public function overwriteCommands(?array $commands = null): void {
-      $this->unregisterCommands(array_keys($commands));
-      $this->registerCommands(array_values($commands));
+    public function overwriteCommands(PluginToolkit $plugin, ?array $commands = null): void {
+      if ($commands !== null) {
+        // Unregister existing commands
+        $this->unregisterCommands(array_keys($commands));
+
+        // Process and register new commands
+        $newCommands = [];
+        foreach ($commands as $component) {
+          if ($component instanceof Command) {
+            // If it's already an instance of Command, add it directly
+            $newCommands[] = $component;
+          } else {
+            // Otherwise, check if it's a valid class and create an instance
+            if (class_exists($component)) {
+              $command = new $component($plugin); // Assuming $this->plugin is the correct plugin instance
+              if ($command instanceof Command) {
+                $newCommands[] = $command;
+              }
+            }
+          }
+        }
+
+        // Register the new commands
+        $this->registerCommands($newCommands);
+      }
     }
 
     /**
@@ -219,9 +248,11 @@ abstract class PluginToolkit extends PluginBase {
     public function unregisterCommands(?array $commands = null): void {
       $commandMap = $this->getServer()->getCommandMap();
       foreach ($commands as $commandName) {
-        $command = $commandMap->getCommand($commandName);
-        if ($command !== null) {
-          $commandMap->unregister($command);
+        if (is_string($commandName)) {
+          $command = $commandMap->getCommand($commandName);
+          if ($command !== null) {
+            $commandMap->unregister($command);
+          }
         }
       }
     }

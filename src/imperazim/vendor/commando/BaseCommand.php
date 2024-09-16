@@ -102,10 +102,6 @@ abstract class BaseCommand extends Command implements IArgumentable, IRunnable, 
     }
   }
 
-  public function sendConsoleError() : void {
-    $this->getOwningPlugin()->getLogger()->error('Comando bloqueado no console!');
-  }
-
   /**
   * @param ArgumentableTrait $ctx
   * @param array             $args

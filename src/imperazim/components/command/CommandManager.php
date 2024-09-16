@@ -24,9 +24,9 @@ final class CommandManager extends PluginComponent {
   */
   public static function init(PluginToolkit $plugin): array {
     self::setPlugin(plugin: $plugin);
-    $plugin->overwriteCommands([
-      'version' => new VersionCommand(),
-      'genplugin' => new GeneratePluginCommand(),
+    $plugin->overwriteCommands($plugin, [
+      'version' => VersionCommand::class,
+      'genplugin' => GeneratePluginCommand::class,
     ]);
     return [];
   }
