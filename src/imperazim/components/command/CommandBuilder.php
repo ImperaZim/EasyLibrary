@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace imperazim\components\command;
+
+/**
+* Class CommandBuilder
+* @package imperazim\components\command
+*/
+final class CommandBuilder {
+
+  /**
+  * CommandBuilder constructor.
+  *
+  * @param array $commandData The array containing command configuration.
+  */
+  public function __construct(
+    private array $names = [],
+    private string $description = '',
+    private string $subcommands = '',
+    private ?string $permission = null,
+    private array $arguments = [],
+    private array $constraints = []
+  ) {}
+
+  /**
+  * Get command names.
+  *
+  * @return array
+  */
+  public function getNames(): array {
+    return $this->names;
+  }
+
+  /**
+  * Get command description.
+  *
+  * @return string
+  */
+  public function getDescription(): string {
+    return $this->description;
+  }
+
+  /**
+  * Get subcommands directory.
+  *
+  * @return string
+  */
+  public function getSubcommands(): string {
+    return $this->subcommands;
+  }
+
+  /**
+  * Get command permission.
+  *
+  * @return string|null
+  */
+  public function getPermission(): ?string {
+    return $this->permission;
+  }
+
+  /**
+  * Get command arguments.
+  *
+  * @return array
+  */
+  public function getArguments(): array {
+    return $this->arguments;
+  }
+
+  /**
+  * Get command constraints.
+  *
+  * @return array
+  */
+  public function getConstraints(): array {
+    return $this->constraints;
+  }
+}
