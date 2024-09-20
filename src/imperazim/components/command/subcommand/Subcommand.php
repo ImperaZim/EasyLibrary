@@ -11,7 +11,7 @@ use imperazim\components\plugin\PluginToolkit;
 * Class Command
 * @package imperazim\components\command\subcommand
 */
-abstract class Command extends BaseSubCommand {
+abstract class Subcommand extends BaseSubCommand {
 
   /** @var SubcommandBuilder|null */
   private $build = null;
