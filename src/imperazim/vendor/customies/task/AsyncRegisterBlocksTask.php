@@ -12,9 +12,9 @@ use pocketmine\scheduler\AsyncTask;
 
 final class AsyncRegisterBlocksTask extends AsyncTask {
 
-	private ThreadSafeArray $classNames;
-	private ThreadSafeArray $serializer;
-	private ThreadSafeArray $deserializer;
+	private array $classNames = [];
+	private array $serializer = [];
+	private array $deserializer = [];
 
 	/**
 	 * @param Closure[] $blocks
@@ -25,7 +25,7 @@ final class AsyncRegisterBlocksTask extends AsyncTask {
 		$this->serializer = new ThreadSafeArray();
 		$this->deserializer = new ThreadSafeArray();
 
-		foreach($blockFuncs as $identifier => [$className, $serializer, $deserializer]){
+		foreach($blockFuncs as $identifier => [$block, $serializer, $deserializer, $className]){
 			$this->classNames[$identifier] = $className;
 			$this->serializer[$identifier] = $serializer;
 			$this->deserializer[$identifier] = $deserializer;

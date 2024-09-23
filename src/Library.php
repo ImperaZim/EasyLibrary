@@ -12,12 +12,13 @@ use imperazim\components\plugin\traits\PluginToolkitTrait;
 final class Library extends PluginToolkit {
   use PluginToolkitTrait;
 
-  private LibraryComponents $componentsManager;
+  public LibraryComponents $componentsManager;
 
   /**
   * This method is called when the plugin is enabled.
   */
   protected function onEnable(): void {
+    self::setInstance($this);
     $this->componentsManager = new LibraryComponents($this);
     $this->componentsManager->enableComponents();
   }
