@@ -70,7 +70,7 @@ final class InvMenuManager extends PluginComponent implements Listener {
 		if($packet instanceof NetworkStackLatencyPacket){
 			$player = $event->getOrigin()->getPlayer();
 			if($player !== null){
-				self::player_manager->getNullable($player)?->network->notify($packet->timestamp);
+				self::$player_manager->getNullable($player)?->network->notify($packet->timestamp);
 			}
 		}
 	}
@@ -81,7 +81,7 @@ final class InvMenuManager extends PluginComponent implements Listener {
 	 */
 	public function onInventoryClose(InventoryCloseEvent $event) : void{
 		$player = $event->getPlayer();
-		$session = self::player_manager->getNullable($player);
+		$session = self::$player_manager->getNullable($player);
 		if($session === null){
 			return;
 		}
@@ -101,7 +101,7 @@ final class InvMenuManager extends PluginComponent implements Listener {
 		$transaction = $event->getTransaction();
 		$player = $transaction->getSource();
 
-		$player_instance = self::player_manager->get($player);
+		$player_instance = self::$player_manager->get($player);
 		$current = $player_instance->getCurrent();
 		if($current === null){
 			return;
