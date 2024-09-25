@@ -37,10 +37,10 @@ final class CustomiesItemFactory {
 	/**
 	 * Get a custom item from its identifier. An exception will be thrown if the item is not registered.
 	 */
-	public function get(string $identifier, int $amount = 1): Item {
+	public function get(string $identifier, int $amount = 1): ?Item {
 		$item = StringToItemParser::getInstance()->parse($identifier);
 		if($item === null) {
-			throw new InvalidArgumentException("Custom item " . $identifier . " is not registered");
+			return null;
 		}
 		return $item->setCount($amount);
 	}
