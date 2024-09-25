@@ -6,7 +6,7 @@ namespace imperazim\vendor\invmenu\types;
 
 use Closure;
 use imperazim\vendor\invmenu\InvMenu;
-use imperazim\vendor\invmenu\InvMenuHooker;
+use imperazim\vendor\invmenu\InvMenuManager;
 use imperazim\vendor\invmenu\type\InvMenuTypeIds;
 
 /**
@@ -28,7 +28,7 @@ class InvMenuChest extends InvMenu {
     private ?Closure $onInteract = null,
     private ?Closure $onClose = null
   ) {
-    parent::__construct(InvMenuHooker::getTypeRegistry()->get(InvMenuTypeIds::TYPE_CHEST));
+    parent::__construct(InvMenuManager::getTypeRegistry()->get(InvMenuTypeIds::TYPE_CHEST));
     $this->setName($name);
     $this->setListener($onInteract);
     $this->setInventoryCloseListener($onClose);
