@@ -18,7 +18,7 @@ use imperazim\components\plugin\exception\PluginException;
 * @package imperazim\components\plugin\traits
 */
 trait PluginResourcePacksTrait {
-  
+
   /** @var string */
   protected string $sourceDirectory = 'resource_packs';
   /** @var string */
@@ -51,7 +51,9 @@ trait PluginResourcePacksTrait {
 
       $textureFolder = rtrim($this->targetDirectory, '/') . '/';
       $targetPath = new Path($textureFolder, false);
-      $targetPath->deleteFolderRecursive();
+      if (is_dir($textureFolder)) {
+        $targetPath->deleteFolderRecursive();
+      }
 
       if (!file_exists($textureFolder) && !mkdir($textureFolder, 0777, true) && !is_dir($textureFolder)) {
         throw new Exception('Failed to create the destination folder.');
@@ -101,5 +103,5 @@ trait PluginResourcePacksTrait {
       }
     }
   }
-  
+
 }
