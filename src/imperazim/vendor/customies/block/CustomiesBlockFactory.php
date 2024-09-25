@@ -178,7 +178,7 @@ final class CustomiesBlockFactory {
 		CreativeInventory::getInstance()->add($block->asItem());
 
 		$this->blockPaletteEntries[] = new BlockPaletteEntry($identifier, new CacheableNbt($propertiesTag));
-		$this->blockFuncs[$identifier] = [$block, $serializer, $deserializer];
+		$this->blockFuncs[$identifier] = [$className, $serializer, $deserializer];
 
 		// 1.20.60 added a new "block_id" field which depends on the order of the block palette entries. Every time we
 		// insert a new block, we need to re-sort the block palette entries to keep in sync with the client.

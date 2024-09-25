@@ -21,10 +21,10 @@ final class AsyncRegisterBlocksTask extends AsyncTask {
 	 * @phpstan-param array<string, array{(Closure(int): Block), (Closure(BlockStateWriter): Block), (Closure(Block): BlockStateReader)}> $blocks
 	 */
 	public function __construct(private string $cachePath, array $blockFuncs) {
-		$this->classNames = new ThreadSafeArray();
+	  $this->classNames = new ThreadSafeArray();
 		$this->serializer = new ThreadSafeArray();
 		$this->deserializer = new ThreadSafeArray();
-
+		
 		foreach($blockFuncs as $identifier => [$className, $serializer, $deserializer]){
 			$this->classNames[$identifier] = $className;
 			$this->serializer[$identifier] = $serializer;
