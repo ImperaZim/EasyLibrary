@@ -18,7 +18,7 @@ final class CommandBuilder {
   public function __construct(
     private array $names = [],
     private string $description = '',
-    private string $subcommands = '',
+    private array $subcommands = [],
     private ?string $permission = null,
     private array $arguments = [],
     private array $constraints = []
@@ -45,9 +45,9 @@ final class CommandBuilder {
   /**
   * Get subcommands directory.
   *
-  * @return string
+  * @return array
   */
-  public function getSubcommands(): string {
+  public function getSubcommands(): array {
     return $this->subcommands;
   }
 

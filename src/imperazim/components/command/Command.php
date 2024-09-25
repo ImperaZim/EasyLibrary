@@ -7,6 +7,7 @@ namespace imperazim\components\command;
 use imperazim\vendor\commando\BaseCommand;
 use imperazim\vendor\commando\BaseSubCommand;
 use imperazim\components\plugin\PluginToolkit;
+use imperazim\components\command\subcommmand\Subcommand;
 
 /**
 * Class Command
@@ -56,7 +57,11 @@ abstract class Command extends BaseCommand {
       $this->registerArguments($builder->getArguments());
       $this->addConstraints($builder->getConstraints());
       if ($builder->getSubcommands()) {
-        $this->registerSubcommands($builder->getSubcommands());
+        $subcommands = [];
+        foreach ($builder->getSubcommands() as $subcommand) {
+          $subcommands[] = new $subcommand($this->getOwningPlugin());
+        }
+        $this->registerSubcommands($subcommands);
       }
     }
   }
