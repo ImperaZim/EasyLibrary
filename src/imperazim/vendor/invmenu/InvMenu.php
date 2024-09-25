@@ -54,9 +54,6 @@ class InvMenu implements InvMenuTypeIds{
 	protected ?SharedInvMenuSynchronizer $synchronizer = null;
 
 	public function __construct(InvMenuType $type, ?Inventory $custom_inventory = null){
-		if(!InvMenuManager::isRegistered()){
-			throw new LogicException("Tried creating menu before calling " . InvMenuManager::class . "::register()");
-		}
 		$this->type = $type;
 		$this->inventory = $this->type->createInventory();
 		$this->setInventory($custom_inventory);
