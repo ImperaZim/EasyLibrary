@@ -55,43 +55,10 @@ abstract class Command extends BaseCommand {
       }
       $this->registerArguments($builder->getArguments());
       $this->addConstraints($builder->getConstraints());
-      if (is_dir($builder->getSubcommands())) {
-        $subcommands = $this->loadSubcommands($this->getOwningPlugin());
-        $this->registerSubcommands($subcommands);
+      if ($builder->getSubcommands()) {
+        $this->registerSubcommands($builder->getSubcommands());
       }
     }
-  }
-
-  /**
-  * Load subcommands from the subcommands directory.
-  * @param PluginToolkit $plugin
-  * @return array
-  */
-  private function loadSubcommands(PluginToolkit $plugin): array {
-    $builder = $this->build;
-    $directory = $builder->getSubcommands();
-    $subcommandInstances = [];
-
-    if (is_dir($directory)) {
-      $files = scandir($directory);
-
-      foreach ($files as $file) {
-        if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-          $className = pathinfo($file, PATHINFO_FILENAME);
-          require_once $directory . DIRECTORY_SEPARATOR . $file;
-
-          if (class_exists($className)) {
-            $subcommand = new $className($plugin);
-
-            if ($subcommand instanceof BaseSubCommand) {
-              $subcommandInstances[] = $subcommand;
-            }
-          }
-        }
-      }
-    }
-
-    return $subcommandInstances;
   }
 
   /**
