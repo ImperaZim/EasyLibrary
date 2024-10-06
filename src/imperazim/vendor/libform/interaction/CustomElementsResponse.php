@@ -35,6 +35,14 @@ final class CustomElementsResponse {
   }
 
   /**
+  * Get all elements
+  * @return Element[]
+  */
+  public function getElements(): array {
+    return $this->getNonLabelElements();
+  }
+
+  /**
   * Get specific element by your identifier
   * @param string $id
   * @return Element|null
