@@ -24,10 +24,12 @@ final class Button implements \JsonSerializable {
   public function __construct(
     private string|array $text,
     private ?Image $image = null,
-    private ?string $identifier = null,
+    private ?string $identifier = "",
     private ?ButtonResponse $response = null,
     private ?bool $reopen = false
-  ) {}
+  ) {
+    $this->setIdentifier($identifier);
+  }
 
   /**
   * Defines the text of the button.
@@ -63,24 +65,6 @@ final class Button implements \JsonSerializable {
   */
   public function getImage(): ?Image {
     return $this->image;
-  }
-
-  /**
-  * Defines the identifier of the button.
-  * @param string $identifier The new identifier for the button.
-  * @return self Returns the current instance for method chaining.
-  */
-  public function setIdentifier(string $identifier): self {
-    $this->identifier = $identifier;
-    return $this;
-  }
-
-  /**
-  * Gets the identifier of the button.
-  * @return string|null The identifier of the button.
-  */
-  public function getIdentifier(): ?string {
-    return $this->identifier;
   }
 
   /**

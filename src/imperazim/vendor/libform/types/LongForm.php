@@ -73,27 +73,26 @@ final class LongForm extends Form {
   
   /**
   * Get a button by its index.
-  * @param int $value
+  * @param int $identifier
   * @return Button
   * @throws FormValidationException
   */
-  private function getButton(int $value): Button {
-    if (!isset($this->buttons[$value])) {
-      throw new FormValidationException("Button at index $value does not exist.");
+  private function getButton(int $identifier): Button {
+    if (!isset($this->buttons[$identifier])) {
+      throw new FormValidationException("Button at index $identifier does not exist.");
     }
-    return $this->buttons[$value];
+    return $this->buttons[$identifier];
   }
 
   /**
   * Add a button to the form.
   * @param string $text
   * @param Image|null $image
-  * @param string|null $value
+  * @param string|null $identifier
   * @return self
   */
-  public function addButton(string $text, ?Image $image = null, ?string $value = null, ?ButtonResponse $response = null): self {
-    $button = new Button($text, $image, $value, $response);
-    $button->setIdentifier($value);
+  public function addButton(string $text, ?Image $image = null, ?string $identifier = null, ?ButtonResponse $response = null): self {
+    $button = new Button($text, $image, $identifier, $response);
     $this->buttons[] = $button;
     return $this;
   }
