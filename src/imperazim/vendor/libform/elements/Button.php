@@ -18,14 +18,14 @@ final class Button implements \JsonSerializable {
   * Button constructor.
   * @param string|array $text The text displayed on the button.
   * @param Image|null $image The image associated with the button.
-  * @param string|null $value The value associated with the button.
-  * @param ButtonResponse|null $onclick The response function to be executed when the button is pressed.
+  * @param string|null $identifier The identifier associated with the button.
+  * @param ButtonResponse|null $response The response function to be executed when the button is pressed.
   */
   public function __construct(
     private string|array $text,
     private ?Image $image = null,
-    private ?string $value = null,
-    private ?ButtonResponse $onclick = null,
+    private ?string $identifier = null,
+    private ?ButtonResponse $response = null,
     private ?bool $reopen = false
   ) {}
 
@@ -66,30 +66,30 @@ final class Button implements \JsonSerializable {
   }
 
   /**
-  * Defines the value of the button.
-  * @param string $value The new value for the button.
+  * Defines the identifier of the button.
+  * @param string $identifier The new identifier for the button.
   * @return self Returns the current instance for method chaining.
   */
-  public function setValue(string $value): self {
-    $this->value = $value;
+  public function setIdentifier(string $identifier): self {
+    $this->identifier = $identifier;
     return $this;
   }
 
   /**
-  * Gets the value of the button.
-  * @return string|null The value of the button.
+  * Gets the identifier of the button.
+  * @return string|null The identifier of the button.
   */
-  public function getValue(): ?string {
-    return $this->value;
+  public function getIdentifier(): ?string {
+    return $this->identifier;
   }
 
   /**
   * Defines the response function of the button.
-  * @param ButtonResponse $onclick The new response function for the button.
+  * @param ButtonResponse $response The new response function for the button.
   * @return self Returns the current instance for method chaining.
   */
-  public function setResponse(ButtonResponse $onclick): self {
-    $this->onclick = $onclick;
+  public function setResponse(ButtonResponse $response): self {
+    $this->response = $response;
     return $this;
   }
 
@@ -98,7 +98,7 @@ final class Button implements \JsonSerializable {
   * @return ButtonResponse|null The response function of the button.
   */
   public function getResponse(): ?ButtonResponse {
-    return $this->onclick;
+    return $this->response;
   }
 
   /**
