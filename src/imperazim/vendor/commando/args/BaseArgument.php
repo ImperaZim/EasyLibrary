@@ -14,12 +14,15 @@ abstract class BaseArgument {
   protected string $name;
   /** @var bool */
   protected bool $optional = false;
+  /** @var bool */
+  protected bool $hideName = false;
   /** @var CommandParameter */
   protected CommandParameter $parameterData;
 
-  public function __construct(string $name, bool $optional = false) {
+  public function __construct(string $name, bool $optional = false, bool $hideName = false) {
     $this->name = $name;
     $this->optional = $optional;
+    $this->hideName = $hideName;
 
     $this->parameterData = new CommandParameter();
     $this->parameterData->paramName = $name;
@@ -58,6 +61,13 @@ abstract class BaseArgument {
   */
   public function isOptional(): bool {
     return $this->optional;
+  }
+
+  /**
+  * @return bool
+  */
+  public function hideName(): bool {
+    return $this->hideName;
   }
 
   /**

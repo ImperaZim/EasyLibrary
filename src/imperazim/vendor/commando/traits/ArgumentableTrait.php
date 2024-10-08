@@ -193,7 +193,11 @@ trait ArgumentableTrait {
       $hasOptional = false;
       $names = [];
       foreach ($arguments as $argument) {
-        $names[] = $argument->getName() . ":" . $argument->getTypeName();
+        $nameData = "";
+        if (!$argument->hideName()) {
+          $nameData .= $argument->getName() . ":";
+        }
+        $names[] = $nameData . $argument->getTypeName();
         if ($argument->isOptional()) {
           $hasOptional = true;
         }
