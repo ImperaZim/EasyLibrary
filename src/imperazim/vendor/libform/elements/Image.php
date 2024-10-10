@@ -15,7 +15,7 @@ final class Image implements \JsonSerializable {
   * @param string $data The data of the image.
   * @param string $type The type of the image.
   */
-  private function __construct(
+  public function __construct(
     public /*readonly*/ string $data, 
     public /*readonly*/ string $type
   ) {}
