@@ -24,7 +24,7 @@ final class Button implements \JsonSerializable {
   public function __construct(
     private string|array $text,
     private ?Image $image = null,
-    private ?string $identifier = "",
+    ?string $identifier = null,
     private ?ButtonResponse $response = null,
     private ?bool $reopen = false
   ) {
